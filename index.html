@@ -1,10 +1,2004 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Benim Sitem</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Card Checker | Profesyonel Kart Doğrulama</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --gray: #95a5a6;
+            --dark-gray: #7f8c8d;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --border-radius: 10px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), #1a252f);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 28px;
+            color: var(--secondary);
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-outline:hover {
+            border-color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .btn-dark {
+            background-color: var(--dark);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--secondary);
+        }
+
+        /* Gateway Selection */
+        .gateways {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .gateway-item {
+            background-color: var(--light);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .gateway-item:hover {
+            background-color: #e0e6eb;
+        }
+
+        .gateway-item.active {
+            border-color: var(--secondary);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .gateway-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--secondary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .gateway-info h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .gateway-info p {
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        /* File Upload */
+        .file-upload-area {
+            border: 3px dashed var(--gray);
+            border-radius: var(--border-radius);
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--secondary);
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .file-upload-area i {
+            font-size: 50px;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+
+        .file-upload-area h3 {
+            margin-bottom: 10px;
+        }
+
+        .file-upload-area p {
+            color: var(--dark-gray);
+            margin-bottom: 20px;
+        }
+
+        /* Results */
+        .results-container {
+            max-height: 500px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background-color: var(--light);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-item.live {
+            border-left: 5px solid var(--success);
+        }
+
+        .result-item.dead {
+            border-left: 5px solid var(--danger);
+        }
+
+        .result-item.points {
+            border-left: 5px solid var(--warning);
+        }
+
+        .card-number {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+
+        .status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status.live {
+            background-color: rgba(39, 174, 96, 0.2);
+            color: var(--success);
+        }
+
+        .status.dead {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--danger);
+        }
+
+        .status.points {
+            background-color: rgba(243, 156, 18, 0.2);
+            color: var(--warning);
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+      .stat-label {
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        /* Login Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: border 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary);
+            outline: none;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        /* Admin Panel */
+        .admin-header {
+            background-color: var(--dark);
+            color: white;
+            padding: 15px 0;
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+        }
+
+        .admin-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .admin-tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--gray);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .admin-tab.active {
+            color: var(--secondary);
+            border-bottom-color: var(--secondary);
+        }
+
+        .admin-content {
+            display: none;
+        }
+
+        .admin-content.active {
+            display: block;
+        }
+
+        .logs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .logs-table th,
+        .logs-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .logs-table th {
+            background-color: var(--light);
+            font-weight: 700;
+        }
+
+        .logs-table tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: var(--light);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--secondary);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 25px 0;
+            margin-top: 40px;
+            color: var(--gray);
+            border-top: 1px solid #ddd;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .gateways {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Animations */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(150%);
+            transition: transform 0.5s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background-color: var(--success);
+        }
+
+        .notification.error {
+            background-color: var(--danger);
+        }
+
+        .notification.info {
+            background-color: var(--secondary);
+        }
+    </style>
 </head>
 <body>
-  <h1>Site Çalışıyor 🎉</h1>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="card-title"><i class="fas fa-sign-in-alt"></i> Giriş Yap</h2>
+                <button class="close-modal" id="closeLoginModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="email">E-posta</label>
+                    <input type="email" id="email" class="form-control" placeholder="E-posta adresinizi girin">
+                </div>
+                <div class="form-group">
+                    <label for="password">Şifre</label>
+                    <input type="password" id="password" class="form-control" placeholder="Şifrenizi girin">
+                </div>
+                <div class="form-group">
+                    <p style="text-align: center; margin-top: 15px; color: var(--gray);">
+                        Hesabınız yok mu? <a href="#" id="switchToRegister" style="color: var(--secondary); font-weight: 600;">Kayıt Ol</a>
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelLogin">İptal</button>
+                <button class="btn btn-primary" id="loginButton">Giriş Yap</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="card-title"><i class="fas fa-user-plus"></i> Kayıt Ol</h2>
+                <button class="close-modal" id="closeRegisterModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="regEmail">E-posta</label>
+                    <input type="email" id="regEmail" class="form-control" placeholder="E-posta adresinizi girin">
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Şifre</label>
+                    <input type="password" id="regPassword" class="form-control" placeholder="Şifrenizi girin">
+                </div>
+                <div class="form-group">
+                    <label for="regConfirmPassword">Şifre Tekrar</label>
+                    <input type="password" id="regConfirmPassword" class="form-control" placeholder="Şifrenizi tekrar girin">
+                </div>
+                <div class="form-group">
+                    <p style="text-align: center; margin-top: 15px; color: var(--gray);">
+                        Zaten hesabınız var mı? <a href="#" id="switchToLogin" style="color: var(--secondary); font-weight: 600;">Giriş Yap</a>
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelRegister">İptal</button>
+                <button class="btn btn-primary" id="registerButton">Kayıt Ol</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel (Hidden by default) -->
+    <div id="adminPanel" class="container" style="display: none;">
+        <div class="admin-header">
+            <div class="admin-nav">
+                <div class="logo">
+                    <i class="fas fa-user-shield"></i>
+                    <h1>Admin <span>Paneli</span></h1>
+                </div>
+                <button class="btn btn-outline" id="logoutAdmin">
+                    <i class="fas fa-sign-out-alt"></i> Çıkış Yap
+                </button>
+            </div>
+        </div>
+
+        <div class="admin-tabs">
+            <button class="admin-tab active" data-tab="users">Kullanıcı Kontrolleri</button>
+            <button class="admin-tab" data-tab="logs">Sistem Logları</button>
+            <button class="admin-tab" data-tab="download">Kartları İndir</button>
+        </div>
+
+        <div id="usersTab" class="admin-content active">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-users"></i> Kullanıcı Kontrolleri</h2>
+                <p>Tüm kullanıcıların kart kontrol geçmişi burada kayıt altına alınmaktadır.</p>
+                
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalChecks">0</div>
+                        <div class="stat-label">Toplam Kontrol</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalUsers">0</div>
+                        <div class="stat-label">Toplam Kullanıcı</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalLive">0</div>
+                        <div class="stat-label">Live Kartlar</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalDead">0</div>
+                        <div class="stat-label">Dead Kartlar</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <h3 class="card-title"><i class="fas fa-history"></i> Son Kontroller</h3>
+                    <table class="logs-table">
+                        <thead>
+                            <tr>
+                                <th>Kullanıcı</th>
+                                <th>Gateway</th>
+                                <th>Kart</th>
+                                <th>Durum</th>
+                                <th>Tarih</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userLogsTable">
+                            <!-- Logs will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+       <div id="logsTab" class="admin-content">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-clipboard-list"></i> Sistem Logları</h2>
+                <p>Tüm sistem aktiviteleri burada kayıt altına alınmaktadır.</p>
+                
+                <div class="results-container">
+                    <div id="systemLogs">
+                        <!-- System logs will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="downloadTab" class="admin-content">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-download"></i> Kartları İndir</h2>
+                <p>Tüm kullanıcıların kontrol ettiği kartları toplu şekilde indirebilirsiniz.</p>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-primary" id="downloadAllCards">
+                        <i class="fas fa-file-download"></i> Tüm Kartları İndir (.txt)
+                    </button>
+                    <button class="btn btn-success" id="downloadLiveCards" style="margin-left: 10px;">
+                        <i class="fas fa-check-circle"></i> Live Kartları İndir
+                    </button>
+                    <button class="btn btn-danger" id="downloadDeadCards" style="margin-left: 10px;">
+                        <i class="fas fa-times-circle"></i> Dead Kartları İndir
+                    </button>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <h3 class="card-title"><i class="fas fa-credit-card"></i> Toplanan Kartlar</h3>
+                    <div class="results-container">
+                        <div id="allCardsList">
+                            <!-- All cards will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Site (Visible by default) -->
+    <div id="mainSite">
+        <!-- Header -->
+        <header>
+            <div class="container header-content">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <h1>Premium <span>Card Checker</span></h1>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn btn-outline" id="loginButtonHeader">
+                        <i class="fas fa-sign-in-alt"></i> Giriş Yap
+                    </button>
+                    <button class="btn btn-primary" id="registerButtonHeader">
+                        <i class="fas fa-user-plus"></i> Kayıt Ol
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="container">
+            <div class="main-content">
+                <!-- Left Column -->
+                <div>
+                    <!-- Gateway Selection -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-exchange-alt"></i> Gateway Seçimi</h2>
+                            <span class="status live pulse">DearSiber Checker</span>
+                        </div>
+                        <p>Kartlarınızı kontrol etmek için bir gateway seçin.</p>
+                        
+                        <div class="gateways">
+                            <div class="gateway-item active" data-gateway="stripe">
+                                <div class="gateway-icon" style="background-color: #6772e5;">
+                                    <i class="fab fa-cc-stripe"></i>
+                                </div>
+                                <div class="gateway-info">
+                                    <h4>Stripe</h4>
+                                    <p>iyii</p>
+                                </div>
+                            </div>
+                            
+                            <div class="gateway-item" data-gateway="paypal">
+                                <div class="gateway-icon" style="background-color: #003087;">
+                                    <i class="fab fa-cc-paypal"></i>
+                                </div>
+                                <div class="gateway-info">
+                                    <h4>PayPal</h4>
+                                    <p>iyii</p>
+                                </div>
+                            </div>
+                            
+                            <div class="gateway-item" data-gateway="tr-iyzico">
+                                <div class="gateway-icon" style="background-color: #5d30db;">
+                                    <i class="fas fa-credit-card"></i>
+                                </div>
+                                <div class="gateway-info">
+                                    <h4>TR Iyzico</h4>
+                                    <p>iyii</p>
+                                </div>
+                            </div>
+                            
+                            <div class="gateway-item" data-gateway="yd-iyzico">
+                                <div class="gateway-icon" style="background-color: #8a4af3;">
+                                    <i class="fas fa-globe"></i>
+                                </div>
+                                <div class="gateway-info">
+                                    <h4>YD Iyzico</h4>
+                                    <p>iyii</p>
+                                </div>
+                            </div>
+                            
+                            <div class="gateway-item" data-gateway="shopify">
+                                <div class="gateway-icon" style="background-color: #95bf46;">
+                                    <i class="fab fa-shopify"></i>
+                                </div>
+                                <div class="gateway-info">
+                                    <h4>Shopify</h4>
+                                    <p>iyii</p>
+                                </div>
+                            </div>
+                            
+                            <div class="gateway-item" data-gateway="puanv1">
+                                <div class="gateway-icon" style="background-color: #f39c12;">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="gateway-info">
+                                    <h4>Puan v1</h4>
+                                    <p>Puan Kontrolü</p>
+                                </div>
+                            </div>
+                            
+                            <div class="gateway-item" data-gateway="puanv2">
+                                <div class="gateway-icon" style="background-color: #e67e22;">
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <div class="gateway-info">
+                                    <h4>Puan v2</h4>
+                                    <p>Puan Kontrolü</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+           <!-- File Upload -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-upload"></i> Kart Yükleme</h2>
+                            <button class="btn btn-primary" id="startCheck">
+                                <i class="fas fa-play"></i> Kontrol Et
+                            </button>
+                        </div>
+                        <p>Kartlarınızı yükleyin. Format: <code>382928282828|11|28|292</code> veya <code>382928282828|11|2028|292</code> veya <code>382928282828|1|28|292</code></p>
+                        
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <i class="fas fa-file-upload"></i>
+                            <h3>Dosyanızı sürükleyip bırakın veya tıklayın</h3>
+                            <p>Desteklenen formatlar: .txt, .csv</p>
+                            <button class="btn btn-outline">
+                                <i class="fas fa-folder-open"></i> Dosya Seç
+                            </button>
+                            <input type="file" id="fileInput" accept=".txt,.csv" style="display: none;">
+                        </div>
+                        
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label for="cardsTextArea">Veya kartları direkt buraya yapıştırın:</label>
+                            <textarea id="cardsTextArea" class="form-control" rows="5" placeholder="Her satıra bir kart gelecek şekilde yapıştırın..."></textarea>
+                        </div>
+                        
+                        <div class="progress-container" id="progressContainer" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span id="progressStatus">Hazırlanıyor...</span>
+                                <span id="progressPercent">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-list-alt"></i> Kontrol Sonuçları</h2>
+                            <button class="btn btn-outline" id="clearResults">
+                                <i class="fas fa-trash"></i> Temizle
+                            </button>
+                        </div>
+                        
+                        <div class="stats">
+                            <div class="stat-box">
+                                <div class="stat-value" id="totalCards">0</div>
+                                <div class="stat-label">Toplam Kart</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" id="liveCards">0</div>
+                                <div class="stat-label">Live</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" id="deadCards">0</div>
+                                <div class="stat-label">Dead</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" id="pointCards">0</div>
+                                <div class="stat-label">Puanlı</div>
+                            </div>
+                        </div>
+                        
+                        <div class="results-container" id="resultsContainer">
+                            <!-- Results will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column (Sidebar) -->
+                <div>
+                    <!-- User Info -->
+                    <div class="card">
+                        <h2 class="card-title"><i class="fas fa-user-circle"></i> Kullanıcı Bilgileri</h2>
+                        <div style="text-align: center; margin: 20px 0;">
+                            <div style="font-size: 60px; color: var(--secondary); margin-bottom: 10px;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h3 id="userName">Misafir Kullanıcı</h3>
+                            <p id="userEmail" style="color: var(--gray); margin-bottom: 20px;">Giriş yapılmadı</p>
+                            <button class="btn btn-primary" id="loginSidebar" style="width: 100%;">
+                                <i class="fas fa-sign-in-alt"></i> Giriş Yap
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Instructions -->
+                    <div class="card">
+                        <h2 class="card-title"><i class="fas fa-info-circle"></i> Kullanım Talimatları</h2>
+                        <ul style="padding-left: 20px; margin-top: 15px;">
+                            <li style="margin-bottom: 10px;">Desteklenen kart formatlarını kullanın</li>
+                            <li style="margin-bottom: 10px;">Her satıra bir kart gelecek şekilde yapıştırın</li>
+                            <li style="margin-bottom: 10px;">Gateway seçiminizi kontrol etmeden önce yapın</li>
+                            <li style="margin-bottom: 10px;">Her kart 5 saniyede kontrol edilir</li>
+                            <li>Puan gateway'leri çok sıkmayın aman patlar fln dikkat.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="card">
+                        <h2 class="card-title"><i class="fas fa-history"></i> Son Aktiviteler</h2>
+                        <div id="recentActivity">
+                            <p style="text-align: center; color: var(--gray); padding: 20px 0;">
+                                Henüz aktivite yok
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <p>© 2023 Premium Card Checker. Tüm hakları saklıdır.</p>
+                <p style="margin-top: 10px; font-size: 14px;">
+                    <i class="fas fa-shield-alt"></i> Profesyonel kart doğrulama
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let isAdmin = false;
+        let selectedGateway = 'stripe';
+        let cards = [];
+        let results = [];
+        let userLogs = [];
+        let systemLogs = [];
+        let allCards = [];
+        let checkingInProgress = false;
+        let checkCounter = 0;
+
+        // DOM Elements
+        const mainSite = document.getElementById('mainSite');
+        const adminPanel = document.getElementById('adminPanel');
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const cardsTextArea = document.getElementById('cardsTextArea');
+        const startCheckButton = document.getElementById('startCheck');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressStatus = document.getElementById('progressStatus');
+        const progressPercent = document.getElementById('progressPercent');
+        const clearResultsButton = document.getElementById('clearResults');
+        const gatewayItems = document.querySelectorAll('.gateway-item');
+        const loginButtonHeader = document.getElementById('loginButtonHeader');
+        const registerButtonHeader = document.getElementById('registerButtonHeader');
+        const loginButton = document.getElementById('loginButton');
+        const registerButton = document.getElementById('registerButton');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const closeRegisterModal = document.getElementById('closeRegisterModal');
+        const cancelLogin = document.getElementById('cancelLogin');
+        const cancelRegister = document.getElementById('cancelRegister');
+        const switchToRegister = document.getElementById('switchToRegister');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const logoutAdmin = document.getElementById('logoutAdmin');
+        const downloadAllCards = document.getElementById('downloadAllCards');
+        const downloadLiveCards = document.getElementById('downloadLiveCards');
+        const downloadDeadCards = document.getElementById('downloadDeadCards');
+        const adminTabs = document.querySelectorAll('.admin-tab');
+        const adminContents = document.querySelectorAll('.admin-content');
+        const userName = document.getElementById('userName');
+        const userEmail = document.getElementById('userEmail');
+        const loginSidebar = document.getElementById('loginSidebar');
+        const totalCardsEl = document.getElementById('totalCards');
+        const liveCardsEl = document.getElementById('liveCards');
+        const deadCardsEl = document.getElementById('deadCards');
+        const pointCardsEl = document.getElementById('pointCards');
+        const totalChecksEl = document.getElementById('totalChecks');
+        const totalUsersEl = document.getElementById('totalUsers');
+        const totalLiveEl = document.getElementById('totalLive');
+        const totalDeadEl = document.getElementById('totalDead');
+        const userLogsTable = document.getElementById('userLogsTable');
+        const systemLogsEl = document.getElementById('systemLogs');
+        const allCardsList = document.getElementById('allCardsList');
+        const recentActivity = document.getElementById('recentActivity');
+
+        // Admin credentials
+        const ADMIN_EMAIL = 'zaza3131@gmail.com';
+        const ADMIN_PASSWORD = 'zaza3131';
+
+        // Gateway live rates
+        const gatewayRates = {
+            'stripe': 5,
+            'paypal': 4,
+            'tr-iyzico': 3,
+            'yd-iyzico': 3,
+            'shopify': 2,
+            'puanv1': 2, // For points
+            'puanv2': 2  // For points
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load data from localStorage
+            loadFromLocalStorage();
+            
+            // Update stats
+            updateStats();
+            updateAdminStats();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Add initial system log
+            addSystemLog('Sistem başlatıldı.', 'info');
+        });
+
+        // Load data from localStorage
+        function loadFromLocalStorage() {
+            const savedUser = localStorage.getItem('currentUser');
+            const savedLogs = localStorage.getItem('userLogs');
+            const savedSystemLogs = localStorage.getItem('systemLogs');
+            const savedCards = localStorage.getItem('allCards');
+            
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateUserInfo();
+                
+                // Check if user is admin
+                if (currentUser.email === ADMIN_EMAIL) {
+                    isAdmin = true;
+                }
+            }
+            
+            if (savedLogs) {
+                userLogs = JSON.parse(savedLogs);
+            }
+            
+            if (savedSystemLogs) {
+                systemLogs = JSON.parse(savedSystemLogs);
+                displaySystemLogs();
+            }
+            
+            if (savedCards) {
+                allCards = JSON.parse(savedCards);
+                displayAllCards();
+            }
+        }
+
+        // Save data to localStorage
+        function saveToLocalStorage() {
+            if (currentUser) {
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+            
+            localStorage.setItem('userLogs', JSON.stringify(userLogs));
+            localStorage.setItem('systemLogs', JSON.stringify(systemLogs));
+            localStorage.setItem('allCards', JSON.stringify(allCards));
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Gateway selection
+            gatewayItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    gatewayItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedGateway = this.dataset.gateway;
+                    
+                    // Show notification
+                    showNotification(`Gateway değiştirildi: ${this.querySelector('h4').textContent}`, 'info');
+                });
+            });
+
+            // File upload
+            fileUploadArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', handleFileUpload);
+            
+            // Cards text area
+            cardsTextArea.addEventListener('input', function() {
+                // Parse cards when user types
+                parseCardsFromText(this.value);
+            });
+
+            // Start check button
+            startCheckButton.addEventListener('click', startChecking);
+
+            // Clear results button
+            clearResultsButton.addEventListener('click', clearResults);
+
+            // Login/Register buttons
+            loginButtonHeader.addEventListener('click', () => showModal('login'));
+            registerButtonHeader.addEventListener('click', () => showModal('register'));
+            loginSidebar.addEventListener('click', () => showModal('login'));
+            
+            // Modal buttons
+            loginButton.addEventListener('click', handleLogin);
+            registerButton.addEventListener('click', handleRegister);
+            closeLoginModal.addEventListener('click', () => hideModal('login'));
+            closeRegisterModal.addEventListener('click', () => hideModal('register'));
+            cancelLogin.addEventListener('click', () => hideModal('login'));
+            cancelRegister.addEventListener('click', () => hideModal('register'));
+            switchToRegister.addEventListener('click', () => {
+                hideModal('login');
+                showModal('register');
+            });
+            switchToLogin.addEventListener('click', () => {
+                hideModal('register');
+                showModal('login');
+            });
+            
+            // Admin panel
+            logoutAdmin.addEventListener('click', handleLogout);
+            downloadAllCards.addEventListener('click', () => downloadCards('all'));
+            downloadLiveCards.addEventListener('click', () => downloadCards('live'));
+            downloadDeadCards.addEventListener('click', () => downloadCards('dead'));
+            
+            // Admin tabs
+            adminTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    
+                    // Update active tab
+                    adminTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    adminContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${tabId}Tab`) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+        }
+
+      // Handle file upload
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                cardsTextArea.value = content;
+                parseCardsFromText(content);
+                
+                showNotification(`${file.name} başarıyla yüklendi.`, 'success');
+            };
+            reader.readAsText(file);
+        }
+
+        // Parse cards from text
+        function parseCardsFromText(text) {
+            const lines = text.trim().split('\n');
+            cards = [];
+            
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (trimmed) {
+                    // Validate card format
+                    if (isValidCardFormat(trimmed)) {
+                        cards.push(trimmed);
+                    }
+                }
+            });
+            
+            // Update total cards count
+            totalCardsEl.textContent = cards.length;
+            
+            // Show notification if cards found
+            if (cards.length > 0) {
+                showNotification(`${cards.length} kart bulundu.`, 'info');
+            }
+        }
+
+        // Validate card format
+        function isValidCardFormat(card) {
+            // Supported formats:
+            // 382928282828|11|28|292
+            // 382928282828|11|2028|292
+            // 382928282828|1|28|292
+            const regex = /^\d{12,16}\|\d{1,2}\|(\d{2}|\d{4})\|\d{3}$/;
+            return regex.test(card);
+        }
+
+        // Start checking cards
+        function startChecking() {
+            if (checkingInProgress) {
+                showNotification('Kontrol işlemi zaten devam ediyor.', 'error');
+                return;
+            }
+            
+            if (cards.length === 0) {
+                showNotification('Lütfen önce kartları yükleyin.', 'error');
+                return;
+            }
+            
+            // Clear previous results
+            results = [];
+            resultsContainer.innerHTML = '';
+            
+            // Reset counters
+            checkCounter = 0;
+            liveCardsEl.textContent = '0';
+            deadCardsEl.textContent = '0';
+            pointCardsEl.textContent = '0';
+            
+            // Show progress bar
+            progressContainer.style.display = 'block';
+            progressFill.style.width = '0%';
+            progressPercent.textContent = '0%';
+            progressStatus.textContent = 'Kontrol başlatılıyor...';
+            
+            // Start checking process
+            checkingInProgress = true;
+            startCheckButton.disabled = true;
+            startCheckButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Kontrol Ediliyor...';
+            
+            // Start checking each card with delay
+            checkNextCard();
+        }
+
+        // Check next card in the list
+        function checkNextCard() {
+            if (checkCounter >= cards.length) {
+                // All cards checked
+                finishChecking();
+                return;
+            }
+            
+            const card = cards[checkCounter];
+            const result = checkCard(card);
+            results.push(result);
+            
+            // Display result
+            displayResult(result);
+            
+            // Update stats
+            updateStats();
+            
+            // Update progress
+            const progress = ((checkCounter + 1) / cards.length) * 100;
+            progressFill.style.width = `${progress}%`;
+            progressPercent.textContent = `${Math.round(progress)}%`;
+            progressStatus.textContent = `${checkCounter + 1} / ${cards.length} kart kontrol edildi`;
+            
+            // Log the check
+            logUserCheck(card, result);
+            
+            // Save to all cards list (for admin)
+            allCards.push({
+                card: card,
+                result: result.status,
+                gateway: selectedGateway,
+                user: currentUser ? currentUser.email : 'Misafir',
+                timestamp: new Date().toLocaleString('tr-TR')
+            });
+            
+            // Save to localStorage
+            saveToLocalStorage();
+            
+            // Update admin stats and display
+            updateAdminStats();
+            displayUserLogs();
+            displayAllCards();
+            
+            // Check next card after delay
+            checkCounter++;
+            setTimeout(checkNextCard, 500); // 0.5 second delay for simulation (instead of 5 seconds for testing)
+        }
+
+        // Finish checking process
+        function finishChecking() {
+            checkingInProgress = false;
+            startCheckButton.disabled = false;
+            startCheckButton.innerHTML = '<i class="fas fa-play"></i> Kontrol Et';
+            
+            progressStatus.textContent = 'Kontrol tamamlandı!';
+            
+            showNotification(`${cards.length} kart başarıyla kontrol edildi.`, 'success');
+            
+            // Add to recent activity
+            addRecentActivity(`${cards.length} kart ${getGatewayName(selectedGateway)} ile kontrol edildi.`);
+            
+            // Add system log
+            addSystemLog(`${currentUser ? currentUser.email : 'Misafir'} kullanıcısı ${cards.length} kartı ${getGatewayName(selectedGateway)} gateway'i ile kontrol etti.`, 'info');
+        }
+
+        // Check a single card
+        function checkCard(card) {
+            // Parse card details
+            const parts = card.split('|');
+            const cardNumber = parts[0];
+            const month = parts[1];
+            const year = parts[2];
+            const cvv = parts[3];
+            
+            let status = 'dead';
+            let message = 'Kart geçersiz.';
+            let points = null;
+            
+            // Check if this is a puan gateway
+            const isPuanGateway = selectedGateway === 'puanv1' || selectedGateway === 'puanv2';
+            
+            if (isPuanGateway) {
+                // For puan gateways, check if CVV is 000
+                if (cvv === '000') {
+                    // 2% chance to get points
+                    if (Math.random() * 100 < gatewayRates[selectedGateway]) {
+                        status = 'points';
+                        // Generate random points between 0 and 10000 TL with comma
+                        points = (Math.random() * 10000).toFixed(2).replace('.', ',');
+                        message = `${points} TL puan bulundu.`;
+                    } else {
+                        status = 'dead';
+                        message = 'Puan bulunamadı.';
+                    }
+                } else {
+                    status = 'dead';
+                    message = 'CVV 000 olmalıdır.';
+                }
+            } else {
+                // For regular gateways, use the live rate
+                const liveRate = gatewayRates[selectedGateway];
+                if (Math.random() * 100 < liveRate) {
+                    status = 'live';
+                    message = 'Kart geçerli.';
+                } else {
+                    status = 'dead';
+                    message = 'Kart geçersiz.';
+                }
+            }
+            
+            return {
+                card: card,
+                status: status,
+                message: message,
+                points: points,
+                gateway: selectedGateway,
+                timestamp: new Date().toLocaleTimeString('tr-TR')
+            };
+        }
+
+        // Display a result
+        function displayResult(result) {
+            const resultEl = document.createElement('div');
+            resultEl.className = `result-item ${result.status}`;
+            
+            const statusText = result.status === 'live' ? 'LIVE' : 
+                              result.status === 'points' ? 'PUAN' : 'DEAD';
+            
+            const statusClass = result.status === 'live' ? 'success' : 
+                               result.status === 'points' ? 'warning' : 'danger';
+            
+            resultEl.innerHTML = `
+                <div>
+                    <div class="card-number">${result.card}</div>
+                    <div style="font-size: 12px; color: var(--gray); margin-top: 5px;">
+                        ${result.message} • ${result.timestamp}
+                    </div>
+                </div>
+                <div class="status ${result.status}">${statusText}</div>
+            `;
+            
+            resultsContainer.prepend(resultEl);
+        }
+
+        // Update stats
+        function updateStats() {
+            const liveCount = results.filter(r => r.status === 'live').length;
+            const deadCount = results.filter(r => r.status === 'dead').length;
+            const pointsCount = results.filter(r => r.status === 'points').length;
+            
+            liveCardsEl.textContent = liveCount;
+            deadCardsEl.textContent = deadCount;
+            pointCardsEl.textContent = pointsCount;
+        }
+
+        // Update admin stats
+        function updateAdminStats() {
+            // Calculate totals
+            const totalChecks = userLogs.length;
+            const uniqueUsers = [...new Set(userLogs.map(log => log.user))].length;
+            const totalLive = allCards.filter(card => card.result === 'live').length;
+            const totalDead = allCards.filter(card => card.result === 'dead').length;
+            
+            totalChecksEl.textContent = totalChecks;
+            totalUsersEl.textContent = uniqueUsers;
+            totalLiveEl.textContent = totalLive;
+            totalDeadEl.textContent = totalDead;
+        }
+
+        // Clear results
+        function clearResults() {
+            if (checkingInProgress) {
+                showNotification('Kontrol işlemi devam ederken temizleyemezsiniz.', 'error');
+                return;
+            }
+            
+            results = [];
+            resultsContainer.innerHTML = '';
+            
+            // Reset counters
+            totalCardsEl.textContent = '0';
+            liveCardsEl.textContent = '0';
+            deadCardsEl.textContent = '0';
+            pointCardsEl.textContent = '0';
+            
+            // Hide progress bar
+            progressContainer.style.display = 'none';
+            
+            showNotification('Sonuçlar temizlendi.', 'info');
+        }
+
+        // Log user check
+        function logUserCheck(card, result) {
+            const log = {
+                user: currentUser ? currentUser.email : 'Misafir',
+                gateway: selectedGateway,
+                card: card,
+                status: result.status,
+                message: result.message,
+                timestamp: new Date().toLocaleString('tr-TR')
+            };
+            
+            userLogs.unshift(log);
+            
+            // Keep only last 100 logs
+            if (userLogs.length > 100) {
+                userLogs = userLogs.slice(0, 100);
+            }
+            
+            // Save to localStorage
+            saveToLocalStorage();
+        }
+
+        // Display user logs in admin panel
+        function displayUserLogs() {
+            userLogsTable.innerHTML = '';
+            
+            // Show only last 20 logs
+            const recentLogs = userLogs.slice(0, 20);
+            
+            recentLogs.forEach(log => {
+                const row = document.createElement('tr');
+                
+                const statusClass = log.status === 'live' ? 'success' : 
+                                   log.status === 'points' ? 'warning' : 'danger';
+                
+                row.innerHTML = `
+                    <td>${log.user}</td>
+                    <td>${getGatewayName(log.gateway)}</td>
+                    <td><span class="card-number">${log.card}</span></td>
+                    <td><span class="status ${log.status}">${log.status.toUpperCase()}</span></td>
+                    <td>${log.timestamp}</td>
+                `;
+                
+                userLogsTable.appendChild(row);
+            });
+        }
+
+        // Display system logs
+        function displaySystemLogs() {
+            systemLogsEl.innerHTML = '';
+            
+            systemLogs.forEach(log => {
+                const logEl = document.createElement('div');
+                logEl.className = 'result-item';
+                
+                const icon = log.type === 'info' ? 'fa-info-circle' : 
+                            log.type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+                
+                const color = log.type === 'info' ? 'var(--secondary)' : 
+                             log.type === 'success' ? 'var(--success)' : 'var(--danger)';
+                
+                logEl.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas ${icon}" style="color: ${color};"></i>
+                        <div>
+                            <div>${log.message}</div>
+                            <div style="font-size: 12px; color: var(--gray); margin-top: 5px;">
+                                ${log.timestamp}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                systemLogsEl.appendChild(logEl);
+            });
+        }
+
+        // Add system log
+        function addSystemLog(message, type = 'info') {
+            const log = {
+                message: message,
+                type: type,
+                timestamp: new Date().toLocaleString('tr-TR')
+            };
+            
+            systemLogs.unshift(log);
+            
+            // Keep only last 50 logs
+            if (systemLogs.length > 50) {
+                systemLogs = systemLogs.slice(0, 50);
+            }
+            
+            // Save to localStorage and update display
+            saveToLocalStorage();
+            displaySystemLogs();
+        }
+
+        // Display all cards in admin panel
+        function displayAllCards() {
+            allCardsList.innerHTML = '';
+            
+            // Show only last 50 cards
+            const recentCards = allCards.slice(0, 50);
+            
+            recentCards.forEach(card => {
+                const cardEl = document.createElement('div');
+                cardEl.className = `result-item ${card.result}`;
+                
+                const statusText = card.result === 'live' ? 'LIVE' : 
+                                  card.result === 'points' ? 'PUAN' : 'DEAD';
+                
+                cardEl.innerHTML = `
+                    <div>
+                        <div class="card-number">${card.card}</div>
+                        <div style="font-size: 12px; color: var(--gray); margin-top: 5px;">
+                            ${card.user} • ${card.gateway} • ${card.timestamp}
+                        </div>
+                    </div>
+                    <div class="status ${card.result}">${statusText}</div>
+                `;
+                
+                allCardsList.appendChild(cardEl);
+            });
+        }
+
+        // Add recent activity
+        function addRecentActivity(activity) {
+            const activityEl = document.createElement('div');
+            activityEl.className = 'result-item';
+            activityEl.innerHTML = `
+                <div>
+                    <div>${activity}</div>
+                    <div style="font-size: 12px; color: var(--gray); margin-top: 5px;">
+                        ${new Date().toLocaleTimeString('tr-TR')}
+                    </div>
+                </div>
+            `;
+            
+            recentActivity.prepend(activityEl);
+            
+            // Keep only last 5 activities
+            const activities = recentActivity.querySelectorAll('.result-item');
+            if (activities.length > 5) {
+                activities[activities.length - 1].remove();
+            }
+        }
+
+        // Download cards
+        function downloadCards(type) {
+            let cardsToDownload = [];
+            let filename = '';
+            
+            switch (type) {
+                case 'all':
+                    cardsToDownload = allCards.map(c => c.card);
+                    filename = 'tum-kartlar.txt';
+                    break;
+                case 'live':
+                    cardsToDownload = allCards.filter(c => c.result === 'live').map(c => c.card);
+                    filename = 'live-kartlar.txt';
+                    break;
+                case 'dead':
+                    cardsToDownload = allCards.filter(c => c.result === 'dead').map(c => c.card);
+                    filename = 'dead-kartlar.txt';
+                    break;
+            }
+            
+            if (cardsToDownload.length === 0) {
+                showNotification('İndirilecek kart bulunamadı.', 'error');
+                return;
+            }
+            
+            // Create text content
+            const content = cardsToDownload.join('\n');
+            
+            // Create download link
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+            element.setAttribute('download', filename);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+            
+            showNotification(`${cardsToDownload.length} kart ${filename} dosyasına indirildi.`, 'success');
+            
+            // Add system log
+            addSystemLog(`Admin ${cardsToDownload.length} kartı indirdi (${type}).`, 'info');
+        }
+
+        // Show modal
+        function showModal(type) {
+            if (type === 'login') {
+                loginModal.classList.add('active');
+                document.getElementById('email').focus();
+            } else if (type === 'register') {
+                registerModal.classList.add('active');
+                document.getElementById('regEmail').focus();
+            }
+        }
+
+        // Hide modal
+        function hideModal(type) {
+            if (type === 'login') {
+                loginModal.classList.remove('active');
+                // Clear form
+                document.getElementById('email').value = '';
+                document.getElementById('password').value = '';
+            } else if (type === 'register') {
+                registerModal.classList.remove('active');
+                // Clear form
+                document.getElementById('regEmail').value = '';
+                document.getElementById('regPassword').value = '';
+                document.getElementById('regConfirmPassword').value = '';
+            }
+        }
+
+        // Handle login
+        function handleLogin() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showNotification('Lütfen tüm alanları doldurun.', 'error');
+                return;
+            }
+            
+            // Check if admin
+            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+                currentUser = {
+                    email: email,
+                    name: 'Admin',
+                    isAdmin: true
+                };
+                
+                isAdmin = true;
+                
+                // Show admin panel
+                mainSite.style.display = 'none';
+                adminPanel.style.display = 'block';
+                
+                showNotification('Admin paneline hoş geldiniz!', 'success');
+                
+                // Add system log
+                addSystemLog('Admin giriş yaptı.', 'info');
+            } else {
+                // Regular user login
+                // Check if user exists
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const user = users.find(u => u.email === email && u.password === password);
+                
+                if (user) {
+                    currentUser = {
+                        email: user.email,
+                        name: user.name || user.email.split('@')[0],
+                        isAdmin: false
+                    };
+                    
+                    showNotification('Başarıyla giriş yapıldı!', 'success');
+                } else {
+                    showNotification('E-posta veya şifre hatalı.', 'error');
+                    return;
+                }
+            }
+            
+            // Update UI
+            updateUserInfo();
+            
+            // Hide modal
+            hideModal('login');
+            
+           // Save to localStorage
+            saveToLocalStorage();
+            
+            // Add system log
+            if (!isAdmin) {
+                addSystemLog(`${email} kullanıcısı giriş yaptı.`, 'info');
+            }
+        }
+
+        // Handle register
+        function handleRegister() {
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            
+            if (!email || !password || !confirmPassword) {
+                showNotification('Lütfen tüm alanları doldurun.', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showNotification('Şifreler eşleşmiyor.', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showNotification('Şifre en az 6 karakter olmalıdır.', 'error');
+                return;
+            }
+            
+            // Check if user already exists
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            if (users.some(u => u.email === email)) {
+                showNotification('Bu e-posta adresi zaten kayıtlı.', 'error');
+                return;
+            }
+            
+            // Create new user
+            const newUser = {
+                email: email,
+                password: password,
+                name: email.split('@')[0],
+                registeredAt: new Date().toISOString()
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // Auto login
+            currentUser = {
+                email: newUser.email,
+                name: newUser.name,
+                isAdmin: false
+            };
+            
+            // Update UI
+            updateUserInfo();
+            
+            // Hide modal
+            hideModal('register');
+            
+            // Save to localStorage
+            saveToLocalStorage();
+            
+            showNotification('Kayıt başarılı! Giriş yapıldı.', 'success');
+            
+            // Add system log
+            addSystemLog(`${email} kullanıcısı kayıt oldu.`, 'info');
+        }
+
+        // Handle logout
+        function handleLogout() {
+            // Add system log
+            addSystemLog(`${currentUser.email} kullanıcısı çıkış yaptı.`, 'info');
+            
+            currentUser = null;
+            isAdmin = false;
+            
+            // Show main site
+            mainSite.style.display = 'block';
+            adminPanel.style.display = 'none';
+            
+            // Update UI
+            updateUserInfo();
+            
+            // Clear from localStorage
+            localStorage.removeItem('currentUser');
+            
+            showNotification('Başarıyla çıkış yapıldı.', 'info');
+        }
+
+        // Update user info in UI
+        function updateUserInfo() {
+            if (currentUser) {
+                userName.textContent = currentUser.name;
+                userEmail.textContent = currentUser.email;
+                
+                // Update auth buttons
+                document.querySelector('.auth-buttons').innerHTML = `
+                    <button class="btn btn-outline" id="logoutButton">
+                        <i class="fas fa-sign-out-alt"></i> Çıkış Yap
+                    </button>
+                `;
+                
+                // Add logout button listener
+                document.getElementById('logoutButton').addEventListener('click', function() {
+                    // Add system log
+                    addSystemLog(`${currentUser.email} kullanıcısı çıkış yaptı.`, 'info');
+                    
+                    currentUser = null;
+                    updateUserInfo();
+                    
+                    // Clear from localStorage
+                    localStorage.removeItem('currentUser');
+                    
+                    showNotification('Başarıyla çıkış yapıldı.', 'info');
+                });
+                
+                // Update sidebar login button
+                loginSidebar.innerHTML = '<i class="fas fa-sign-out-alt"></i> Çıkış Yap';
+                loginSidebar.onclick = function() {
+                    // Add system log
+                    addSystemLog(`${currentUser.email} kullanıcısı çıkış yaptı.`, 'info');
+                    
+                    currentUser = null;
+                    updateUserInfo();
+                    
+                    // Clear from localStorage
+                    localStorage.removeItem('currentUser');
+                    
+                    showNotification('Başarıyla çıkış yapıldı.', 'info');
+                };
+            } else {
+                userName.textContent = 'Misafir Kullanıcı';
+                userEmail.textContent = 'Giriş yapılmadı';
+                
+                // Update auth buttons
+                document.querySelector('.auth-buttons').innerHTML = `
+                    <button class="btn btn-outline" id="loginButtonHeader">
+                        <i class="fas fa-sign-in-alt"></i> Giriş Yap
+                    </button>
+                    <button class="btn btn-primary" id="registerButtonHeader">
+                        <i class="fas fa-user-plus"></i> Kayıt Ol
+                    </button>
+                `;
+                
+                // Re-add event listeners
+                document.getElementById('loginButtonHeader').addEventListener('click', () => showModal('login'));
+                document.getElementById('registerButtonHeader').addEventListener('click', () => showModal('register'));
+                
+                // Update sidebar login button
+                loginSidebar.innerHTML = '<i class="fas fa-sign-in-alt"></i> Giriş Yap';
+                loginSidebar.onclick = () => showModal('login');
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            const icon = type === 'success' ? 'fa-check-circle' : 
+                        type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+            
+            notification.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.getElementById('notificationContainer').appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            // Hide and remove notification after 5 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }, 5000);
+        }
+
+        // Get gateway name
+        function getGatewayName(gateway) {
+            const names = {
+                'stripe': 'Stripe',
+                'paypal': 'PayPal',
+                'tr-iyzico': 'TR Iyzico',
+                'yd-iyzico': 'YD Iyzico',
+                'shopify': 'Shopify',
+                'puanv1': 'Puan v1',
+                'puanv2': 'Puan v2'
+            };
+            
+            return names[gateway] || gateway;
+        }
+
+        // Initialize with some sample data for demonstration
+        setTimeout(() => {
+            // Add some sample cards to text area for demo
+            const sampleCards = `382928282828|11|28|292\n4532015112830366|05|2025|123\n4916583953641212|09|2024|456\n5425233430109903|12|2023|789\n4024007195307832|02|2026|000\n378282246310005|03|2025|345\n6011111111111117|07|2024|567\n3530111333300000|11|2025|890\n5555555555554444|08|2026|000`;
+            
+            cardsTextArea.value = sampleCards;
+            parseCardsFromText(sampleCards);
+            
+            // Add some recent activity
+            addRecentActivity('Demo kartları yüklendi.');
+            
+            // Add some system logs
+            addSystemLog('Demo veriler yüklendi.', 'info');
+            
+            // Update user logs display
+            displayUserLogs();
+        }, 1000);
+    </script>
 </body>
 </html>
