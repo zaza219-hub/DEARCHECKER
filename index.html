@@ -426,7 +426,10 @@
     <!-- Main App -->
     <div id="mainApp" class="container">
         <div class="card-box">
-            <div style="font-size:18px;margin-bottom:10px;">🎯 Gateway Seçimi</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="font-size: 18px;">🎯 Gateway Seçimi</div>
+                <button class="btn" onclick="logout()" style="font-size: 14px; padding: 5px 10px;">🚪 Çıkış</button>
+            </div>
             <div class="gateway-select-btn" onclick="toggleGatewayDropdown()">
                 🔽 Gateway Seçin (Seçili: <span id="selectedGateway">Stripe</span>)
             </div>
@@ -562,9 +565,20 @@
         let index = 0;
         let checkTimeout = null;
 
-        // Başlangıç
-        loadData();
-        if (!user) showLogin();
+        // Başlangıç - LocalStorage'ı sıfırla ve giriş ekranını göster
+        function initialize() {
+            // Sadece admin bilgilerini tut, diğerlerini temizle
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('logs');
+            localStorage.removeItem('allCards');
+            localStorage.removeItem('users');
+            
+            // Kullanıcıyı null yap
+            user = null;
+            
+            // Giriş ekranını göster
+            showLogin();
+        }
 
         // Luhn algoritması ile kart numarası kontrolü
         function luhnCheck(cardNumber) {
@@ -646,7 +660,7 @@
             reader.readAsText(file);
         }
 
-        // Kartları parse et
+              // Kartları parse et
         function parseCards() {
             const text = document.getElementById('cardsInput').value;
             cards = text.trim().split('\n')
@@ -666,7 +680,6 @@
             results = [];
             updateResults();
             
-                     
             document.getElementById('progressContainer').style.display = 'block';
             document.getElementById('progressFill').style.width = '0%';
             document.getElementById('startBtn').style.display = 'none';
@@ -926,8 +939,7 @@
         // Çıkış yap
         function logout() {
             user = null;
-            showLogin();
-            localStorage.removeItem('currentUser');
+            initialize(); // LocalStorage'ı sıfırla ve giriş ekranını göster
         }
 
         // Verileri kaydet
@@ -937,22 +949,10 @@
             localStorage.setItem('allCards', JSON.stringify(allCards));
         }
 
-        // Verileri yükle
-        function loadData() {
-            const savedUser = localStorage.getItem('currentUser');
-            const savedLogs = localStorage.getItem('logs');
-            const savedCards = localStorage.getItem('allCards');
-            
-            if (savedUser) {
-                user = JSON.parse(savedUser);
-                if (user.email === ADMIN.email) showAdminPanel();
-                else showMainApp();
-            }
-            if (savedLogs) logs = JSON.parse(savedLogs);
-            if (savedCards) allCards = JSON.parse(savedCards);
-        }
+        // Başlangıçta initialize çalıştır
+        initialize();
 
-        // kartlar
+        // Demo kartlar
         window.onload = () => {
             if (!document.getElementById('cardsInput').value) {
                 document.getElementById('cardsInput').value = 
