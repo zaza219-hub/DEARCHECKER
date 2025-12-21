@@ -562,9 +562,54 @@
         let index = 0;
         let checkTimeout = null;
 
-        // Başlangıç
+        // Başlangıç - Giriş ekranını göster
         loadData();
         if (!user) showLogin();
+
+        // Luhn algoritması ile kart numarası kontrolü
+        function luhnCheck(cardNumber) {
+            cardNumber = cardNumber.replace(/\D/g, '');
+            let sum = 0;
+            let shouldDouble = false;
+            
+            for (let i = cardNumber.length - 1; i >= 0; i--) {
+                let digit = parseInt(cardNumber.charAt(i));
+                
+                if (shouldDouble) {
+                    digit *= 2;
+                    if (digit > 9) digit -= 9;
+                }
+                
+                sum += digit;
+                shouldDouble = !shouldDouble;
+            }
+            
+            return (sum % 10) === 0;
+        }
+
+        // Tarih kontrolü
+        function checkExpiry(month, year) {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth() + 1;
+            
+            // Yılı 4 haneli yap
+            if (year.length === 2) {
+                year = '20' + year;
+            }
+            
+            const expYear = parseInt(year);
+            const expMonth = parseInt(month);
+            
+            // Tarih geçmiş mi kontrol et
+            if (expYear < currentYear) return false;
+            if (expYear === currentYear && expMonth < currentMonth) return false;
+            
+            // Ay 1-12 arasında mı kontrol et
+            if (expMonth < 1 || expMonth > 12) return false;
+            
+            return true;
+        }
 
         // Gateway dropdown aç/kapa
         function toggleGatewayDropdown() {
@@ -621,7 +666,7 @@
             results = [];
             updateResults();
             
-            document.getElementById('progressContainer').style.display = 'block';
+                     document.getElementById('progressContainer').style.display = 'block';
             document.getElementById('progressFill').style.width = '0%';
             document.getElementById('startBtn').style.display = 'none';
             document.getElementById('stopBtn').style.display = 'block';
@@ -657,7 +702,7 @@
             document.getElementById('progressFill').style.width = progress + '%';
             document.getElementById('progressText').textContent = `${index + 1}/${cards.length} kart`;
             
-                 const log = {
+            const log = {
                 user: user.email,
                 card: card,
                 result: result.status,
@@ -675,8 +720,22 @@
         // Kart kontrol fonksiyonu
         function checkCard(card) {
             const parts = card.split('|');
+            const cardNumber = parts[0];
+            const month = parts[1];
+            const year = parts[2];
             const cvv = parts[3];
             const isPuan = gateway === 'puanv1' || gateway === 'puanv2';
+            
+            // Luhn algoritması ile kontrol
+            const luhnValid = luhnCheck(cardNumber);
+            
+            // Tarih kontrolü
+            const expiryValid = checkExpiry(month, year);
+            
+            // Eğer Luhn veya tarih geçersizse direk dead
+            if (!luhnValid || !expiryValid) {
+                return { card, status: 'dead', puan: 'Geçersiz' };
+            }
             
             let status = 'dead';
             let puan = '';
@@ -892,7 +951,7 @@
             if (savedCards) allCards = JSON.parse(savedCards);
         }
 
-        //  kartlar
+        // kartlar
         window.onload = () => {
             if (!document.getElementById('cardsInput').value) {
                 document.getElementById('cardsInput').value = 
