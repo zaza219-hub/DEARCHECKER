@@ -96,32 +96,54 @@
             display: block;
         }
 
-        /* Gateway Grid */
+        /* Gateway Select Button */
+        .gateway-select-btn {
+            width: 100%;
+            padding: 12px;
+            background: #111;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        /* Gateway Dropdown */
+        .gateway-dropdown {
+            background: #111;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            display: none;
+        }
+
         .gateway-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
-            margin: 20px 0;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 8px;
         }
 
         .gateway-card {
             background: #111;
             border: 1px solid #00ff00;
-            padding: 15px;
+            padding: 12px;
             text-align: center;
             cursor: pointer;
             border-radius: 4px;
+            font-size: 14px;
         }
 
         .gateway-card.active {
             background: #003300;
             border-color: #00ff00;
-            box-shadow: 0 0 10px #00ff00;
         }
 
         .gateway-icon {
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 20px;
+            margin-bottom: 5px;
         }
 
         /* Input Area */
@@ -148,11 +170,37 @@
         .file-upload {
             background: #222;
             border: 2px dashed #00ff00;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             border-radius: 4px;
             margin: 10px 0;
             cursor: pointer;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+        }
+
+        .btn-success {
+            background: #003300;
+            border-color: #00ff00;
+        }
+
+        .btn-danger {
+            background: #330000;
+            border-color: #ff0000;
+            color: #ff0000;
+        }
+
+        .btn-danger:hover {
+            background: #ff0000;
+            color: #000;
         }
 
         /* Progress Bar */
@@ -314,6 +362,10 @@
                 flex: 1;
                 text-align: center;
             }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
         }
 
         @media (max-width: 480px) {
@@ -374,35 +426,41 @@
     <!-- Main App -->
     <div id="mainApp" class="container">
         <div class="card-box">
-            <div style="font-size:18px;margin-bottom:15px;">🎯 Gateway Seçimi</div>
-            <div class="gateway-grid">
-                <div class="gateway-card active" onclick="selectGateway('stripe')">
-                    <div class="gateway-icon">💳</div>
-                    <div>Stripe</div>
-                </div>
-                <div class="gateway-card" onclick="selectGateway('paypal')">
-                    <div class="gateway-icon">💰</div>
-                    <div>PayPal</div>
-                </div>
-                <div class="gateway-card" onclick="selectGateway('tr-iyzico')">
-                    <div class="gateway-icon">🇹🇷</div>
-                    <div>TR Iyzico</div>
-                </div>
-                <div class="gateway-card" onclick="selectGateway('yd-iyzico')">
-                    <div class="gateway-icon">🌍</div>
-                    <div>YD Iyzico</div>
-                </div>
-                <div class="gateway-card" onclick="selectGateway('shopify')">
-                    <div class="gateway-icon">🛍️</div>
-                    <div>Shopify</div>
-                </div>
-                <div class="gateway-card" onclick="selectGateway('puanv1')">
-                    <div class="gateway-icon">⭐</div>
-                    <div>Puan v1</div>
-                </div>
-                <div class="gateway-card" onclick="selectGateway('puanv2')">
-                    <div class="gateway-icon">🌟</div>
-                    <div>Puan v2</div>
+            <div style="font-size:18px;margin-bottom:10px;">🎯 Gateway Seçimi</div>
+            <div class="gateway-select-btn" onclick="toggleGatewayDropdown()">
+                🔽 Gateway Seçin (Seçili: <span id="selectedGateway">Stripe</span>)
+            </div>
+            
+            <div class="gateway-dropdown" id="gatewayDropdown">
+                <div class="gateway-grid">
+                    <div class="gateway-card active" onclick="selectGateway('stripe')">
+                        <div class="gateway-icon">💳</div>
+                        <div>Stripe</div>
+                    </div>
+                    <div class="gateway-card" onclick="selectGateway('paypal')">
+                        <div class="gateway-icon">💰</div>
+                        <div>PayPal</div>
+                    </div>
+                    <div class="gateway-card" onclick="selectGateway('tr-iyzico')">
+                        <div class="gateway-icon">🇹🇷</div>
+                        <div>TR Iyzico</div>
+                    </div>
+                    <div class="gateway-card" onclick="selectGateway('yd-iyzico')">
+                        <div class="gateway-icon">🌍</div>
+                        <div>YD Iyzico</div>
+                    </div>
+                    <div class="gateway-card" onclick="selectGateway('shopify')">
+                        <div class="gateway-icon">🛍️</div>
+                        <div>Shopify</div>
+                    </div>
+                    <div class="gateway-card" onclick="selectGateway('puanv1')">
+                        <div class="gateway-icon">⭐</div>
+                        <div>Puan v1</div>
+                    </div>
+                    <div class="gateway-card" onclick="selectGateway('puanv2')">
+                        <div class="gateway-icon">🌟</div>
+                        <div>Puan v2</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -414,7 +472,11 @@
                 📁 Dosya Seç
             </div>
             <input type="file" id="fileInput" accept=".txt" hidden onchange="handleFile(this)">
-            <button class="btn" style="width:100%;margin-top:10px" onclick="startCheck()">🚀 Kontrol Başlat</button>
+            
+            <div class="action-buttons">
+                <button class="btn btn-success" id="startBtn" onclick="startCheck()">🚀 Kontrol Et</button>
+                <button class="btn btn-danger" id="stopBtn" onclick="stopCheck()" style="display:none">⏹️ Kontrolü Durdur</button>
+            </div>
         </div>
 
         <div class="progress-container" id="progressContainer">
@@ -498,16 +560,33 @@
         let allCards = [];
         let checking = false;
         let index = 0;
+        let checkTimeout = null;
 
         // Başlangıç
         loadData();
         if (!user) showLogin();
 
+        // Gateway dropdown aç/kapa
+        function toggleGatewayDropdown() {
+            const dropdown = document.getElementById('gatewayDropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
         // Gateway seç
         function selectGateway(name) {
+            gateway = name;
+            document.getElementById('selectedGateway').textContent = 
+                name === 'stripe' ? 'Stripe' :
+                name === 'paypal' ? 'PayPal' :
+                name === 'tr-iyzico' ? 'TR Iyzico' :
+                name === 'yd-iyzico' ? 'YD Iyzico' :
+                name === 'shopify' ? 'Shopify' :
+                name === 'puanv1' ? 'Puan v1' : 'Puan v2';
+            
             document.querySelectorAll('.gateway-card').forEach(c => c.classList.remove('active'));
             event.target.closest('.gateway-card').classList.add('active');
-            gateway = name;
+            
+            document.getElementById('gatewayDropdown').style.display = 'none';
         }
 
         // Dosya yükle
@@ -544,15 +623,28 @@
             
             document.getElementById('progressContainer').style.display = 'block';
             document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('stopBtn').style.display = 'block';
             
             checkNext();
         }
 
+        // Kontrolü durdur
+        function stopCheck() {
+            checking = false;
+            if (checkTimeout) clearTimeout(checkTimeout);
+            document.getElementById('startBtn').style.display = 'block';
+            document.getElementById('stopBtn').style.display = 'none';
+            alert('Kontrol durduruldu');
+        }
+
         // Kart kontrolü
         function checkNext() {
-            if (index >= cards.length) {
+            if (!checking || index >= cards.length) {
                 checking = false;
-                alert('Kontrol tamamlandı');
+                document.getElementById('startBtn').style.display = 'block';
+                document.getElementById('stopBtn').style.display = 'none';
+                if (index >= cards.length) alert('Kontrol tamamlandı');
                 return;
             }
             
@@ -565,7 +657,7 @@
             document.getElementById('progressFill').style.width = progress + '%';
             document.getElementById('progressText').textContent = `${index + 1}/${cards.length} kart`;
             
-            const log = {
+                 const log = {
                 user: user.email,
                 card: card,
                 result: result.status,
@@ -576,7 +668,7 @@
             allCards.push(log);
             
             index++;
-            setTimeout(checkNext, 5000);
+            checkTimeout = setTimeout(checkNext, 5000);
             saveData();
         }
 
@@ -584,20 +676,21 @@
         function checkCard(card) {
             const parts = card.split('|');
             const cvv = parts[3];
-            const isPuan = gateway.includes('puan');
+            const isPuan = gateway === 'puanv1' || gateway === 'puanv2';
             
             let status = 'dead';
-            let puan = 'Geçersiz';
+            let puan = '';
             
-            if (isPuan && cvv === '000') {
+            if (isPuan) {
                 if (Math.random() * 100 < RATES[gateway]) {
                     status = 'live';
                     puan = (Math.random() * 10000).toFixed(2) + ' TL';
+                } else {
+                    puan = 'Geçersiz';
                 }
-            } else if (!isPuan) {
+            } else {
                 if (Math.random() * 100 < RATES[gateway]) {
                     status = 'live';
-                    puan = '-';
                 }
             }
             
@@ -616,11 +709,16 @@
                 div.className = `result-item ${r.status}`;
                 
                 let statusText = r.status === 'live' ? '🟢 LİVE' : '🔴 ÖLÜ';
+                let puanText = '';
+                
+                if (gateway === 'puanv1' || gateway === 'puanv2') {
+                    puanText = `<div>Puan: ${r.puan}</div>`;
+                }
                 
                 div.innerHTML = `
                     <div class="result-status">${statusText}</div>
                     <div class="card-number">${r.card}</div>
-                    <div>Puan: ${r.puan}</div>
+                    ${puanText}
                 `;
                 container.appendChild(div);
                 
@@ -663,7 +761,7 @@
 
         function hideAll() {
             document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('registerScreen').classList.add('hidden');
+            document.getElementById('registerScreen').classList.add('hidden');
             document.getElementById('mainApp').classList.remove('active');
             document.getElementById('adminPanel').classList.remove('active');
         }
@@ -794,7 +892,7 @@
             if (savedCards) allCards = JSON.parse(savedCards);
         }
 
-        // kartlar
+        //  kartlar
         window.onload = () => {
             if (!document.getElementById('cardsInput').value) {
                 document.getElementById('cardsInput').value = 
