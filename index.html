@@ -3,149 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔐 Dark Card Checker</title>
+    <title>🔐 Card Checker</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Courier New', monospace;
+            font-family: Arial, sans-serif;
         }
 
         body {
             background: #0a0a0a;
             color: #00ff00;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        .glow {
-            text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+        .hidden {
+            display: none !important;
         }
 
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
-        }
-
-        .slide {
-            animation: slideIn 0.5s ease;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .typewriter {
-            overflow: hidden;
-            border-right: 2px solid #00ff00;
-            white-space: nowrap;
-            animation: typing 3.5s steps(40, end), blink 0.75s step-end infinite;
-        }
-
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
-        }
-
-        @keyframes blink {
-            50% { border-color: transparent }
-        }
-
-        /* Matrix efekti */
-        .matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            opacity: 0.1;
+        .active {
+            display: block !important;
         }
 
         /* Header */
         header {
-            background: rgba(0, 20, 0, 0.8);
-            border-bottom: 2px solid #00ff00;
+            background: #111;
             padding: 15px;
+            border-bottom: 2px solid #00ff00;
             text-align: center;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.1), transparent);
-            animation: scan 3s linear infinite;
-        }
-
-        @keyframes scan {
-            0% { left: -100%; }
-            100% { left: 100%; }
         }
 
         .logo {
             font-size: 24px;
             font-weight: bold;
-            letter-spacing: 2px;
+            margin-bottom: 10px;
         }
 
-        /* Auth Buttons */
         .auth-buttons {
             display: flex;
-            gap: 10px;
             justify-content: center;
-            margin-top: 10px;
+            gap: 10px;
         }
 
         .btn {
             padding: 8px 20px;
             border: 1px solid #00ff00;
-            background: rgba(0, 30, 0, 0.7);
+            background: #111;
             color: #00ff00;
             cursor: pointer;
+            border-radius: 4px;
             font-weight: bold;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-            border-radius: 3px;
         }
 
         .btn:hover {
-            background: rgba(0, 255, 0, 0.2);
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
-            transform: translateY(-2px);
+            background: #00ff00;
+            color: #000;
         }
 
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(0, 255, 0, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
+        /* Login Screen */
+        .login-screen {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            background: #111;
+            border: 2px solid #00ff00;
+            border-radius: 8px;
         }
 
-        .btn:hover::before {
-            width: 300px;
-            height: 300px;
+        .form-group {
+            margin: 20px 0;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: #222;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            border-radius: 4px;
         }
 
         /* Container */
@@ -158,119 +94,80 @@
 
         .active {
             display: block;
-            animation: fadeIn 0.5s;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* Gateway Cards */
+        /* Gateway Grid */
         .gateway-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
             margin: 20px 0;
         }
 
         .gateway-card {
-            background: rgba(0, 20, 0, 0.7);
-            border: 1px solid #00aa00;
-            border-radius: 5px;
+            background: #111;
+            border: 1px solid #00ff00;
             padding: 15px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .gateway-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
-            border-color: #00ff00;
+            border-radius: 4px;
         }
 
         .gateway-card.active {
-            background: rgba(0, 40, 0, 0.9);
+            background: #003300;
             border-color: #00ff00;
-            box-shadow: 0 0 25px rgba(0, 255, 0, 0.6);
+            box-shadow: 0 0 10px #00ff00;
         }
 
         .gateway-icon {
-            font-size: 30px;
+            font-size: 24px;
             margin-bottom: 10px;
-            color: #00ff00;
         }
 
         /* Input Area */
-        .input-card {
-            background: rgba(0, 20, 0, 0.7);
-            border: 1px solid #00aa00;
-            border-radius: 5px;
+        .card-box {
+            background: #111;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
             padding: 20px;
             margin: 20px 0;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
-        }
-
-        .card-title {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #00ff00;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         textarea {
             width: 100%;
-            background: rgba(0, 10, 0, 0.8);
-            border: 1px solid #008800;
+            height: 120px;
+            background: #222;
+            border: 1px solid #00ff00;
             color: #00ff00;
-            padding: 15px;
-            border-radius: 5px;
-            font-family: monospace;
-            resize: vertical;
-            min-height: 120px;
+            padding: 10px;
+            border-radius: 4px;
             margin: 10px 0;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: #00ff00;
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            font-family: monospace;
         }
 
         .file-upload {
-            background: rgba(0, 30, 0, 0.7);
-            border: 2px dashed #00aa00;
+            background: #222;
+            border: 2px dashed #00ff00;
             padding: 20px;
             text-align: center;
-            border-radius: 5px;
+            border-radius: 4px;
             margin: 10px 0;
             cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .file-upload:hover {
-            border-color: #00ff00;
-            background: rgba(0, 40, 0, 0.7);
         }
 
         /* Progress Bar */
         .progress-container {
-            background: rgba(0, 20, 0, 0.7);
-            border: 1px solid #00aa00;
-            border-radius: 5px;
+            background: #111;
+            border: 1px solid #00ff00;
             padding: 15px;
             margin: 20px 0;
+            border-radius: 4px;
             display: none;
         }
 
         .progress-bar {
             height: 10px;
-            background: rgba(0, 10, 0, 0.8);
+            background: #222;
             border-radius: 5px;
             overflow: hidden;
             margin: 10px 0;
@@ -278,27 +175,31 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #00aa00, #00ff00);
+            background: #00ff00;
             width: 0%;
-            transition: width 0.5s;
-            position: relative;
-            overflow: hidden;
+            transition: width 0.3s;
         }
 
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            animation: loading 1.5s infinite;
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
         }
 
-        @keyframes loading {
-            0% { left: -100%; }
-            100% { left: 100%; }
+        .stat-box {
+            background: #111;
+            border: 1px solid #00ff00;
+            padding: 15px;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
 
         /* Results */
@@ -306,94 +207,41 @@
             max-height: 400px;
             overflow-y: auto;
             margin: 20px 0;
-            border: 1px solid #00aa00;
-            border-radius: 5px;
-            background: rgba(0, 10, 0, 0.8);
         }
 
         .result-item {
-            padding: 12px;
-            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            animation: slideIn 0.3s;
+            background: #111;
+            border: 1px solid #00ff00;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
         }
 
-        .result-item.live {
-            background: rgba(0, 40, 0, 0.3);
+        .live {
             border-left: 4px solid #00ff00;
         }
 
-        .result-item.dead {
-            background: rgba(40, 0, 0, 0.3);
+        .dead {
             border-left: 4px solid #ff0000;
         }
 
-        .result-item.points {
-            background: rgba(40, 40, 0, 0.3);
-            border-left: 4px solid #ffff00;
+        .result-status {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .live .result-status {
+            color: #00ff00;
+        }
+
+        .dead .result-status {
+            color: #ff0000;
         }
 
         .card-number {
             font-family: monospace;
-            font-weight: bold;
-        }
-
-        .status {
-            padding: 5px 15px;
-            border-radius: 3px;
-            font-weight: bold;
-            font-size: 12px;
-        }
-
-        .status.live {
-            background: rgba(0, 255, 0, 0.2);
-            color: #00ff00;
-        }
-
-        .status.dead {
-            background: rgba(255, 0, 0, 0.2);
-            color: #ff0000;
-        }
-
-        .status.points {
-            background: rgba(255, 255, 0, 0.2);
-            color: #ffff00;
-        }
-
-        /* Stats */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .stat-box {
-            background: rgba(0, 20, 0, 0.7);
-            border: 1px solid #00aa00;
-            border-radius: 5px;
-            padding: 15px;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .stat-box:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
-        }
-
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
             margin-bottom: 5px;
-            color: #00ff00;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: #00aa00;
         }
 
         /* Admin Panel */
@@ -402,12 +250,12 @@
         }
 
         .admin-header {
-            background: rgba(0, 20, 0, 0.9);
-            border: 1px solid #00ff00;
-            border-radius: 5px;
+            background: #111;
+            border: 2px solid #00ff00;
             padding: 20px;
             margin: 20px 0;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
+            border-radius: 4px;
+            text-align: center;
         }
 
         .tabs {
@@ -419,28 +267,20 @@
 
         .tab {
             padding: 10px 20px;
-            background: rgba(0, 30, 0, 0.7);
-            border: 1px solid #00aa00;
+            background: #111;
+            border: 1px solid #00ff00;
             color: #00ff00;
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.3s;
-        }
-
-        .tab:hover {
-            background: rgba(0, 40, 0, 0.9);
-            border-color: #00ff00;
+            border-radius: 4px;
         }
 
         .tab.active {
-            background: rgba(0, 255, 0, 0.2);
-            border-color: #00ff00;
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+            background: #003300;
         }
 
         .tab-content {
             display: none;
-            animation: fadeIn 0.5s;
         }
 
         .tab-content.active {
@@ -448,94 +288,12 @@
         }
 
         .log-item {
-            background: rgba(0, 10, 0, 0.8);
-            border: 1px solid #00aa00;
-            border-radius: 3px;
+            background: #111;
+            border: 1px solid #00ff00;
             padding: 10px;
             margin: 5px 0;
-            font-size: 12px;
-            font-family: monospace;
-        }
-
-        /* Login Screen */
-        .login-screen {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 80vh;
-            animation: fadeIn 1s;
-        }
-
-        .login-box {
-            background: rgba(0, 20, 0, 0.9);
-            border: 2px solid #00ff00;
-            border-radius: 10px;
-            padding: 30px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 0 40px rgba(0, 255, 0, 0.5);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-box::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(0, 255, 0, 0.1), transparent);
-            transform: rotate(45deg);
-            animation: shine 3s infinite;
-        }
-
-        @keyframes shine {
-            0% { transform: rotate(45deg) translateX(-100%); }
-            100% { transform: rotate(45deg) translateX(100%); }
-        }
-
-        .form-group {
-            margin: 20px 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            background: rgba(0, 10, 0, 0.8);
-            border: 1px solid #00aa00;
-            border-radius: 5px;
-            color: #00ff00;
-            font-size: 16px;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #00ff00;
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-        }
-
-        /* Notification */
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            background: rgba(0, 30, 0, 0.9);
-            border: 1px solid #00ff00;
-            border-radius: 5px;
-            color: #00ff00;
-            font-weight: bold;
-            z-index: 1000;
-            transform: translateX(150%);
-            transition: transform 0.5s;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-        }
-
-        .notification.show {
-            transform: translateX(0);
+            border-radius: 4px;
+            font-size: 14px;
         }
 
         /* Responsive */
@@ -545,7 +303,7 @@
             }
             
             .stats {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(3, 1fr);
             }
             
             .tabs {
@@ -554,7 +312,6 @@
             
             .tab {
                 flex: 1;
-                min-width: 120px;
                 text-align: center;
             }
         }
@@ -563,95 +320,69 @@
             .gateway-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .btn {
-                padding: 6px 15px;
-                font-size: 14px;
-            }
         }
 
         /* Scrollbar */
         ::-webkit-scrollbar {
-            width: 10px;
+            width: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(0, 20, 0, 0.5);
+            background: #111;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #00aa00;
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
             background: #00ff00;
-        }
-
-        /* Hidden class */
-        .hidden {
-            display: none !important;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
-    <!-- Matrix Effect -->
-    <div class="matrix-bg" id="matrix"></div>
-
-    <!-- Header -->
-    <header>
-        <div class="logo glow">🔐 DARK CARD CHECKER</div>
-        <div class="auth-buttons" id="headerAuth">
-            <button class="btn pulse" onclick="showLogin()">🔓 Giriş</button>
-            <button class="btn" onclick="showRegister()">📝 Kayıt</button>
-        </div>
-    </header>
-
     <!-- Login Screen -->
-    <div id="loginScreen" class="login-screen">
-        <div class="login-box">
-            <h2 class="card-title glow typewriter">🔐 Sisteme Erişim</h2>
+    <div id="loginScreen">
+        <div class="login-screen">
+            <div class="logo">🔐 Card Checker</div>
             <div class="form-group">
-                <input type="email" id="loginEmail" placeholder="📧 E-posta">
+                <input type="email" id="loginEmail" placeholder="E-posta">
             </div>
             <div class="form-group">
-                <input type="password" id="loginPassword" placeholder="🔑 Şifre">
+                <input type="password" id="loginPassword" placeholder="Şifre">
             </div>
-            <button class="btn" style="width:100%;margin:10px 0" onclick="login()">🚀 Giriş Yap</button>
-            <button class="btn" style="width:100%" onclick="showRegister()">📋 Kayıt Ol</button>
+            <button class="btn" style="width:100%;margin:10px 0" onclick="login()">Giriş Yap</button>
+            <button class="btn" style="width:100%" onclick="showRegister()">Kayıt Ol</button>
         </div>
     </div>
 
     <!-- Register Screen -->
-    <div id="registerScreen" class="login-screen hidden">
-        <div class="login-box">
-            <h2 class="card-title glow">📝 Yeni Hesap</h2>
+    <div id="registerScreen" class="hidden">
+        <div class="login-screen">
+            <div class="logo">📝 Kayıt Ol</div>
             <div class="form-group">
-                <input type="email" id="regEmail" placeholder="📧 E-posta">
+                <input type="email" id="regEmail" placeholder="E-posta">
             </div>
             <div class="form-group">
-                <input type="password" id="regPassword" placeholder="🔑 Şifre">
+                <input type="password" id="regPassword" placeholder="Şifre">
             </div>
             <div class="form-group">
-                <input type="password" id="regConfirm" placeholder="🔁 Şifre Tekrar">
+                <input type="password" id="regConfirm" placeholder="Şifre Tekrar">
             </div>
-            <button class="btn" style="width:100%;margin:10px 0" onclick="register()">✅ Kayıt Ol</button>
-            <button class="btn" style="width:100%" onclick="showLogin()">↩️ Geri Dön</button>
+            <button class="btn" style="width:100%;margin:10px 0" onclick="register()">Kayıt Ol</button>
+            <button class="btn" style="width:100%" onclick="showLogin()">Geri Dön</button>
         </div>
     </div>
 
     <!-- Main App -->
     <div id="mainApp" class="container">
-        <div class="input-card">
-            <div class="card-title">🎯 Gateway Seçimi</div>
+        <div class="card-box">
+            <div style="font-size:18px;margin-bottom:15px;">🎯 Gateway Seçimi</div>
             <div class="gateway-grid">
                 <div class="gateway-card active" onclick="selectGateway('stripe')">
                     <div class="gateway-icon">💳</div>
-                    <div>Stripe Gateway</div>
+                    <div>Stripe</div>
                 </div>
                 <div class="gateway-card" onclick="selectGateway('paypal')">
                     <div class="gateway-icon">💰</div>
-                    <div>PayPal Gateway</div>
+                    <div>PayPal</div>
                 </div>
                 <div class="gateway-card" onclick="selectGateway('tr-iyzico')">
                     <div class="gateway-icon">🇹🇷</div>
@@ -663,7 +394,7 @@
                 </div>
                 <div class="gateway-card" onclick="selectGateway('shopify')">
                     <div class="gateway-icon">🛍️</div>
-                    <div>Shopify Gateway</div>
+                    <div>Shopify</div>
                 </div>
                 <div class="gateway-card" onclick="selectGateway('puanv1')">
                     <div class="gateway-icon">⭐</div>
@@ -676,45 +407,44 @@
             </div>
         </div>
 
-        <div class="input-card">
-            <div class="card-title">📄 Kartları Yükle</div>
-            <textarea id="cardsInput" placeholder="🎴 Her satıra bir kart (örn: 382928282828|11|28|292)"></textarea>
+        <div class="card-box">
+            <div style="font-size:18px;margin-bottom:15px;">📄 Kartları Yükle</div>
+            <textarea id="cardsInput" placeholder="Her satıra bir kart (örn: 382928282828|11|28|292)"></textarea>
             <div class="file-upload" onclick="document.getElementById('fileInput').click()">
-                📁 Dosya Seç veya Sürükle
+                📁 Dosya Seç
             </div>
             <input type="file" id="fileInput" accept=".txt" hidden onchange="handleFile(this)">
-            <button class="btn" style="width:100%;margin-top:15px" onclick="startCheck()">🚀 Kontrol Başlat</button>
+            <button class="btn" style="width:100%;margin-top:10px" onclick="startCheck()">🚀 Kontrol Başlat</button>
         </div>
 
         <div class="progress-container" id="progressContainer">
-            <div class="card-title">⚡ Kontrol Ediliyor</div>
+            <div style="margin-bottom:10px;">⚡ Kontrol Ediliyor...</div>
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
-            <div id="progressText" style="text-align:center;margin-top:10px;font-size:14px"></div>
+            <div id="progressText" style="text-align:center;margin-top:10px;"></div>
         </div>
 
         <div class="stats">
             <div class="stat-box">
                 <div class="stat-value" id="totalCards">0</div>
-                <div class="stat-label">Toplam Kart</div>
+                <div>Toplam</div>
             </div>
             <div class="stat-box">
                 <div class="stat-value" id="liveCards">0</div>
-                <div class="stat-label">✅ Live</div>
+                <div>🟢 Live</div>
             </div>
             <div class="stat-box">
                 <div class="stat-value" id="deadCards">0</div>
-                <div class="stat-label">❌ Dead</div>
-                     <div class="stat-box">
-                <div class="stat-value" id="pointCards">0</div>
-                <div class="stat-label">💰 Puanlı</div>
+                <div>🔴 Dead</div>
             </div>
         </div>
 
-        <div class="input-card">
-            <div class="card-title">📊 Sonuçlar</div>
-            <button class="btn" style="width:100%;margin-bottom:15px" onclick="clearResults()">🗑️ Temizle</button>
+        <div class="card-box">
+            <div style="display:flex;justify-content:space-between;margin-bottom:15px;">
+                <div style="font-size:18px;">📊 Sonuçlar</div>
+                <button class="btn" onclick="clearResults()">🗑️ Temizle</button>
+            </div>
             <div class="results-container" id="resultsList"></div>
         </div>
     </div>
@@ -722,45 +452,41 @@
     <!-- Admin Panel -->
     <div id="adminPanel" class="container">
         <div class="admin-header">
-            <div class="logo">⚡ ADMIN PANEL</div>
-            <button class="btn" onclick="logout()" style="margin-top:10px">🚪 Çıkış</button>
+            <div style="font-size:24px;margin-bottom:10px;">⚡ Admin Paneli</div>
+            <button class="btn" onclick="logout()">🚪 Çıkış</button>
         </div>
 
         <div class="tabs">
-            <button class="tab active" onclick="showTab('adminLogs')">📋 Loglar</button>
-            <button class="tab" onclick="showTab('adminCards')">🎴 Kartlar</button>
-            <button class="tab" onclick="showTab('adminDownload')">📥 İndir</button>
+            <button class="tab active" onclick="showTab('logs')">📋 Loglar</button>
+            <button class="tab" onclick="showTab('cards')">🎴 Kartlar</button>
+            <button class="tab" onclick="showTab('download')">📥 İndir</button>
         </div>
 
-        <div id="adminLogs" class="tab-content active">
-            <div class="input-card">
-                <div class="card-title">📈 Sistem Logları</div>
+        <div id="logs" class="tab-content active">
+            <div class="card-box">
+                <div style="font-size:18px;margin-bottom:15px;">📈 Sistem Logları</div>
                 <div id="logsList"></div>
             </div>
         </div>
 
-        <div id="adminCards" class="tab-content">
-            <div class="input-card">
-                <div class="card-title">📊 Tüm Kartlar</div>
+        <div id="cards" class="tab-content">
+            <div class="card-box">
+                <div style="font-size:18px;margin-bottom:15px;">📊 Tüm Kartlar</div>
                 <div id="allCardsList"></div>
             </div>
         </div>
 
-        <div id="adminDownload" class="tab-content">
-            <div class="input-card">
-                <div class="card-title">💾 Kartları İndir</div>
+        <div id="download" class="tab-content">
+            <div class="card-box">
+                <div style="font-size:18px;margin-bottom:15px;">💾 Kartları İndir</div>
                 <button class="btn" style="width:100%;margin:10px 0" onclick="downloadCards('all')">📦 Tüm Kartlar</button>
-                <button class="btn" style="width:100%;margin:10px 0" onclick="downloadCards('live')">✅ Live Kartlar</button>
-                <button class="btn" style="width:100%;margin:10px 0" onclick="downloadCards('dead')">❌ Dead Kartlar</button>
+                <button class="btn" style="width:100%;margin:10px 0" onclick="downloadCards('live')">🟢 Live Kartlar</button>
+                <button class="btn" style="width:100%;margin:10px 0" onclick="downloadCards('dead')">🔴 Dead Kartlar</button>
             </div>
         </div>
     </div>
 
-    <!-- Notification -->
-    <div id="notification" class="notification"></div>
-
     <script>
-        // Sistem ayarları
         const ADMIN = { email: 'zaza3131@gmail.com', pass: 'zaza3131' };
         const RATES = { stripe: 5, paypal: 4, 'tr-iyzico': 3, 'yd-iyzico': 3, shopify: 2, puanv1: 2, puanv2: 2 };
         
@@ -774,42 +500,14 @@
         let index = 0;
 
         // Başlangıç
-        document.addEventListener('DOMContentLoaded', () => {
-            loadData();
-            createMatrix();
-            if (user) showMainApp();
-        });
-
-        // Matrix efekti
-        function createMatrix() {
-            const matrix = document.getElementById('matrix');
-            for (let i = 0; i < 50; i++) {
-                const line = document.createElement('div');
-                line.style.position = 'absolute';
-                line.style.width = '1px';
-                line.style.height = Math.random() * 100 + 'px';
-                line.style.left = Math.random() * 100 + '%';
-                line.style.top = '-100px';
-                line.style.background = 'linear-gradient(to bottom, transparent, #00ff00, transparent)';
-                line.style.animation = `fall ${Math.random() * 5 + 3}s linear infinite`;
-                line.style.animationDelay = Math.random() * 5 + 's';
-                matrix.appendChild(line);
-            }
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes fall {
-                    to { top: 100vh; }
-                }
-            `;
-            document.head.appendChild(style);
-        }
+        loadData();
+        if (!user) showLogin();
 
         // Gateway seç
         function selectGateway(name) {
             document.querySelectorAll('.gateway-card').forEach(c => c.classList.remove('active'));
             event.target.closest('.gateway-card').classList.add('active');
             gateway = name;
-            notify(`Gateway: ${name}`);
         }
 
         // Dosya yükle
@@ -820,7 +518,6 @@
             reader.onload = e => {
                 document.getElementById('cardsInput').value = e.target.result;
                 parseCards();
-                notify('✅ Dosya yüklendi');
             };
             reader.readAsText(file);
         }
@@ -838,15 +535,14 @@
         function startCheck() {
             if (!user) return showLogin();
             parseCards();
-            if (cards.length === 0) return notify('❌ Kart bulunamadı');
+            if (cards.length === 0) return alert('Kart bulunamadı');
             
             checking = true;
             index = 0;
             results = [];
             updateResults();
             
-            const progress = document.getElementById('progressContainer');
-            progress.style.display = 'block';
+            document.getElementById('progressContainer').style.display = 'block';
             document.getElementById('progressFill').style.width = '0%';
             
             checkNext();
@@ -856,7 +552,7 @@
         function checkNext() {
             if (index >= cards.length) {
                 checking = false;
-                notify('✅ Kontrol tamamlandı');
+                alert('Kontrol tamamlandı');
                 return;
             }
             
@@ -867,7 +563,7 @@
             
             const progress = ((index + 1) / cards.length) * 100;
             document.getElementById('progressFill').style.width = progress + '%';
-            document.getElementById('progressText').textContent = `${index + 1}/${cards.length} (${Math.round(progress)}%)`;
+            document.getElementById('progressText').textContent = `${index + 1}/${cards.length} kart`;
             
             const log = {
                 user: user.email,
@@ -890,22 +586,22 @@
             const cvv = parts[3];
             const isPuan = gateway.includes('puan');
             
-            let status = 'dead', message = '❌ Geçersiz', points = null;
+            let status = 'dead';
+            let puan = 'Geçersiz';
             
             if (isPuan && cvv === '000') {
                 if (Math.random() * 100 < RATES[gateway]) {
-                    status = 'points';
-                    points = (Math.random() * 10000).toFixed(2);
-                    message = `💰 ${points} TL`;
+                    status = 'live';
+                    puan = (Math.random() * 10000).toFixed(2) + ' TL';
                 }
             } else if (!isPuan) {
                 if (Math.random() * 100 < RATES[gateway]) {
                     status = 'live';
-                    message = '✅ Geçerli';
+                    puan = '-';
                 }
             }
             
-            return { card, status, message, time: new Date().toLocaleTimeString() };
+            return { card, status, puan };
         }
 
         // Sonuçları güncelle
@@ -913,62 +609,63 @@
             const container = document.getElementById('resultsList');
             container.innerHTML = '';
             
-            let live = 0, dead = 0, points = 0;
+            let live = 0, dead = 0;
             
             results.slice().reverse().forEach(r => {
                 const div = document.createElement('div');
                 div.className = `result-item ${r.status}`;
                 
-                let badge = r.status === 'live' ? '✅ LIVE' : 
-                          r.status === 'points' ? '💰 PUAN' : '❌ DEAD';
+                let statusText = r.status === 'live' ? '🟢 LİVE' : '🔴 ÖLÜ';
                 
                 div.innerHTML = `
+                    <div class="result-status">${statusText}</div>
                     <div class="card-number">${r.card}</div>
-                    <div class="status ${r.status}">${badge}</div>
+                    <div>Puan: ${r.puan}</div>
                 `;
                 container.appendChild(div);
                 
                 if (r.status === 'live') live++;
-                else if (r.status === 'dead') dead++;
-                else if (r.status === 'points') points++;
+                else dead++;
             });
             
             document.getElementById('liveCards').textContent = live;
             document.getElementById('deadCards').textContent = dead;
-            document.getElementById('pointCards').textContent = points;
         }
 
         // Sonuçları temizle
         function clearResults() {
-            if (checking) return notify('⏳ Kontrol sürüyor');
+            if (checking) return alert('Kontrol sürüyor');
             results = [];
             updateResults();
-            notify('🗑️ Temizlendi');
         }
 
-        // Giriş ekranı
+        // Ekranları göster/gizle
         function showLogin() {
             hideAll();
             document.getElementById('loginScreen').classList.remove('hidden');
         }
 
-        // Kayıt ekranı
         function showRegister() {
             hideAll();
             document.getElementById('registerScreen').classList.remove('hidden');
         }
 
-        // Ana uygulama
         function showMainApp() {
             hideAll();
             document.getElementById('mainApp').classList.add('active');
         }
 
-        // Admin panel
         function showAdminPanel() {
             hideAll();
             document.getElementById('adminPanel').classList.add('active');
-            showTab('adminLogs');
+            showTab('logs');
+        }
+
+        function hideAll() {
+            document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('registerScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('active');
+            document.getElementById('adminPanel').classList.remove('active');
         }
 
         // Tab göster
@@ -978,8 +675,8 @@
             document.getElementById(tabId).classList.add('active');
             event.target.classList.add('active');
             
-            if (tabId === 'adminLogs') loadLogs();
-            if (tabId === 'adminCards') loadAllCards();
+            if (tabId === 'logs') loadLogs();
+            if (tabId === 'cards') loadAllCards();
         }
 
         // Logları yükle
@@ -987,9 +684,9 @@
             const container = document.getElementById('logsList');
             container.innerHTML = logs.slice(0, 50).map(l => `
                 <div class="log-item">
-                    <div>👤 ${l.user} | 🔧 ${l.gateway}</div>
-                    <div>🎴 ${l.card}</div>
-                    <div>${l.result === 'live' ? '✅' : l.result === 'points' ? '💰' : '❌'} ${l.result} | 🕐 ${l.time}</div>
+                    <div>${l.user} | ${l.gateway}</div>
+                    <div>${l.card}</div>
+                    <div>${l.result} | ${l.time}</div>
                 </div>
             `).join('');
         }
@@ -999,8 +696,8 @@
             const container = document.getElementById('allCardsList');
             container.innerHTML = allCards.slice(0, 50).map(c => `
                 <div class="log-item">
-                    <div>🎴 ${c.card}</div>
-                    <div>${c.result === 'live' ? '✅' : c.result === 'points' ? '💰' : '❌'} ${c.result} | 👤 ${c.user} | 🕐 ${c.time}</div>
+                    <div>${c.card}</div>
+                    <div>${c.result} | ${c.user} | ${c.time}</div>
                 </div>
             `).join('');
         }
@@ -1012,7 +709,7 @@
             else if (type === 'live') filtered = allCards.filter(c => c.result === 'live').map(c => c.card);
             else if (type === 'dead') filtered = allCards.filter(c => c.result === 'dead').map(c => c.card);
             
-            if (filtered.length === 0) return notify('❌ Kart bulunamadı');
+            if (filtered.length === 0) return alert('Kart bulunamadı');
             
             const content = filtered.join('\n');
             const blob = new Blob([content], { type: 'text/plain' });
@@ -1024,8 +721,6 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            
-            notify(`✅ ${filtered.length} kart indirildi`);
         }
 
         // Giriş yap
@@ -1033,19 +728,17 @@
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPassword').value;
             
-            if (!email || !pass) return notify('❌ Bilgileri doldurun');
+            if (!email || !pass) return alert('Bilgileri doldurun');
             
             if (email === ADMIN.email && pass === ADMIN.pass) {
                 user = { email: email, name: 'Admin' };
                 showAdminPanel();
-                notify('⚡ Admin paneline hoş geldiniz');
             } else {
                 const users = JSON.parse(localStorage.getItem('users') || '[]');
                 const found = users.find(u => u.email === email && u.password === pass);
-                if (!found) return notify('❌ Hatalı bilgiler');
+                if (!found) return alert('Hatalı bilgiler');
                 user = { email: found.email, name: found.name };
                 showMainApp();
-                notify('✅ Giriş başarılı');
             }
             
             saveData();
@@ -1057,11 +750,11 @@
             const pass = document.getElementById('regPassword').value;
             const confirm = document.getElementById('regConfirm').value;
             
-            if (!email || !pass || !confirm) return notify('❌ Bilgileri doldurun');
-            if (pass !== confirm) return notify('❌ Şifreler eşleşmiyor');
+            if (!email || !pass || !confirm) return alert('Bilgileri doldurun');
+            if (pass !== confirm) return alert('Şifreler eşleşmiyor');
             
             const users = JSON.parse(localStorage.getItem('users') || '[]');
-            if (users.some(u => u.email === email)) return notify('❌ Email kullanımda');
+            if (users.some(u => u.email === email)) return alert('Email kullanımda');
             
             const newUser = { email: email, password: pass, name: email.split('@')[0] };
             users.push(newUser);
@@ -1069,7 +762,6 @@
             
             user = { email: email, name: newUser.name };
             showMainApp();
-            notify('✅ Kayıt başarılı');
             saveData();
         }
 
@@ -1077,24 +769,7 @@
         function logout() {
             user = null;
             showLogin();
-            notify('👋 Çıkış yapıldı');
             localStorage.removeItem('currentUser');
-        }
-
-        // Tüm ekranları gizle
-        function hideAll() {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('registerScreen').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('active');
-            document.getElementById('adminPanel').classList.remove('active');
-        }
-
-        // Bildirim göster
-        function notify(message) {
-            const notif = document.getElementById('notification');
-            notif.textContent = message;
-            notif.classList.add('show');
-            setTimeout(() => notif.classList.remove('show'), 3000);
         }
 
         // Verileri kaydet
@@ -1110,12 +785,16 @@
             const savedLogs = localStorage.getItem('logs');
             const savedCards = localStorage.getItem('allCards');
             
-            if (savedUser) user = JSON.parse(savedUser);
+            if (savedUser) {
+                user = JSON.parse(savedUser);
+                if (user.email === ADMIN.email) showAdminPanel();
+                else showMainApp();
+            }
             if (savedLogs) logs = JSON.parse(savedLogs);
             if (savedCards) allCards = JSON.parse(savedCards);
         }
 
-        // Demo kartlar
+        // kartlar
         window.onload = () => {
             if (!document.getElementById('cardsInput').value) {
                 document.getElementById('cardsInput').value = 
