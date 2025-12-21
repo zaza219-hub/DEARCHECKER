@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dear Card Checker</title>
+    <title>🔐 Card Checker</title>
     <style>
         * {
             margin: 0;
@@ -562,7 +562,7 @@
         let index = 0;
         let checkTimeout = null;
 
-        // Başlangıç - Giriş ekranını göster
+        // Başlangıç
         loadData();
         if (!user) showLogin();
 
@@ -666,7 +666,8 @@
             results = [];
             updateResults();
             
-                     document.getElementById('progressContainer').style.display = 'block';
+                     
+            document.getElementById('progressContainer').style.display = 'block';
             document.getElementById('progressFill').style.width = '0%';
             document.getElementById('startBtn').style.display = 'none';
             document.getElementById('stopBtn').style.display = 'block';
