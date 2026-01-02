@@ -3,358 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kart Kontrol Sistemi</title>
+    <title>Giriş Yap</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: #000; 
+            color: #0f0; 
+            font-family: monospace; 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px; 
         }
-        
-        body {
-            background: #111;
-            color: #0f0;
-            min-height: 100vh;
-            padding: 15px;
+        .login-box {
+            background: #111; 
+            border: 2px solid #0f0; 
+            padding: 30px; 
+            border-radius: 10px; 
+            width: 100%; 
+            max-width: 400px; 
+            text-align: center; 
         }
-        
-        .header {
-            text-align: center;
-            padding: 20px 0;
-            border-bottom: 2px solid #0f0;
-            margin-bottom: 20px;
+        .title { 
+            font-size: 24px; 
+            margin-bottom: 20px; 
+            text-shadow: 0 0 5px #0f0; 
         }
-        
-        .title {
-            font-size: 22px;
-            color: #0f0;
-            text-shadow: 0 0 5px #0f0;
+        input {
+            width: 100%; 
+            padding: 15px; 
+            margin: 10px 0; 
+            background: #000; 
+            color: #0f0; 
+            border: 1px solid #0a0; 
+            border-radius: 5px; 
+            font-size: 16px; 
         }
-        
-        .subtitle {
-            color: #0a0;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-        
-        .admin-btn {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            background: transparent;
-            color: #0f0;
-            border: 1px solid #0f0;
-            padding: 8px 15px;
-            border-radius: 5px;
-            font-size: 14px;
-            z-index: 1000;
-        }
-        
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-        }
-        
-        .card-box {
-            background: rgba(0, 20, 0, 0.3);
-            border: 1px solid #0a0;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .input-label {
-            color: #0f0;
-            margin-bottom: 10px;
-            font-size: 16px;
-            display: block;
-        }
-        
-        .card-input {
-            width: 100%;
-            height: 150px;
-            background: #000;
-            color: #0f0;
-            border: 1px solid #0a0;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-bottom: 15px;
-            resize: none;
-        }
-        
-        .format-info {
-            color: #0a0;
-            font-size: 14px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
         .btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            margin: 8px 0;
-            cursor: pointer;
+            width: 100%; 
+            padding: 15px; 
+            background: #0f0; 
+            color: #000; 
+            border: none; 
+            border-radius: 5px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            margin-top: 10px; 
+            cursor: pointer; 
         }
-        
-        .btn-start {
-            background: #0a0;
-            color: #000;
-        }
-        
-        .btn-stop {
-            background: #a00;
-            color: #fff;
-        }
-        
-        .results {
-            margin-top: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .result-item {
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 6px;
-            font-size: 14px;
-            border-left: 4px solid #0a0;
-            background: rgba(0, 10, 0, 0.3);
-        }
-        
-        .live {
-            border-left-color: #0f0;
-            color: #0f0;
-        }
-        
-        .dead {
-            border-left-color: #f00;
-            color: #f00;
-        }
-        
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(0, 20, 0, 0.2);
-            border-radius: 8px;
-        }
-        
-        .stat {
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #0f0;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #0a0;
-            margin-top: 5px;
-        }
-        
-        /* Admin Panel */
         .admin-panel {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 2000;
-            padding: 20px;
-            overflow-y: auto;
+            display: none; 
+            padding: 20px; 
+            width: 100%; 
+            max-width: 800px; 
         }
-        
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #0f0;
-        }
-        
-        .close-btn {
-            background: #f00;
-            color: #fff;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        
-        .login-form {
-            margin-top: 50px;
-        }
-        
-        .login-input {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            background: #000;
-            color: #0f0;
-            border: 1px solid #0a0;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-        
-        .login-btn {
-            width: 100%;
-            padding: 16px;
-            background: #0f0;
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 20px;
-        }
-        
         .ip-list {
-            margin-top: 20px;
+            margin-top: 20px; 
+            max-height: 400px; 
+            overflow-y: auto; 
         }
-        
         .ip-item {
-            padding: 12px;
-            margin-bottom: 10px;
-            background: rgba(0, 20, 0, 0.3);
-            border-radius: 8px;
-            border-left: 4px solid #0f0;
+            background: #111; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-left: 4px solid #0f0; 
+            border-radius: 5px; 
         }
-        
         .ip-address {
-            color: #0f0;
-            font-weight: bold;
-            font-size: 18px;
-            margin-bottom: 5px;
+            color: #0f0; 
+            font-size: 18px; 
+            font-weight: bold; 
         }
-        
-        .ip-info {
-            color: #0a0;
-            font-size: 14px;
-        }
-        
-        .clear-btn {
-            width: 100%;
-            padding: 15px;
-            background: #a00;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-top: 20px;
-        }
-        
-        @media (min-width: 768px) {
-            .container {
-                max-width: 700px;
-            }
-            
-            .btn {
-                width: 48%;
-                display: inline-block;
-                margin-right: 2%;
-            }
-            
-            .btn-stop {
-                margin-right: 0;
-            }
+        .ip-time {
+            color: #0a0; 
+            font-size: 14px; 
+            margin-top: 5px; 
         }
     </style>
 </head>
 <body>
 
-<button class="admin-btn" onclick="openAdmin()">Admin</button>
-
-<div class="header">
-    <div class="title">KART KONTROL SİSTEMİ</div>
-    <div class="subtitle">Premium Validator v2.0</div>
+<div class="login-box" id="loginBox">
+    <div class="title">GİRİŞ YAP</div>
+    <input type="text" id="username" placeholder="Kullanıcı Adı">
+    <input type="password" id="password" placeholder="Şifre">
+    <button class="btn" onclick="login()">GİRİŞ</button>
 </div>
 
-<div class="container">
-    <div class="card-box">
-        <label class="input-label">Kartları Girin:</label>
-        <textarea class="card-input" id="cardInput" placeholder="4111111111111111|12|25|123
-5500000000000004|01|26|456
-9292918181818182|11|29|391"></textarea>
-        
-        <div class="format-info">Format: KartNo|Ay|Yıl|CVV</div>
-        
-        <button class="btn btn-start" onclick="startCheck()">KONTROL ET</button>
-        <button class="btn btn-stop" onclick="stopCheck()">DURDUR</button>
-    </div>
-    
-    <div class="stats">
-        <div class="stat">
-            <div class="stat-value" id="total">0</div>
-            <div class="stat-label">Toplam</div>
-        </div>
-        <div class="stat">
-            <div class="stat-value" id="live">0</div>
-            <div class="stat-label">Canlı</div>
-        </div>
-        <div class="stat">
-            <div class="stat-value" id="dead">0</div>
-            <div class="stat-label">Ölü</div>
-        </div>
-    </div>
-    
-    <div class="results" id="results">
-        <!-- Sonuçlar buraya gelecek -->
-    </div>
-</div>
-
-<!-- Admin Panel -->
 <div class="admin-panel" id="adminPanel">
-    <div id="loginSection">
-        <div class="admin-header">
-            <div class="title">ADMİN GİRİŞ</div>
-        </div>
-        
-        <div class="login-form">
-            <input type="text" class="login-input" id="username" placeholder="Kullanıcı Adı">
-            <input type="password" class="login-input" id="password" placeholder="Şifre">
-            <button class="login-btn" onclick="login()">GİRİŞ YAP</button>
-        </div>
-    </div>
-    
-    <div id="adminSection" style="display: none;">
-        <div class="admin-header">
-            <div class="title">IP KAYITLARI</div>
-            <button class="close-btn" onclick="closeAdmin()">KAPAT</button>
-        </div>
-        
-        <div class="ip-list" id="ipList">
-            <!-- IP'ler buraya gelecek -->
-        </div>
-        
-        <button class="clear-btn" onclick="clearLogs()">KAYITLARI TEMİZLE</button>
+    <h1>📊 IP KAYITLARI</h1>
+    <div class="ip-list" id="ipList">
+        <!-- IP'ler buraya gelecek -->
     </div>
 </div>
 
 <script>
-// Değişkenler
-let checking = false;
-let currentIndex = 0;
-let cards = [];
-let ipLogs = JSON.parse(localStorage.getItem('iplogs')) || [];
-let userIP = '';
+// IP'leri localStorage'dan al
+let ipLogs = JSON.parse(localStorage.getItem('ipLogs')) || [];
 
-// Sayfa yüklendiğinde IP al
+// Sayfa yüklendiğinde IP'yi kaydet
 window.onload = async function() {
-    userIP = await getIP();
-    console.log("Kullanıcı IP:", userIP);
+    // IP'yi al ve kaydet
+    const ip = await getIP();
+    const log = {
+        ip: ip,
+        time: new Date().toLocaleString('tr-TR'),
+        date: new Date().toISOString().split('T')[0]
+    };
+    
+    // Aynı IP'den bugün kayıt yoksa ekle
+    const today = new Date().toISOString().split('T')[0];
+    const exists = ipLogs.some(log => log.ip === ip && log.date === today);
+    
+    if (!exists) {
+        ipLogs.unshift(log);
+        localStorage.setItem('ipLogs', JSON.stringify(ipLogs));
+    }
 };
 
 // IP alma fonksiyonu
@@ -362,151 +127,30 @@ async function getIP() {
     try {
         const response = await fetch('https://api.ipify.org?format=json');
         const data = await response.json();
-        
-        // IP'yi kaydet
-        const log = {
-            ip: data.ip,
-            time: new Date().toLocaleString('tr-TR'),
-            date: new Date().toISOString().split('T')[0],
-            cardsChecked: 0
-        };
-        
-        ipLogs.unshift(log);
-        localStorage.setItem('iplogs', JSON.stringify(ipLogs));
-        
         return data.ip;
     } catch (error) {
-        // Fallback IP
-        const fallbackIP = `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
-        
-        const log = {
-            ip: fallbackIP,
-            time: new Date().toLocaleString('tr-TR'),
-            date: new Date().toISOString().split('T')[0],
-            cardsChecked: 0
-        };
-        
-        ipLogs.unshift(log);
-        localStorage.setItem('iplogs', JSON.stringify(ipLogs));
-        
-        return fallbackIP;
+        return 'IP_ALINAMADI';
     }
 }
 
-// Kart kontrolünü başlat
-function startCheck() {
-    const input = document.getElementById('cardInput').value.trim();
-    if (!input) {
-        alert('Lütfen kartları girin!');
-        return;
-    }
-    
-    cards = input.split('\n')
-        .map(line => line.trim())
-        .filter(line => line.length > 0);
-    
-    if (cards.length === 0) {
-        alert('Geçerli kart bulunamadı!');
-        return;
-    }
-    
-    checking = true;
-    currentIndex = 0;
-    
-    // İstatistikleri sıfırla
-    document.getElementById('total').textContent = '0';
-    document.getElementById('live').textContent = '0';
-    document.getElementById('dead').textContent = '0';
-    
-    // Sonuçları temizle
-    document.getElementById('results').innerHTML = '';
-    
-    // Kontrolü başlat
-    checkNextCard();
-}
-
-// Sonraki kartı kontrol et
-async function checkNextCard() {
-    if (!checking || currentIndex >= cards.length) {
-        checking = false;
-        
-        // IP kaydını güncelle
-        if (ipLogs.length > 0) {
-            ipLogs[0].cardsChecked = cards.length;
-            localStorage.setItem('iplogs', JSON.stringify(ipLogs));
-        }
-        
-        return;
-    }
-    
-    const card = cards[currentIndex];
-    const parts = card.split('|');
-    
-    // İstatistikleri güncelle
-    document.getElementById('total').textContent = currentIndex + 1;
-    
-    // %2 ihtimalle canlı kart
-    const isLive = Math.random() < 0.02;
-    
-    // Sonucu ekle
-    const resultDiv = document.createElement('div');
-    resultDiv.className = `result-item ${isLive ? 'live' : 'dead'}`;
-    
-    if (isLive) {
-        resultDiv.innerHTML = `✅ CANLI | ${card}`;
-        document.getElementById('live').textContent = parseInt(document.getElementById('live').textContent) + 1;
-    } else {
-        resultDiv.innerHTML = `❌ ÖLÜ | ${card}`;
-        document.getElementById('dead').textContent = parseInt(document.getElementById('dead').textContent) + 1;
-    }
-    
-    document.getElementById('results').prepend(resultDiv);
-    
-    currentIndex++;
-    
-    // 0.5-1.5 saniye bekle
-    if (checking) {
-        setTimeout(checkNextCard, 500 + Math.random() * 1000);
-    }
-}
-
-// Kontrolü durdur
-function stopCheck() {
-    checking = false;
-}
-
-// Admin panelini aç
-function openAdmin() {
-    document.getElementById('adminPanel').style.display = 'block';
-    document.getElementById('loginSection').style.display = 'block';
-    document.getElementById('adminSection').style.display = 'none';
-    
-    // Formları temizle
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
-}
-
-// Admin panelini kapat
-function closeAdmin() {
-    document.getElementById('adminPanel').style.display = 'none';
-}
-
-// Admin girişi
+// Giriş fonksiyonu
 function login() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     
-    if (username === 'sirin31' && password === 'sirin3131') {
-        document.getElementById('loginSection').style.display = 'none';
-        document.getElementById('adminSection').style.display = 'block';
-        showIPLogs();
-    } else {
-        alert('Hatalı giriş!');
-    }
+    // Herkes girebilir, önemli olan IP'yi almaktı
+    // IP zaten yukarıda alındı ve kaydedildi
+    
+    // Admin panelini göster
+    document.getElementById('loginBox').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    
+    // IP'leri listele
+    showIPs();
 }
 
-// IP kayıtlarını göster
-function showIPLogs() {
+// IP'leri göster
+function showIPs() {
     const ipList = document.getElementById('ipList');
     ipList.innerHTML = '';
     
@@ -515,27 +159,15 @@ function showIPLogs() {
         return;
     }
     
-    ipLogs.forEach((log, index) => {
+    ipLogs.forEach(log => {
         const ipItem = document.createElement('div');
         ipItem.className = 'ip-item';
         ipItem.innerHTML = `
-            <div class="ip-address">${log.ip}</div>
-            <div class="ip-info">
-                <div>Tarih: ${log.time}</div>
-                <div>Kontrol Edilen Kart: ${log.cardsChecked || 0}</div>
-            </div>
+            <div class="ip-address">🌐 ${log.ip}</div>
+            <div class="ip-time">⏰ ${log.time}</div>
         `;
         ipList.appendChild(ipItem);
     });
-}
-
-// Kayıtları temizle
-function clearLogs() {
-    if (confirm('Tüm IP kayıtlarını silmek istediğinize emin misiniz?')) {
-        ipLogs = [];
-        localStorage.removeItem('iplogs');
-        showIPLogs();
-    }
 }
 </script>
 </body>
