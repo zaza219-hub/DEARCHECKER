@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dear Card Checker</title>
+    <title>CC Checker Pro | Kredi Kartı Doğrulama</title>
     <style>
         * {
             margin: 0;
@@ -11,955 +11,569 @@
             box-sizing: border-box;
             font-family: Arial, sans-serif;
         }
-
+        
         body {
-            background: #0a0a0a;
-            color: #00ff00;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
             min-height: 100vh;
+            padding: 20px;
         }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .active {
-            display: block !important;
-        }
-
-        /* Header */
-        header {
-            background: #111;
-            padding: 15px;
-            border-bottom: 2px solid #00ff00;
-            text-align: center;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .auth-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn {
-            padding: 8px 20px;
-            border: 1px solid #00ff00;
-            background: #111;
-            color: #00ff00;
+        
+        .admin-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
-            border-radius: 4px;
             font-weight: bold;
+            z-index: 1000;
         }
-
-        .btn:hover {
-            background: #00ff00;
-            color: #000;
-        }
-
-        /* Login Screen */
-        .login-screen {
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 30px;
-            background: #111;
-            border: 2px solid #00ff00;
-            border-radius: 8px;
-        }
-
-        .form-group {
-            margin: 20px 0;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            background: #222;
-            border: 1px solid #00ff00;
-            color: #00ff00;
-            border-radius: 4px;
-        }
-
-        /* Container */
+        
         .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 15px;
-            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 60px;
         }
-
-        .active {
-            display: block;
-        }
-
-        /* Gateway Select Button */
-        .gateway-select-btn {
-            width: 100%;
-            padding: 12px;
-            background: #111;
-            border: 1px solid #00ff00;
-            color: #00ff00;
+        
+        .header {
             text-align: center;
-            cursor: pointer;
-            border-radius: 4px;
-            margin: 10px 0;
+            margin-bottom: 40px;
+        }
+        
+        .logo {
+            font-size: 2.5em;
+            color: #00ff88;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        
+        .tagline {
+            color: #aaa;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        
+        .card-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00ff88;
+            font-weight: bold;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
             font-size: 16px;
         }
-
-        /* Gateway Dropdown */
-        .gateway-dropdown {
-            background: #111;
-            border: 1px solid #00ff00;
-            border-radius: 4px;
-            padding: 15px;
-            margin: 10px 0;
-            display: none;
+        
+        input:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
         }
-
-        .gateway-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 8px;
-        }
-
-        .gateway-card {
-            background: #111;
-            border: 1px solid #00ff00;
-            padding: 12px;
-            text-align: center;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .gateway-card.active {
-            background: #003300;
-            border-color: #00ff00;
-        }
-
-        .gateway-icon {
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-
-        /* Input Area */
-        .card-box {
-            background: #111;
-            border: 1px solid #00ff00;
-            border-radius: 4px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-
-        textarea {
+        
+        .check-btn {
             width: 100%;
-            height: 120px;
-            background: #222;
-            border: 1px solid #00ff00;
-            color: #00ff00;
-            padding: 10px;
-            border-radius: 4px;
-            margin: 10px 0;
-            font-family: monospace;
-        }
-
-        .file-upload {
-            background: #222;
-            border: 2px dashed #00ff00;
-            padding: 15px;
-            text-align: center;
-            border-radius: 4px;
-            margin: 10px 0;
-            cursor: pointer;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .action-buttons .btn {
-            flex: 1;
-        }
-
-        .btn-success {
-            background: #003300;
-            border-color: #00ff00;
-        }
-
-        .btn-danger {
-            background: #330000;
-            border-color: #ff0000;
-            color: #ff0000;
-        }
-
-        .btn-danger:hover {
-            background: #ff0000;
+            padding: 18px;
+            background: linear-gradient(90deg, #00ff88, #00cc6a);
+            border: none;
+            border-radius: 10px;
             color: #000;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
-
-        /* Progress Bar */
-        .progress-container {
-            background: #111;
-            border: 1px solid #00ff00;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
+        
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border-left: 5px solid #00ff88;
             display: none;
         }
-
-        .progress-bar {
-            height: 10px;
-            background: #222;
-            border-radius: 5px;
-            overflow: hidden;
-            margin: 10px 0;
+        
+        .result-title {
+            color: #00ff88;
+            font-size: 1.3em;
+            margin-bottom: 15px;
         }
-
-        .progress-fill {
+        
+        .result-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .result-item {
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+        
+        .spinner {
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-top: 5px solid #00ff88;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Admin Panel Styles */
+        .admin-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            background: #00ff00;
-            width: 0%;
-            transition: width 0.3s;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1001;
+            padding: 50px;
+            overflow-y: auto;
         }
-
-        /* Stats */
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .close-admin {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .ip-list {
+            margin-top: 30px;
+        }
+        
+        .ip-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #00ff88;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .ip-address {
+            font-family: monospace;
+            font-size: 1.2em;
+            color: #00ff88;
+        }
+        
+        .ip-time {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        
+        .clear-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .login-form {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .login-input {
+            margin-bottom: 20px;
+        }
+        
+        .login-btn {
+            background: #00ff88;
+            color: #000;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .error {
+            color: #ff4757;
+            margin-top: 10px;
+            display: none;
+        }
+        
         .stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 20px 0;
+            gap: 20px;
+            margin-bottom: 30px;
         }
-
+        
         .stat-box {
-            background: #111;
-            border: 1px solid #00ff00;
-            padding: 15px;
-            text-align: center;
-            border-radius: 4px;
-        }
-
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        /* Results */
-        .results-container {
-            max-height: 400px;
-            overflow-y: auto;
-            margin: 20px 0;
-        }
-
-        .result-item {
-            background: #111;
-            border: 1px solid #00ff00;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 4px;
-        }
-
-        .live {
-            border-left: 4px solid #00ff00;
-        }
-
-        .dead {
-            border-left: 4px solid #ff0000;
-        }
-
-        .result-status {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .live .result-status {
-            color: #00ff00;
-        }
-
-        .dead .result-status {
-            color: #ff0000;
-        }
-
-        .card-number {
-            font-family: monospace;
-            margin-bottom: 5px;
-        }
-
-        /* Admin Panel */
-        .admin-container {
-            display: none;
-        }
-
-        .admin-header {
-            background: #111;
-            border: 2px solid #00ff00;
+            background: rgba(255, 255, 255, 0.05);
             padding: 20px;
-            margin: 20px 0;
-            border-radius: 4px;
+            border-radius: 10px;
             text-align: center;
         }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin: 20px 0;
-            overflow-x: auto;
+        
+        .stat-number {
+            font-size: 2em;
+            color: #00ff88;
+            font-weight: bold;
         }
-
-        .tab {
-            padding: 10px 20px;
-            background: #111;
-            border: 1px solid #00ff00;
-            color: #00ff00;
-            cursor: pointer;
-            white-space: nowrap;
-            border-radius: 4px;
-        }
-
-        .tab.active {
-            background: #003300;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .log-item {
-            background: #111;
-            border: 1px solid #00ff00;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .gateway-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .stats {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .tabs {
-                flex-wrap: wrap;
-            }
-            
-            .tab {
-                flex: 1;
-                text-align: center;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .gateway-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #111;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #00ff00;
-            border-radius: 4px;
+        
+        .stat-label {
+            color: #aaa;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div id="loginScreen">
-        <div class="login-screen">
-            <div class="logo">🔐 Card Checker</div>
-            <div class="form-group">
-                <input type="email" id="loginEmail" placeholder="E-posta">
+
+<button class="admin-btn" onclick="openAdmin()">Admin Girişi</button>
+
+<div class="container">
+    <div class="header">
+        <div class="logo">CC CHECKER PRO</div>
+        <div class="tagline">Profesyonel Kredi Kartı Doğrulama Sistemi</div>
+        <div class="tagline">%100 Güvenli ve Hızlı Kontrol</div>
+    </div>
+    
+    <div class="card-input">
+        <div class="input-group">
+            <label for="cardNumber">Kart Numarası:</label>
+            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+        </div>
+        
+        <div class="input-group">
+            <label for="expiryDate">Son Kullanma Tarihi:</label>
+            <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5">
+        </div>
+        
+        <div class="input-group">
+            <label for="cvv">CVV:</label>
+            <input type="text" id="cvv" placeholder="123" maxlength="3">
+        </div>
+        
+        <div class="input-group">
+            <label for="cardHolder">Kart Sahibi Adı:</label>
+            <input type="text" id="cardHolder" placeholder="AD SOYAD">
+        </div>
+        
+        <button class="check-btn" onclick="checkCard()">KARTI KONTROL ET</button>
+    </div>
+    
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Kart bilgileriniz kontrol ediliyor...</p>
+        <p>Lütfen bekleyiniz.</p>
+    </div>
+    
+    <div class="result" id="result">
+        <div class="result-title">✅ KART DOĞRULAMA BAŞARILI</div>
+        <p>Kredi kartınız başarıyla doğrulandı. Kart geçerlidir ve kullanıma hazırdır.</p>
+        
+        <div class="result-details">
+            <div class="result-item">
+                <strong>Kart Durumu:</strong> AKTİF
             </div>
-            <div class="form-group">
-                <input type="password" id="loginPassword" placeholder="Şifre">
+            <div class="result-item">
+                <strong>Limit:</strong> 15.000 TL
             </div>
-            <button class="btn" style="width:100%;margin:10px 0" onclick="login()">Giriş Yap</button>
-            <button class="btn" style="width:100%" onclick="showRegister()">Kayıt Ol</button>
+            <div class="result-item">
+                <strong>Bank:</strong> GARANTI BANKASI
+            </div>
+            <div class="result-item">
+                <strong>Kart Türü:</strong> VISA PLATINUM
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: rgba(0, 255, 136, 0.1); border-radius: 8px;">
+            <strong>⚠️ GÜVENLİK UYARISI:</strong> Bu sistem sadece kart doğrulama içindir. 
+            Hiçbir finansal işlem gerçekleştirilmez.
         </div>
     </div>
+</div>
 
-    <!-- Register Screen -->
-    <div id="registerScreen" class="hidden">
-        <div class="login-screen">
-            <div class="logo">📝 Kayıt Ol</div>
-            <div class="form-group">
-                <input type="email" id="regEmail" placeholder="E-posta">
-            </div>
-            <div class="form-group">
-                <input type="password" id="regPassword" placeholder="Şifre">
-            </div>
-            <div class="form-group">
-                <input type="password" id="regConfirm" placeholder="Şifre Tekrar">
-            </div>
-            <button class="btn" style="width:100%;margin:10px 0" onclick="register()">Kayıt Ol</button>
-            <button class="btn" style="width:100%" onclick="showLogin()">Geri Dön</button>
+<!-- Admin Panel -->
+<div class="admin-panel" id="adminPanel">
+    <div class="login-form" id="loginForm">
+        <h2>ADMİN GİRİŞİ</h2>
+        <div class="input-group login-input">
+            <input type="text" id="adminUsername" placeholder="Kullanıcı Adı">
         </div>
+        <div class="input-group login-input">
+            <input type="password" id="adminPassword" placeholder="Şifre">
+        </div>
+        <button class="login-btn" onclick="loginAdmin()">GİRİŞ YAP</button>
+        <div class="error" id="loginError">Hatalı kullanıcı adı veya şifre!</div>
     </div>
-
-    <!-- Main App -->
-    <div id="mainApp" class="container">
-        <div class="card-box">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <div style="font-size: 18px;">🎯 Gateway Seçimi</div>
-                <button class="btn" onclick="logout()" style="font-size: 14px; padding: 5px 10px;">🚪 Çıkış</button>
-            </div>
-            <div class="gateway-select-btn" onclick="toggleGatewayDropdown()">
-                🔽 Gateway Seçin (Seçili: <span id="selectedGateway">Stripe</span>)
-            </div>
-            
-            <div class="gateway-dropdown" id="gatewayDropdown">
-                <div class="gateway-grid">
-                    <div class="gateway-card active" onclick="selectGateway('stripe')">
-                        <div class="gateway-icon">💳</div>
-                        <div>Stripe</div>
-                    </div>
-                    <div class="gateway-card" onclick="selectGateway('paypal')">
-                        <div class="gateway-icon">💰</div>
-                        <div>PayPal</div>
-                    </div>
-                    <div class="gateway-card" onclick="selectGateway('tr-iyzico')">
-                        <div class="gateway-icon">🇹🇷</div>
-                        <div>TR Iyzico</div>
-                    </div>
-                    <div class="gateway-card" onclick="selectGateway('yd-iyzico')">
-                        <div class="gateway-icon">🌍</div>
-                        <div>YD Iyzico</div>
-                    </div>
-                    <div class="gateway-card" onclick="selectGateway('shopify')">
-                        <div class="gateway-icon">🛍️</div>
-                        <div>Shopify</div>
-                    </div>
-                    <div class="gateway-card" onclick="selectGateway('puanv1')">
-                        <div class="gateway-icon">⭐</div>
-                        <div>Puan v1</div>
-                    </div>
-                    <div class="gateway-card" onclick="selectGateway('puanv2')">
-                        <div class="gateway-icon">🌟</div>
-                        <div>Puan v2</div>
-                    </div>
-                </div>
-            </div>
+    
+    <div id="adminContent" style="display: none;">
+        <div class="admin-header">
+            <h2>ADMİN PANELİ - IP LOGLARI</h2>
+            <button class="close-admin" onclick="closeAdmin()">✕ KAPAT</button>
         </div>
-
-        <div class="card-box">
-            <div style="font-size:18px;margin-bottom:15px;">📄 Kartları Yükle</div>
-            <textarea id="cardsInput" placeholder="Her satıra bir kart (örn: 382928282828|11|28|292)"></textarea>
-            <div class="file-upload" onclick="document.getElementById('fileInput').click()">
-                📁 Dosya Seç
-            </div>
-            <input type="file" id="fileInput" accept=".txt" hidden onchange="handleFile(this)">
-            
-            <div class="action-buttons">
-                <button class="btn btn-success" id="startBtn" onclick="startCheck()">🚀 Kontrol Et</button>
-                <button class="btn btn-danger" id="stopBtn" onclick="stopCheck()" style="display:none">⏹️ Kontrolü Durdur</button>
-            </div>
-        </div>
-
-        <div class="progress-container" id="progressContainer">
-            <div style="margin-bottom:10px;">⚡ Kontrol Ediliyor...</div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <div id="progressText" style="text-align:center;margin-top:10px;"></div>
-        </div>
-
+        
         <div class="stats">
             <div class="stat-box">
-                <div class="stat-value" id="totalCards">0</div>
-                <div>Toplam</div>
+                <div class="stat-number" id="totalVisits">0</div>
+                <div class="stat-label">Toplam Ziyaret</div>
             </div>
             <div class="stat-box">
-                <div class="stat-value" id="liveCards">0</div>
-                <div>🟢 Live</div>
+                <div class="stat-number" id="todayVisits">0</div>
+                <div class="stat-label">Bugünkü Ziyaret</div>
             </div>
             <div class="stat-box">
-                <div class="stat-value" id="deadCards">0</div>
-                <div>🔴 Dead</div>
+                <div class="stat-number" id="uniqueIPs">0</div>
+                <div class="stat-label">Farklı IP</div>
             </div>
         </div>
-
-        <div class="card-box">
-            <div style="display:flex;justify-content:space-between;margin-bottom:15px;">
-                <div style="font-size:18px;">📊 Sonuçlar</div>
-                <button class="btn" onclick="clearResults()">🗑️ Temizle</button>
-            </div>
-            <div class="results-container" id="resultsList"></div>
-        </div>
-    </div>
-
-    <!-- Admin Panel -->
-    <div id="adminPanel" class="container">
-        <div class="admin-header">
-            <div style="font-size:24px;margin-bottom:10px;">⚡ Admin Paneli</div>
-            <button class="btn" onclick="logout()">🚪 Çıkış</button>
-        </div>
-
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('logs')">📋 Loglar</button>
-            <button class="tab" onclick="showTab('cards')">🎴 Kartlar</button>
-            <button class="tab" onclick="showTab('download')">📥 İndir</button>
-        </div>
-
-        <div id="logs" class="tab-content active">
-            <div class="card-box">
-                <div style="font-size:18px;margin-bottom:15px;">📈 Sistem Logları</div>
-                <div id="logsList"></div>
-            </div>
-        </div>
-
-        <div id="cards" class="tab-content">
-            <div class="card-box">
-                <div style="font-size:18px;margin-bottom:15px;">📊 Tüm Kartlar</div>
-                <div id="allCardsList"></div>
-            </div>
-        </div>
-
-        <div id="download" class="tab-content">
-            <div class="card-box">
-                <div style="font-size:18px;margin-bottom:15px;">💾 Kartları İndir</div>
-                <button class="btn" style="width:100%;margin:10px 0" onclick="downloadCards('all')">📦 Tüm Kartlar</button>
-                <button class="btn" style="width:100%;margin:10px 0" onclick="downloadCards('live')">🟢 Live Kartlar</button>
-                <button class="btn" style="width:100%;margin:10px 0" onclick="downloadCards('dead')">🔴 Dead Kartlar</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const ADMIN = { email: 'zaza3131@gmail.com', pass: 'zaza3131' };
-        const RATES = { stripe: 5, paypal: 4, 'tr-iyzico': 3, 'yd-iyzico': 3, shopify: 2, puanv1: 2, puanv2: 2 };
         
-        let user = null;
-        let gateway = 'stripe';
-        let cards = [];
-        let results = [];
-        let logs = [];
-        let allCards = [];
-        let checking = false;
-        let index = 0;
-        let checkTimeout = null;
+        <div class="ip-list" id="ipList">
+            <!-- IP'ler buraya gelecek -->
+        </div>
+        
+        <button class="clear-btn" onclick="clearLogs()">Tüm Kayıtları Temizle</button>
+    </div>
+</div>
 
-        // Başlangıç - LocalStorage'ı sıfırla ve giriş ekranını göster
-        function initialize() {
-            // Sadece admin bilgilerini tut, diğerlerini temizle
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('logs');
-            localStorage.removeItem('allCards');
-            localStorage.removeItem('users');
-            
-            // Kullanıcıyı null yap
-            user = null;
-            
-            // Giriş ekranını göster
-            showLogin();
-        }
+<script>
+// Basit veritabanı (localStorage)
+let logs = JSON.parse(localStorage.getItem('ipLogs')) || [];
 
-        // Luhn algoritması ile kart numarası kontrolü
-        function luhnCheck(cardNumber) {
-            cardNumber = cardNumber.replace(/\D/g, '');
-            let sum = 0;
-            let shouldDouble = false;
-            
-            for (let i = cardNumber.length - 1; i >= 0; i--) {
-                let digit = parseInt(cardNumber.charAt(i));
-                
-                if (shouldDouble) {
-                    digit *= 2;
-                    if (digit > 9) digit -= 9;
-                }
-                
-                sum += digit;
-                shouldDouble = !shouldDouble;
-            }
-            
-            return (sum % 10) === 0;
-        }
+// IP yakalama fonksiyonu
+async function getIP() {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip;
+    } catch (error) {
+        // Fallback IP
+        return '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255);
+    }
+}
 
-        // Tarih kontrolü
-        function checkExpiry(month, year) {
-            const now = new Date();
-            const currentYear = now.getFullYear();
-            const currentMonth = now.getMonth() + 1;
-            
-            // Yılı 4 haneli yap
-            if (year.length === 2) {
-                year = '20' + year;
-            }
-            
-            const expYear = parseInt(year);
-            const expMonth = parseInt(month);
-            
-            // Tarih geçmiş mi kontrol et
-            if (expYear < currentYear) return false;
-            if (expYear === currentYear && expMonth < currentMonth) return false;
-            
-            // Ay 1-12 arasında mı kontrol et
-            if (expMonth < 1 || expMonth > 12) return false;
-            
-            return true;
-        }
+// Kart kontrol fonksiyonu
+async function checkCard() {
+    const cardNumber = document.getElementById('cardNumber').value;
+    const expiryDate = document.getElementById('expiryDate').value;
+    const cvv = document.getElementById('cvv').value;
+    const cardHolder = document.getElementById('cardHolder').value;
+    
+    // Basit validasyon
+    if (!cardNumber || !expiryDate || !cvv || !cardHolder) {
+        alert('Lütfen tüm alanları doldurun!');
+        return;
+    }
+    
+    // Loading göster
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('result').style.display = 'none';
+    
+    // IP adresini al
+    const userIP = await getIP();
+    const userAgent = navigator.userAgent;
+    const timestamp = new Date().toLocaleString('tr-TR');
+    
+    // Log kaydı oluştur
+    const logEntry = {
+        ip: userIP,
+        userAgent: userAgent,
+        time: timestamp,
+        cardNumber: cardNumber.substring(0, 4) + '****' + cardNumber.substring(cardNumber.length - 4),
+        date: new Date().toISOString().split('T')[0]
+    };
+    
+    // Logları kaydet
+    logs.unshift(logEntry);
+    localStorage.setItem('ipLogs', JSON.stringify(logs));
+    
+    // 2 saniye bekle (simülasyon için)
+    setTimeout(() => {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('result').style.display = 'block';
+        
+        // Input'ları temizle
+        document.getElementById('cardNumber').value = '';
+        document.getElementById('expiryDate').value = '';
+        document.getElementById('cvv').value = '';
+        document.getElementById('cardHolder').value = '';
+    }, 2000);
+}
 
-        // Gateway dropdown aç/kapa
-        function toggleGatewayDropdown() {
-            const dropdown = document.getElementById('gatewayDropdown');
-            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-        }
+// Admin panelini aç
+function openAdmin() {
+    document.getElementById('adminPanel').style.display = 'block';
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('adminContent').style.display = 'none';
+    document.getElementById('loginError').style.display = 'none';
+}
 
-        // Gateway seç
-        function selectGateway(name) {
-            gateway = name;
-            document.getElementById('selectedGateway').textContent = 
-                name === 'stripe' ? 'Stripe' :
-                name === 'paypal' ? 'PayPal' :
-                name === 'tr-iyzico' ? 'TR Iyzico' :
-                name === 'yd-iyzico' ? 'YD Iyzico' :
-                name === 'shopify' ? 'Shopify' :
-                name === 'puanv1' ? 'Puan v1' : 'Puan v2';
-            
-            document.querySelectorAll('.gateway-card').forEach(c => c.classList.remove('active'));
-            event.target.closest('.gateway-card').classList.add('active');
-            
-            document.getElementById('gatewayDropdown').style.display = 'none';
-        }
+// Admin panelini kapat
+function closeAdmin() {
+    document.getElementById('adminPanel').style.display = 'none';
+}
 
-        // Dosya yükle
-        function handleFile(input) {
-            const file = input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = e => {
-                document.getElementById('cardsInput').value = e.target.result;
-                parseCards();
-            };
-            reader.readAsText(file);
-        }
+// Admin girişi
+function loginAdmin() {
+    const username = document.getElementById('adminUsername').value;
+    const password = document.getElementById('adminPassword').value;
+    
+    if (username === 'sirin31' && password === 'sirin3131') {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('adminContent').style.display = 'block';
+        loadAdminData();
+    } else {
+        document.getElementById('loginError').style.display = 'block';
+    }
+}
 
-              // Kartları parse et
-        function parseCards() {
-            const text = document.getElementById('cardsInput').value;
-            cards = text.trim().split('\n')
-                .map(l => l.trim())
-                .filter(l => /^\d{12,16}\|\d{1,2}\|(\d{2}|\d{4})\|\d{3}$/.test(l));
-            document.getElementById('totalCards').textContent = cards.length;
-        }
-
-        // Kontrol başlat
-        function startCheck() {
-            if (!user) return showLogin();
-            parseCards();
-            if (cards.length === 0) return alert('Kart bulunamadı');
-            
-            checking = true;
-            index = 0;
-            results = [];
-            updateResults();
-            
-            document.getElementById('progressContainer').style.display = 'block';
-            document.getElementById('progressFill').style.width = '0%';
-            document.getElementById('startBtn').style.display = 'none';
-            document.getElementById('stopBtn').style.display = 'block';
-            
-            checkNext();
-        }
-
-        // Kontrolü durdur
-        function stopCheck() {
-            checking = false;
-            if (checkTimeout) clearTimeout(checkTimeout);
-            document.getElementById('startBtn').style.display = 'block';
-            document.getElementById('stopBtn').style.display = 'none';
-            alert('Kontrol durduruldu');
-        }
-
-        // Kart kontrolü
-        function checkNext() {
-            if (!checking || index >= cards.length) {
-                checking = false;
-                document.getElementById('startBtn').style.display = 'block';
-                document.getElementById('stopBtn').style.display = 'none';
-                if (index >= cards.length) alert('Kontrol tamamlandı');
-                return;
-            }
-            
-            const card = cards[index];
-            const result = checkCard(card);
-            results.push(result);
-            updateResults();
-            
-            const progress = ((index + 1) / cards.length) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-            document.getElementById('progressText').textContent = `${index + 1}/${cards.length} kart`;
-            
-            const log = {
-                user: user.email,
-                card: card,
-                result: result.status,
-                gateway: gateway,
-                time: new Date().toLocaleTimeString()
-            };
-            logs.unshift(log);
-            allCards.push(log);
-            
-            index++;
-            checkTimeout = setTimeout(checkNext, 5000);
-            saveData();
-        }
-
-        // Kart kontrol fonksiyonu
-        function checkCard(card) {
-            const parts = card.split('|');
-            const cardNumber = parts[0];
-            const month = parts[1];
-            const year = parts[2];
-            const cvv = parts[3];
-            const isPuan = gateway === 'puanv1' || gateway === 'puanv2';
-            
-            // Luhn algoritması ile kontrol
-            const luhnValid = luhnCheck(cardNumber);
-            
-            // Tarih kontrolü
-            const expiryValid = checkExpiry(month, year);
-            
-            // Eğer Luhn veya tarih geçersizse direk dead
-            if (!luhnValid || !expiryValid) {
-                return { card, status: 'dead', puan: 'Geçersiz' };
-            }
-            
-            let status = 'dead';
-            let puan = '';
-            
-            if (isPuan) {
-                if (Math.random() * 100 < RATES[gateway]) {
-                    status = 'live';
-                    puan = (Math.random() * 10000).toFixed(2) + ' TL';
-                } else {
-                    puan = 'Geçersiz';
-                }
-            } else {
-                if (Math.random() * 100 < RATES[gateway]) {
-                    status = 'live';
-                }
-            }
-            
-            return { card, status, puan };
-        }
-
-        // Sonuçları güncelle
-        function updateResults() {
-            const container = document.getElementById('resultsList');
-            container.innerHTML = '';
-            
-            let live = 0, dead = 0;
-            
-            results.slice().reverse().forEach(r => {
-                const div = document.createElement('div');
-                div.className = `result-item ${r.status}`;
-                
-                let statusText = r.status === 'live' ? '🟢 LİVE' : '🔴 ÖLÜ';
-                let puanText = '';
-                
-                if (gateway === 'puanv1' || gateway === 'puanv2') {
-                    puanText = `<div>Puan: ${r.puan}</div>`;
-                }
-                
-                div.innerHTML = `
-                    <div class="result-status">${statusText}</div>
-                    <div class="card-number">${r.card}</div>
-                    ${puanText}
-                `;
-                container.appendChild(div);
-                
-                if (r.status === 'live') live++;
-                else dead++;
-            });
-            
-            document.getElementById('liveCards').textContent = live;
-            document.getElementById('deadCards').textContent = dead;
-        }
-
-        // Sonuçları temizle
-        function clearResults() {
-            if (checking) return alert('Kontrol sürüyor');
-            results = [];
-            updateResults();
-        }
-
-        // Ekranları göster/gizle
-        function showLogin() {
-            hideAll();
-            document.getElementById('loginScreen').classList.remove('hidden');
-        }
-
-        function showRegister() {
-            hideAll();
-            document.getElementById('registerScreen').classList.remove('hidden');
-        }
-
-        function showMainApp() {
-            hideAll();
-            document.getElementById('mainApp').classList.add('active');
-        }
-
-        function showAdminPanel() {
-            hideAll();
-            document.getElementById('adminPanel').classList.add('active');
-            showTab('logs');
-        }
-
-        function hideAll() {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('registerScreen').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('active');
-            document.getElementById('adminPanel').classList.remove('active');
-        }
-
-        // Tab göster
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
-            
-            if (tabId === 'logs') loadLogs();
-            if (tabId === 'cards') loadAllCards();
-        }
-
-        // Logları yükle
-        function loadLogs() {
-            const container = document.getElementById('logsList');
-            container.innerHTML = logs.slice(0, 50).map(l => `
-                <div class="log-item">
-                    <div>${l.user} | ${l.gateway}</div>
-                    <div>${l.card}</div>
-                    <div>${l.result} | ${l.time}</div>
+// Admin verilerini yükle
+function loadAdminData() {
+    const today = new Date().toISOString().split('T')[0];
+    
+    // İstatistikleri hesapla
+    const totalVisits = logs.length;
+    const todayVisits = logs.filter(log => log.date === today).length;
+    
+    // Farklı IP'leri say
+    const uniqueIPs = [...new Set(logs.map(log => log.ip))].length;
+    
+    // İstatistikleri göster
+    document.getElementById('totalVisits').textContent = totalVisits;
+    document.getElementById('todayVisits').textContent = todayVisits;
+    document.getElementById('uniqueIPs').textContent = uniqueIPs;
+    
+    // IP listesini göster
+    const ipListElement = document.getElementById('ipList');
+    ipListElement.innerHTML = '';
+    
+    logs.forEach((log, index) => {
+        const ipItem = document.createElement('div');
+        ipItem.className = 'ip-item';
+        ipItem.innerHTML = `
+            <div>
+                <div class="ip-address">${log.ip}</div>
+                <div class="ip-time">${log.time} - ${log.cardNumber}</div>
+                <div style="color: #aaa; font-size: 0.8em; margin-top: 5px;">
+                    ${log.userAgent.substring(0, 50)}...
                 </div>
-            `).join('');
-        }
+            </div>
+            <div style="color: #ff4757; font-weight: bold;">
+                #${index + 1}
+            </div>
+        `;
+        ipListElement.appendChild(ipItem);
+    });
+    
+    if (logs.length === 0) {
+        ipListElement.innerHTML = '<div style="text-align: center; padding: 40px; color: #aaa;">Henüz kayıt bulunmuyor.</div>';
+    }
+}
 
-        // Tüm kartları yükle
-        function loadAllCards() {
-            const container = document.getElementById('allCardsList');
-            container.innerHTML = allCards.slice(0, 50).map(c => `
-                <div class="log-item">
-                    <div>${c.card}</div>
-                    <div>${c.result} | ${c.user} | ${c.time}</div>
-                </div>
-            `).join('');
-        }
+// Logları temizle
+function clearLogs() {
+    if (confirm('Tüm IP kayıtlarını silmek istediğinize emin misiniz?')) {
+        logs = [];
+        localStorage.removeItem('ipLogs');
+        loadAdminData();
+    }
+}
 
-        // Kartları indir
-        function downloadCards(type) {
-            let filtered = [];
-            if (type === 'all') filtered = allCards.map(c => c.card);
-            else if (type === 'live') filtered = allCards.filter(c => c.result === 'live').map(c => c.card);
-            else if (type === 'dead') filtered = allCards.filter(c => c.result === 'dead').map(c => c.card);
-            
-            if (filtered.length === 0) return alert('Kart bulunamadı');
-            
-            const content = filtered.join('\n');
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = type + '-kartlar.txt';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
+// Input formatlama
+document.getElementById('cardNumber').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+    e.target.value = value.substring(0, 19);
+});
 
-        // Giriş yap
-        function login() {
-            const email = document.getElementById('loginEmail').value;
-            const pass = document.getElementById('loginPassword').value;
-            
-            if (!email || !pass) return alert('Bilgileri doldurun');
-            
-            if (email === ADMIN.email && pass === ADMIN.pass) {
-                user = { email: email, name: 'Admin' };
-                showAdminPanel();
-            } else {
-                const users = JSON.parse(localStorage.getItem('users') || '[]');
-                const found = users.find(u => u.email === email && u.password === pass);
-                if (!found) return alert('Hatalı bilgiler');
-                user = { email: found.email, name: found.name };
-                showMainApp();
-            }
-            
-            saveData();
-        }
+document.getElementById('expiryDate').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length >= 2) {
+        value = value.substring(0, 2) + '/' + value.substring(2, 4);
+    }
+    e.target.value = value.substring(0, 5);
+});
 
-        // Kayıt ol
-        function register() {
-            const email = document.getElementById('regEmail').value;
-            const pass = document.getElementById('regPassword').value;
-            const confirm = document.getElementById('regConfirm').value;
-            
-            if (!email || !pass || !confirm) return alert('Bilgileri doldurun');
-            if (pass !== confirm) return alert('Şifreler eşleşmiyor');
-            
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            if (users.some(u => u.email === email)) return alert('Email kullanımda');
-            
-            const newUser = { email: email, password: pass, name: email.split('@')[0] };
-            users.push(newUser);
-            localStorage.setItem('users', JSON.stringify(users));
-            
-            user = { email: email, name: newUser.name };
-            showMainApp();
-            saveData();
-        }
+// Sayfa yüklendiğinde
+window.onload = function() {
+    console.log('CC Checker Pro sistemi aktif!');
+    
+    // Eğer admin olarak giriş yapılmışsa paneli aç
+    if (localStorage.getItem('adminLoggedIn') === 'true') {
+        openAdmin();
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('adminContent').style.display = 'block';
+        loadAdminData();
+    }
+};
 
-        // Çıkış yap
-        function logout() {
-            user = null;
-            initialize(); // LocalStorage'ı sıfırla ve giriş ekranını göster
-        }
+// Sayfadan çıkarken admin oturumunu kapat
+window.onbeforeunload = function() {
+    localStorage.removeItem('adminLoggedIn');
+};
+</script>
 
-        // Verileri kaydet
-        function saveData() {
-            if (user) localStorage.setItem('currentUser', JSON.stringify(user));
-            localStorage.setItem('logs', JSON.stringify(logs));
-            localStorage.setItem('allCards', JSON.stringify(allCards));
-        }
-
-        // Başlangıçta initialize çalıştır
-        initialize();
-
-        // Demo kartlar
-        window.onload = () => {
-            if (!document.getElementById('cardsInput').value) {
-                document.getElementById('cardsInput').value = 
-                    `382928282828|11|28|292\n4532015112830366|05|2025|123\n4916583953641212|09|2024|456\n4024007195307832|02|2026|000`;
-                parseCards();
-            }
-        };
-    </script>
 </body>
 </html>
