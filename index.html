@@ -1,46 +1,41 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CC Checker v2.0 | Premium Validator</title>
+    <title>Kart Kontrol Sistemi</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Courier New', monospace;
+            font-family: Arial, sans-serif;
         }
         
         body {
-            background-color: #0a0a0a;
-            color: #00ff00;
+            background: #111;
+            color: #0f0;
             min-height: 100vh;
-            padding: 20px;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 40, 0, 0.3) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(0, 60, 0, 0.3) 0%, transparent 20%);
+            padding: 15px;
         }
         
         .header {
             text-align: center;
-            padding: 20px;
-            border-bottom: 1px solid #00ff00;
-            margin-bottom: 30px;
-            position: relative;
+            padding: 20px 0;
+            border-bottom: 2px solid #0f0;
+            margin-bottom: 20px;
         }
         
         .title {
-            font-size: 2.2em;
-            color: #00ff00;
-            text-shadow: 0 0 10px #00ff00;
-            letter-spacing: 2px;
+            font-size: 22px;
+            color: #0f0;
+            text-shadow: 0 0 5px #0f0;
         }
         
         .subtitle {
-            color: #00aa00;
-            font-size: 0.9em;
-            margin-top: 10px;
+            color: #0a0;
+            font-size: 14px;
+            margin-top: 5px;
         }
         
         .admin-btn {
@@ -48,189 +43,126 @@
             top: 15px;
             right: 15px;
             background: transparent;
-            color: #00ff00;
-            border: 1px solid #00ff00;
+            color: #0f0;
+            border: 1px solid #0f0;
             padding: 8px 15px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 12px;
+            border-radius: 5px;
+            font-size: 14px;
             z-index: 1000;
-            transition: 0.3s;
-        }
-        
-        .admin-btn:hover {
-            background: #00ff00;
-            color: #000;
         }
         
         .container {
-            max-width: 900px;
+            max-width: 100%;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
         }
         
-        .checker-box {
-            background: rgba(0, 20, 0, 0.7);
-            border: 1px solid #00ff00;
-            border-radius: 5px;
-            padding: 25px;
-        }
-        
-        .logs-box {
-            background: rgba(0, 20, 0, 0.7);
-            border: 1px solid #00ff00;
-            border-radius: 5px;
-            padding: 25px;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-        
-        .box-title {
-            color: #00ff00;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #00ff00;
-            font-size: 1.3em;
-        }
-        
-        .card-input {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 15px;
-            border-radius: 3px;
+        .card-box {
+            background: rgba(0, 20, 0, 0.3);
+            border: 1px solid #0a0;
+            border-radius: 10px;
+            padding: 20px;
             margin-bottom: 20px;
         }
         
         .input-label {
-            color: #00aa00;
-            font-size: 0.9em;
-            margin-bottom: 8px;
+            color: #0f0;
+            margin-bottom: 10px;
+            font-size: 16px;
             display: block;
         }
         
-        .card-textarea {
+        .card-input {
             width: 100%;
             height: 150px;
             background: #000;
-            color: #00ff00;
-            border: 1px solid #00aa00;
+            color: #0f0;
+            border: 1px solid #0a0;
             padding: 15px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            resize: vertical;
-            border-radius: 3px;
-        }
-        
-        .card-textarea:focus {
-            outline: none;
-            border-color: #00ff00;
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            resize: none;
         }
         
         .format-info {
-            color: #00aa00;
-            font-size: 0.8em;
-            margin-top: 5px;
+            color: #0a0;
+            font-size: 14px;
             margin-bottom: 15px;
-        }
-        
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            text-align: center;
         }
         
         .btn {
-            padding: 12px 25px;
+            width: 100%;
+            padding: 16px;
             border: none;
-            border-radius: 3px;
-            cursor: pointer;
+            border-radius: 8px;
+            font-size: 18px;
             font-weight: bold;
-            transition: 0.3s;
-            flex: 1;
+            margin: 8px 0;
+            cursor: pointer;
         }
         
-        .btn-check {
-            background: #00aa00;
+        .btn-start {
+            background: #0a0;
             color: #000;
         }
         
-        .btn-check:hover {
-            background: #00ff00;
-        }
-        
         .btn-stop {
-            background: #aa0000;
+            background: #a00;
             color: #fff;
         }
         
-        .btn-stop:hover {
-            background: #ff0000;
+        .results {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .result-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            font-size: 14px;
+            border-left: 4px solid #0a0;
+            background: rgba(0, 10, 0, 0.3);
+        }
+        
+        .live {
+            border-left-color: #0f0;
+            color: #0f0;
+        }
+        
+        .dead {
+            border-left-color: #f00;
+            color: #f00;
         }
         
         .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 25px;
-            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 20, 0, 0.2);
+            border-radius: 8px;
         }
         
-        .stat-item {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 15px;
+        .stat {
             text-align: center;
-            border-radius: 3px;
-            border: 1px solid #00aa00;
         }
         
         .stat-value {
-            font-size: 1.8em;
-            color: #00ff00;
+            font-size: 24px;
             font-weight: bold;
+            color: #0f0;
         }
         
         .stat-label {
-            color: #00aa00;
-            font-size: 0.8em;
+            font-size: 12px;
+            color: #0a0;
             margin-top: 5px;
         }
         
-        .live-log {
-            background: #000;
-            height: 300px;
-            overflow-y: auto;
-            padding: 15px;
-            border-radius: 3px;
-            border: 1px solid #00aa00;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-        }
-        
-        .log-entry {
-            padding: 8px;
-            margin-bottom: 5px;
-            border-left: 3px solid #00aa00;
-            background: rgba(0, 20, 0, 0.3);
-        }
-        
-        .log-success {
-            border-left-color: #00ff00;
-            color: #00ff00;
-        }
-        
-        .log-fail {
-            border-left-color: #ff0000;
-            color: #ff0000;
-        }
-        
-        .log-info {
-            border-left-color: #00aaff;
-            color: #00aaff;
-        }
-        
-        /* Admin Panel Styles */
+        /* Admin Panel */
         .admin-panel {
             display: none;
             position: fixed;
@@ -239,8 +171,8 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.95);
-            z-index: 1001;
-            padding: 40px;
+            z-index: 2000;
+            padding: 20px;
             overflow-y: auto;
         }
         
@@ -248,365 +180,224 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 1px solid #00ff00;
+            border-bottom: 1px solid #0f0;
         }
         
-        .close-admin {
-            background: #ff0000;
+        .close-btn {
+            background: #f00;
             color: #fff;
             border: none;
             padding: 8px 15px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        
-        .ip-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        
-        .ip-table th {
-            background: #001a00;
-            color: #00ff00;
-            padding: 12px;
-            text-align: left;
-            border: 1px solid #00aa00;
-            font-size: 13px;
-        }
-        
-        .ip-table td {
-            padding: 10px;
-            border: 1px solid #00aa00;
-            color: #ccc;
-            font-size: 12px;
-        }
-        
-        .ip-table tr:nth-child(even) {
-            background: rgba(0, 20, 0, 0.3);
-        }
-        
-        .ip-address {
-            color: #00ff00;
-            font-family: monospace;
-            font-weight: bold;
-        }
-        
-        .export-btn {
-            background: #00aa00;
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 3px;
-            cursor: pointer;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-        
-        .clear-btn {
-            background: #aa0000;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 3px;
-            cursor: pointer;
-            margin-top: 20px;
-            font-weight: bold;
-            margin-left: 10px;
+            border-radius: 5px;
+            font-size: 14px;
         }
         
         .login-form {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 30px;
-            background: rgba(0, 20, 0, 0.8);
-            border: 1px solid #00ff00;
-            border-radius: 5px;
+            margin-top: 50px;
         }
         
         .login-input {
-            margin-bottom: 20px;
-        }
-        
-        .login-input input {
             width: 100%;
-            padding: 12px;
+            padding: 15px;
+            margin: 10px 0;
             background: #000;
-            border: 1px solid #00aa00;
-            color: #00ff00;
-            border-radius: 3px;
+            color: #0f0;
+            border: 1px solid #0a0;
+            border-radius: 8px;
+            font-size: 16px;
         }
         
         .login-btn {
             width: 100%;
-            padding: 12px;
-            background: #00aa00;
+            padding: 16px;
+            background: #0f0;
             color: #000;
             border: none;
-            border-radius: 3px;
-            cursor: pointer;
+            border-radius: 8px;
+            font-size: 18px;
             font-weight: bold;
-        }
-        
-        .error {
-            color: #ff0000;
-            text-align: center;
-            margin-top: 10px;
-            font-size: 13px;
-        }
-        
-        .results {
             margin-top: 20px;
         }
         
-        .result-item {
-            padding: 10px;
-            margin-bottom: 8px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
+        .ip-list {
+            margin-top: 20px;
         }
         
-        .result-live {
-            border-left: 3px solid #00ff00;
-            color: #00ff00;
+        .ip-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: rgba(0, 20, 0, 0.3);
+            border-radius: 8px;
+            border-left: 4px solid #0f0;
         }
         
-        .result-die {
-            border-left: 3px solid #ff0000;
-            color: #ff0000;
+        .ip-address {
+            color: #0f0;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 5px;
         }
         
-        .progress-bar {
+        .ip-info {
+            color: #0a0;
+            font-size: 14px;
+        }
+        
+        .clear-btn {
             width: 100%;
-            height: 20px;
-            background: #000;
-            border: 1px solid #00aa00;
-            border-radius: 3px;
-            margin: 20px 0;
-            overflow: hidden;
+            padding: 15px;
+            background: #a00;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 20px;
         }
         
-        .progress-fill {
-            height: 100%;
-            background: #00aa00;
-            width: 0%;
-            transition: width 0.3s;
-        }
-        
-        .loading {
-            color: #00aa00;
-            text-align: center;
-            padding: 20px;
-            display: none;
-        }
-        
-        .blink {
-            animation: blink 1s infinite;
-        }
-        
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+        @media (min-width: 768px) {
+            .container {
+                max-width: 700px;
+            }
+            
+            .btn {
+                width: 48%;
+                display: inline-block;
+                margin-right: 2%;
+            }
+            
+            .btn-stop {
+                margin-right: 0;
+            }
         }
     </style>
 </head>
 <body>
 
-<button class="admin-btn" onclick="openAdmin()">ADMIN</button>
+<button class="admin-btn" onclick="openAdmin()">Admin</button>
 
 <div class="header">
-    <div class="title">CC CHECKER v2.0</div>
-    <div class="subtitle">PREMIUM CARD VALIDATOR | LIVE: 97.3% | UPDATED: 24/7</div>
+    <div class="title">KART KONTROL SİSTEMİ</div>
+    <div class="subtitle">Premium Validator v2.0</div>
 </div>
 
 <div class="container">
-    <div class="checker-box">
-        <div class="box-title">CARD CHECKER</div>
+    <div class="card-box">
+        <label class="input-label">Kartları Girin:</label>
+        <textarea class="card-input" id="cardInput" placeholder="4111111111111111|12|25|123
+5500000000000004|01|26|456
+9292918181818182|11|29|391"></textarea>
         
-        <div class="card-input">
-            <div class="input-label">ENTER CARDS (ONE PER LINE):</div>
-            <textarea class="card-textarea" id="cardInput" placeholder="9292918181818182|11|29|391
-4111111111111111|12|25|123
-5500000000000004|01|26|456"></textarea>
-            <div class="format-info">FORMAT: NUMBER|MM|YY|CVV</div>
-            
-            <div class="controls">
-                <button class="btn btn-check" onclick="startChecking()">▶ START CHECKING</button>
-                <button class="btn btn-stop" onclick="stopChecking()">⏸ STOP</button>
-            </div>
+        <div class="format-info">Format: KartNo|Ay|Yıl|CVV</div>
+        
+        <button class="btn btn-start" onclick="startCheck()">KONTROL ET</button>
+        <button class="btn btn-stop" onclick="stopCheck()">DURDUR</button>
+    </div>
+    
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-value" id="total">0</div>
+            <div class="stat-label">Toplam</div>
         </div>
-        
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-value" id="totalCards">0</div>
-                <div class="stat-label">TOTAL CARDS</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="liveCards">0</div>
-                <div class="stat-label">LIVE CARDS</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="dieCards">0</div>
-                <div class="stat-label">DEAD CARDS</div>
-            </div>
+        <div class="stat">
+            <div class="stat-value" id="live">0</div>
+            <div class="stat-label">Canlı</div>
         </div>
-        
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
-        
-        <div class="box-title">RESULTS:</div>
-        <div class="results" id="resultsContainer">
-            <!-- Results will appear here -->
-        </div>
-        
-        <div class="loading" id="loading">
-            <div>CHECKING IN PROGRESS...</div>
-            <div class="blink">PLEASE WAIT</div>
+        <div class="stat">
+            <div class="stat-value" id="dead">0</div>
+            <div class="stat-label">Ölü</div>
         </div>
     </div>
     
-    <div class="logs-box">
-        <div class="box-title">SYSTEM LOGS</div>
-        <div class="live-log" id="liveLog">
-            <div class="log-entry log-info">System initialized...</div>
-            <div class="log-entry log-info">Ready to check cards</div>
-            <div class="log-entry log-info">Connected to validator API</div>
-        </div>
+    <div class="results" id="results">
+        <!-- Sonuçlar buraya gelecek -->
     </div>
 </div>
 
 <!-- Admin Panel -->
 <div class="admin-panel" id="adminPanel">
-    <div class="login-form" id="loginForm">
-        <div class="box-title">ADMIN LOGIN</div>
-        <div class="login-input">
-            <input type="text" id="adminUsername" placeholder="USERNAME" value="sirin31">
+    <div id="loginSection">
+        <div class="admin-header">
+            <div class="title">ADMİN GİRİŞ</div>
         </div>
-        <div class="login-input">
-            <input type="password" id="adminPassword" placeholder="PASSWORD" value="sirin3131">
+        
+        <div class="login-form">
+            <input type="text" class="login-input" id="username" placeholder="Kullanıcı Adı">
+            <input type="password" class="login-input" id="password" placeholder="Şifre">
+            <button class="login-btn" onclick="login()">GİRİŞ YAP</button>
         </div>
-        <button class="login-btn" onclick="loginAdmin()">LOGIN</button>
-        <div class="error" id="loginError" style="display: none;">Invalid credentials!</div>
     </div>
     
-    <div id="adminContent" style="display: none;">
+    <div id="adminSection" style="display: none;">
         <div class="admin-header">
-            <div class="title">ADMIN PANEL - IP LOGS</div>
-            <button class="close-admin" onclick="closeAdmin()">CLOSE</button>
+            <div class="title">IP KAYITLARI</div>
+            <button class="close-btn" onclick="closeAdmin()">KAPAT</button>
         </div>
         
-        <table class="ip-table" id="ipTable">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>IP ADDRESS</th>
-                    <th>TIME</th>
-                    <th>CARDS CHECKED</th>
-                    <th>USER AGENT</th>
-                    <th>LOCATION</th>
-                </tr>
-            </thead>
-            <tbody id="ipTableBody">
-                <!-- IP logs will appear here -->
-            </tbody>
-        </table>
-        
-        <div>
-            <button class="export-btn" onclick="exportLogs()">📥 EXPORT LOGS</button>
-            <button class="clear-btn" onclick="clearAllLogs()">🗑️ CLEAR ALL</button>
+        <div class="ip-list" id="ipList">
+            <!-- IP'ler buraya gelecek -->
         </div>
+        
+        <button class="clear-btn" onclick="clearLogs()">KAYITLARI TEMİZLE</button>
     </div>
 </div>
 
 <script>
-// Variables
+// Değişkenler
 let checking = false;
 let currentIndex = 0;
 let cards = [];
-let logs = JSON.parse(localStorage.getItem('ccCheckerLogs')) || [];
-let ipLogs = JSON.parse(localStorage.getItem('ipLogs')) || [];
+let ipLogs = JSON.parse(localStorage.getItem('iplogs')) || [];
 let userIP = '';
 
-// Initialize
-async function init() {
+// Sayfa yüklendiğinde IP al
+window.onload = async function() {
     userIP = await getIP();
-    addLog('System started', 'info');
-    updateStats();
-    loadIPLogsTable();
-    
-    // Auto-save logs every 30 seconds
-    setInterval(saveLogs, 30000);
-}
+    console.log("Kullanıcı IP:", userIP);
+};
 
-// Get user IP
+// IP alma fonksiyonu
 async function getIP() {
     try {
         const response = await fetch('https://api.ipify.org?format=json');
         const data = await response.json();
         
-        // Log IP immediately
-        const logEntry = {
+        // IP'yi kaydet
+        const log = {
             ip: data.ip,
             time: new Date().toLocaleString('tr-TR'),
-            cardsChecked: 0,
-            userAgent: navigator.userAgent,
-            location: 'Detecting...'
+            date: new Date().toISOString().split('T')[0],
+            cardsChecked: 0
         };
         
-        // Get location
-        try {
-            const geoResponse = await fetch(`https://ipapi.co/${data.ip}/json/`);
-            const geoData = await geoResponse.json();
-            logEntry.location = `${geoData.city || 'Unknown'}, ${geoData.country_name || 'Unknown'}`;
-        } catch (e) {
-            logEntry.location = 'Unknown';
-        }
-        
-        ipLogs.unshift(logEntry);
-        localStorage.setItem('ipLogs', JSON.stringify(ipLogs));
+        ipLogs.unshift(log);
+        localStorage.setItem('iplogs', JSON.stringify(ipLogs));
         
         return data.ip;
     } catch (error) {
-        return 'Unknown';
+        // Fallback IP
+        const fallbackIP = `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+        
+        const log = {
+            ip: fallbackIP,
+            time: new Date().toLocaleString('tr-TR'),
+            date: new Date().toISOString().split('T')[0],
+            cardsChecked: 0
+        };
+        
+        ipLogs.unshift(log);
+        localStorage.setItem('iplogs', JSON.stringify(ipLogs));
+        
+        return fallbackIP;
     }
 }
 
-// Add log message
-function addLog(message, type = 'info') {
-    const logContainer = document.getElementById('liveLog');
-    const logEntry = document.createElement('div');
-    logEntry.className = `log-entry log-${type}`;
-    logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-    logContainer.appendChild(logEntry);
-    logContainer.scrollTop = logContainer.scrollHeight;
-    
-    // Save to logs
-    logs.push({
-        message: message,
-        type: type,
-        time: new Date().toLocaleString('tr-TR')
-    });
-    
-    if (logs.length > 1000) logs = logs.slice(-1000);
-}
-
-// Save logs to localStorage
-function saveLogs() {
-    localStorage.setItem('ccCheckerLogs', JSON.stringify(logs));
-    localStorage.setItem('ipLogs', JSON.stringify(ipLogs));
-}
-
-// Start checking cards
-async function startChecking() {
+// Kart kontrolünü başlat
+function startCheck() {
     const input = document.getElementById('cardInput').value.trim();
     if (!input) {
-        addLog('No cards to check!', 'fail');
+        alert('Lütfen kartları girin!');
         return;
     }
     
@@ -615,34 +406,34 @@ async function startChecking() {
         .filter(line => line.length > 0);
     
     if (cards.length === 0) {
-        addLog('Invalid card format!', 'fail');
+        alert('Geçerli kart bulunamadı!');
         return;
     }
     
-    addLog(`Starting check for ${cards.length} cards...`, 'info');
-    
     checking = true;
     currentIndex = 0;
-    document.getElementById('loading').style.display = 'block';
-    document.getElementById('resultsContainer').innerHTML = '';
     
-    updateStats();
+    // İstatistikleri sıfırla
+    document.getElementById('total').textContent = '0';
+    document.getElementById('live').textContent = '0';
+    document.getElementById('dead').textContent = '0';
     
-    await checkNextCard();
+    // Sonuçları temizle
+    document.getElementById('results').innerHTML = '';
+    
+    // Kontrolü başlat
+    checkNextCard();
 }
 
-// Check next card
+// Sonraki kartı kontrol et
 async function checkNextCard() {
     if (!checking || currentIndex >= cards.length) {
         checking = false;
-        document.getElementById('loading').style.display = 'none';
-        addLog('Checking completed!', 'info');
         
-        // Update IP log with cards checked
+        // IP kaydını güncelle
         if (ipLogs.length > 0) {
             ipLogs[0].cardsChecked = cards.length;
-            saveLogs();
-            loadIPLogsTable();
+            localStorage.setItem('iplogs', JSON.stringify(ipLogs));
         }
         
         return;
@@ -651,187 +442,101 @@ async function checkNextCard() {
     const card = cards[currentIndex];
     const parts = card.split('|');
     
-    if (parts.length !== 4) {
-        addLog(`Invalid format: ${card}`, 'fail');
-        currentIndex++;
-        updateProgress();
-        setTimeout(checkNextCard, 100);
-        return;
-    }
+    // İstatistikleri güncelle
+    document.getElementById('total').textContent = currentIndex + 1;
     
-    // Update progress
-    updateProgress();
-    
-    // Simulate checking (2% live rate)
+    // %2 ihtimalle canlı kart
     const isLive = Math.random() < 0.02;
     
-    // Add result
+    // Sonucu ekle
     const resultDiv = document.createElement('div');
-    resultDiv.className = `result-item ${isLive ? 'result-live' : 'result-die'}`;
+    resultDiv.className = `result-item ${isLive ? 'live' : 'dead'}`;
     
     if (isLive) {
-        resultDiv.innerHTML = `
-            <strong>✓ LIVE</strong> | ${card} | 
-            <span style="color: #00ff00">VALID</span> | 
-            BIN: ${parts[0].substring(0, 6)} | 
-            TYPE: ${getCardType(parts[0])}
-        `;
-        addLog(`LIVE: ${parts[0].substring(0, 6)}******${parts[0].substring(12)}`, 'success');
+        resultDiv.innerHTML = `✅ CANLI | ${card}`;
+        document.getElementById('live').textContent = parseInt(document.getElementById('live').textContent) + 1;
     } else {
-        resultDiv.innerHTML = `
-            <strong>✗ DEAD</strong> | ${card} | 
-            <span style="color: #ff0000">DECLINED</span> | 
-            REASON: ${getDeclineReason()}
-        `;
-        addLog(`DEAD: ${parts[0].substring(0, 6)}******${parts[0].substring(12)}`, 'fail');
+        resultDiv.innerHTML = `❌ ÖLÜ | ${card}`;
+        document.getElementById('dead').textContent = parseInt(document.getElementById('dead').textContent) + 1;
     }
     
-    document.getElementById('resultsContainer').prepend(resultDiv);
-    
-    // Update counters
-    updateCounters(isLive);
+    document.getElementById('results').prepend(resultDiv);
     
     currentIndex++;
     
-    // Delay for next card (random between 0.5-2 seconds)
-    const delay = 500 + Math.random() * 1500;
-    setTimeout(checkNextCard, delay);
-}
-
-// Stop checking
-function stopChecking() {
-    checking = false;
-    addLog('Checking stopped by user', 'info');
-    document.getElementById('loading').style.display = 'none';
-}
-
-// Update progress bar
-function updateProgress() {
-    const progress = (currentIndex / cards.length) * 100;
-    document.getElementById('progressFill').style.width = `${progress}%`;
-}
-
-// Update counters
-function updateCounters(isLive) {
-    const total = document.getElementById('totalCards');
-    const live = document.getElementById('liveCards');
-    const die = document.getElementById('dieCards');
-    
-    total.textContent = currentIndex + 1;
-    
-        if (isLive) {
-        live.textContent = parseInt(live.textContent) + 1;
-    } else {
-        die.textContent = parseInt(die.textContent) + 1;
+    // 0.5-1.5 saniye bekle
+    if (checking) {
+        setTimeout(checkNextCard, 500 + Math.random() * 1000);
     }
 }
 
-// Update stats
-function updateStats() {
-    document.getElementById('totalCards').textContent = '0';
-    document.getElementById('liveCards').textContent = '0';
-    document.getElementById('dieCards').textContent = '0';
+// Kontrolü durdur
+function stopCheck() {
+    checking = false;
 }
 
-// Get card type
-function getCardType(number) {
-    const firstTwo = number.substring(0, 2);
-    if (number.startsWith('4')) return 'VISA';
-    if (number.startsWith('5')) return 'MASTERCARD';
-    if (number.startsWith('3')) return 'AMEX';
-    if (firstTwo === '35') return 'JCB';
-    if (firstTwo === '60') return 'DISCOVER';
-    return 'UNKNOWN';
-}
-
-// Get random decline reason
-function getDeclineReason() {
-    const reasons = [
-        'INSUFFICIENT FUNDS',
-        'CARD EXPIRED',
-        'INVALID CVV',
-        'ISSUER DECLINED',
-        'DO NOT HONOR',
-        'RESTRICTED CARD',
-        'SECURITY VIOLATION',
-        'EXCEEDS LIMIT'
-    ];
-    return reasons[Math.floor(Math.random() * reasons.length)];
-}
-
-// Admin functions
+// Admin panelini aç
 function openAdmin() {
     document.getElementById('adminPanel').style.display = 'block';
+    document.getElementById('loginSection').style.display = 'block';
+    document.getElementById('adminSection').style.display = 'none';
+    
+    // Formları temizle
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
 }
 
+// Admin panelini kapat
 function closeAdmin() {
     document.getElementById('adminPanel').style.display = 'none';
 }
 
-function loginAdmin() {
-    const username = document.getElementById('adminUsername').value;
-    const password = document.getElementById('adminPassword').value;
+// Admin girişi
+function login() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
     
     if (username === 'sirin31' && password === 'sirin3131') {
-        document.getElementById('loginForm').style.display = 'none';
-        document.getElementById('adminContent').style.display = 'block';
-        loadIPLogsTable();
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('adminSection').style.display = 'block';
+        showIPLogs();
     } else {
-        document.getElementById('loginError').style.display = 'block';
+        alert('Hatalı giriş!');
     }
 }
 
-// Load IP logs to table
-function loadIPLogsTable() {
-    const tbody = document.getElementById('ipTableBody');
-    tbody.innerHTML = '';
-    
-    ipLogs.forEach((log, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td class="ip-address">${log.ip}</td>
-            <td>${log.time}</td>
-            <td>${log.cardsChecked || 0}</td>
-            <td>${log.userAgent.substring(0, 50)}...</td>
-            <td>${log.location}</td>
-        `;
-        tbody.appendChild(row);
-    });
+// IP kayıtlarını göster
+function showIPLogs() {
+    const ipList = document.getElementById('ipList');
+    ipList.innerHTML = '';
     
     if (ipLogs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">No IP logs found</td></tr>';
+        ipList.innerHTML = '<div style="text-align:center; padding:20px; color:#0a0;">Henüz kayıt yok.</div>';
+        return;
     }
+    
+    ipLogs.forEach((log, index) => {
+        const ipItem = document.createElement('div');
+        ipItem.className = 'ip-item';
+        ipItem.innerHTML = `
+            <div class="ip-address">${log.ip}</div>
+            <div class="ip-info">
+                <div>Tarih: ${log.time}</div>
+                <div>Kontrol Edilen Kart: ${log.cardsChecked || 0}</div>
+            </div>
+        `;
+        ipList.appendChild(ipItem);
+    });
 }
 
-// Export logs
-function exportLogs() {
-    const dataStr = JSON.stringify(ipLogs, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = `ip_logs_${new Date().toISOString().split('T')[0]}.json`;
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
-    
-    addLog('IP logs exported', 'info');
-}
-
-// Clear all logs
-function clearAllLogs() {
-    if (confirm('Are you sure you want to delete ALL IP logs? This cannot be undone!')) {
+// Kayıtları temizle
+function clearLogs() {
+    if (confirm('Tüm IP kayıtlarını silmek istediğinize emin misiniz?')) {
         ipLogs = [];
-        localStorage.removeItem('ipLogs');
-        loadIPLogsTable();
-        addLog('All IP logs cleared', 'info');
+        localStorage.removeItem('iplogs');
+        showIPLogs();
     }
 }
-
-// Initialize on load
-window.onload = init;
 </script>
-
 </body>
 </html>
