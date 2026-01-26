@@ -1,174 +1,753 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giriş Yap</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            background: #000; 
-            color: #0f0; 
-            font-family: monospace; 
-            height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 20px; 
-        }
-        .login-box {
-            background: #111; 
-            border: 2px solid #0f0; 
-            padding: 30px; 
-            border-radius: 10px; 
-            width: 100%; 
-            max-width: 400px; 
-            text-align: center; 
-        }
-        .title { 
-            font-size: 24px; 
-            margin-bottom: 20px; 
-            text-shadow: 0 0 5px #0f0; 
-        }
-        input {
-            width: 100%; 
-            padding: 15px; 
-            margin: 10px 0; 
-            background: #000; 
-            color: #0f0; 
-            border: 1px solid #0a0; 
-            border-radius: 5px; 
-            font-size: 16px; 
-        }
-        .btn {
-            width: 100%; 
-            padding: 15px; 
-            background: #0f0; 
-            color: #000; 
-            border: none; 
-            border-radius: 5px; 
-            font-size: 18px; 
-            font-weight: bold; 
-            margin-top: 10px; 
-            cursor: pointer; 
-        }
-        .admin-panel {
-            display: none; 
-            padding: 20px; 
-            width: 100%; 
-            max-width: 800px; 
-        }
-        .ip-list {
-            margin-top: 20px; 
-            max-height: 400px; 
-            overflow-y: auto; 
-        }
-        .ip-item {
-            background: #111; 
-            padding: 15px; 
-            margin: 10px 0; 
-            border-left: 4px solid #0f0; 
-            border-radius: 5px; 
-        }
-        .ip-address {
-            color: #0f0; 
-            font-size: 18px; 
-            font-weight: bold; 
-        }
-        .ip-time {
-            color: #0a0; 
-            font-size: 14px; 
-            margin-top: 5px; 
-        }
-    </style>
-</head>
-<body>
-
-<div class="login-box" id="loginBox">
-    <div class="title">GİRİŞ YAP</div>
-    <input type="text" id="username" placeholder="Kullanıcı Adı">
-    <input type="password" id="password" placeholder="Şifre">
-    <button class="btn" onclick="login()">GİRİŞ</button>
-</div>
-
-<div class="admin-panel" id="adminPanel">
-    <h1>📊 IP KAYITLARI</h1>
-    <div class="ip-list" id="ipList">
-        <!-- IP'ler buraya gelecek -->
-    </div>
-</div>
-
-<script>
-// IP'leri localStorage'dan al
-let ipLogs = JSON.parse(localStorage.getItem('ipLogs')) || [];
-
-// Sayfa yüklendiğinde IP'yi kaydet
-window.onload = async function() {
-    // IP'yi al ve kaydet
-    const ip = await getIP();
-    const log = {
-        ip: ip,
-        time: new Date().toLocaleString('tr-TR'),
-        date: new Date().toISOString().split('T')[0]
-    };
-    
-    // Aynı IP'den bugün kayıt yoksa ekle
-    const today = new Date().toISOString().split('T')[0];
-    const exists = ipLogs.some(log => log.ip === ip && log.date === today);
-    
-    if (!exists) {
-        ipLogs.unshift(log);
-        localStorage.setItem('ipLogs', JSON.stringify(ipLogs));
-    }
-};
-
-// IP alma fonksiyonu
-async function getIP() {
-    try {
-        const response = await fetch('https://api.ipify.org?format=json');
-        const data = await response.json();
-        return data.ip;
-    } catch (error) {
-        return 'IP_ALINAMADI';
-    }
-}
-
-// Giriş fonksiyonu
-function login() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    
-    // Herkes girebilir, önemli olan IP'yi almaktı
-    // IP zaten yukarıda alındı ve kaydedildi
-    
-    // Admin panelini göster
-    document.getElementById('loginBox').style.display = 'none';
-    document.getElementById('adminPanel').style.display = 'block';
-    
-    // IP'leri listele
-    showIPs();
-}
-
-// IP'leri göster
-function showIPs() {
-    const ipList = document.getElementById('ipList');
-    ipList.innerHTML = '';
-    
-    if (ipLogs.length === 0) {
-        ipList.innerHTML = '<div style="text-align:center; padding:20px; color:#0a0;">Henüz kayıt yok.</div>';
-        return;
-    }
-    
-    ipLogs.forEach(log => {
-        const ipItem = document.createElement('div');
-        ipItem.className = 'ip-item';
-        ipItem.innerHTML = `
-            <div class="ip-address">🌐 ${log.ip}</div>
-            <div class="ip-time">⏰ ${log.time}</div>
-        `;
-        ipList.appendChild(ipItem);
-    });
-}
-</script>
-</body>
-</html>
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>DEX İçerik Analiz Raporu</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; background: #f0f2f5; }
+                .baslik { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 10px; margin-bottom: 20px; }
+                .ozet { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+                .dosya-karti { background: white; margin: 15px 0; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+                              border-left: 5px solid #4CAF50; transition: transform 0.2s; }
+                .dosya-karti:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+                .dosya-karti.tehlikeli { border-left-color: #f44336; }
+                .dosya-karti.uyari { border-left-color: #FF9800; }
+                .risk-etiket { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; margin-left: 10px; }
+                .risk-yuksek { background: #f44336; color: white; }
+                .risk-orta { background: #FF9800; color: white; }
+                .risk-dusuk { background: #4CAF50; color: white; }
+                .bulgu { background: #f8f9fa; padding: 10px; margin: 8px 0; border-radius: 5px; border-left: 3px solid #2196F3; }
+                .bulgu.kritik { border-left-color: #f44336; background: #ffebee; }
+                .tablo { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+                th { background: #667eea; color: white; padding: 12px; text-align: left; }
+                td { padding: 10px; border-bottom: 1px solid #eee; }
+                .ilerleme { height: 10px; background: #e0e0e0; border-radius: 5px; overflow: hidden; margin: 5px 0; }
+                .ilerleme-dolgu { height: 100%; background: linear-gradient(90deg, #4CAF50, #FF9800, #f44336); }
+                .oneri { background: #e3f2fd; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #2196F3; }
+            </style>
+        </head>
+        <body>
+            <div class="baslik">
+                <h1>🔍 DEX İçerik Güvenlik Analizi</h1>
+                <p>Oluşturulma: 26.01.2026 19:43</p>
+                <p>Klasör: /storage/emulated/0/dex_contents/</p>
+            </div>
+            
+            <div class="ozet">
+                <h2>📊 Analiz Özeti</h2>
+                <p><strong>Taranan Dosya:</strong> 100</p>
+                <p><strong>Bulgulu Dosya:</strong> 100</p>
+                <p><strong>Kritik Bulgu:</strong> 9</p>
+                <p><strong>En Riskli Dosya:</strong> res_9Q.png 
+                   (Skor: 42)</p>
+                
+                <div class="ilerleme">
+                    <div class="ilerleme-dolfu" style="width: 100%"></div>
+                </div>
+            </div>
+            
+            <h2>🚨 Risk Sıralaması (İlk 20)</h2>
+            <table class="tablo">
+                <tr>
+                    <th>#</th>
+                    <th>Dosya Adı</th>
+                    <th>Risk Skoru</th>
+                    <th>Boyut</th>
+                    <th>Bulgular</th>
+                    <th>Entropi</th>
+                </tr>
+        
+                <tr>
+                    <td>1</td>
+                    <td><strong>res_9Q.png</strong></td>
+                    <td><span class="risk-etiket risk-orta">42</span></td>
+                    <td>113.8 KB</td>
+                    <td>1</td>
+                    <td>7.99</td>
+                </tr>
+            
+                <tr>
+                    <td>2</td>
+                    <td><strong>res_36.png</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">14</span></td>
+                    <td>36.87 KB</td>
+                    <td>1</td>
+                    <td>7.78</td>
+                </tr>
+            
+                <tr>
+                    <td>3</td>
+                    <td><strong>okhttp3_internal_publicsuffix_</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">7</span></td>
+                    <td>36.85 KB</td>
+                    <td>1</td>
+                    <td>7.99</td>
+                </tr>
+            
+                <tr>
+                    <td>4</td>
+                    <td><strong>res_color_m3_dark_highlighted_</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>376.0 B</td>
+                    <td>1</td>
+                    <td>3.69</td>
+                </tr>
+            
+                <tr>
+                    <td>5</td>
+                    <td><strong>res_N9.xml</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>508.0 B</td>
+                    <td>1</td>
+                    <td>3.85</td>
+                </tr>
+            
+                <tr>
+                    <td>6</td>
+                    <td><strong>res_oz1.xml</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>464.0 B</td>
+                    <td>1</td>
+                    <td>3.62</td>
+                </tr>
+            
+                <tr>
+                    <td>7</td>
+                    <td><strong>res_YF.xml</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>556.0 B</td>
+                    <td>1</td>
+                    <td>4.10</td>
+                </tr>
+            
+                <tr>
+                    <td>8</td>
+                    <td><strong>res_v3.xml</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>592.0 B</td>
+                    <td>1</td>
+                    <td>4.22</td>
+                </tr>
+            
+                <tr>
+                    <td>9</td>
+                    <td><strong>res_Yw.xml</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>956.0 B</td>
+                    <td>1</td>
+                    <td>3.87</td>
+                </tr>
+            
+                <tr>
+                    <td>10</td>
+                    <td><strong>res_ag.xml</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>592.0 B</td>
+                    <td>1</td>
+                    <td>4.22</td>
+                </tr>
+            
+                <tr>
+                    <td>11</td>
+                    <td><strong>res_t9.xml</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>656.0 B</td>
+                    <td>1</td>
+                    <td>4.48</td>
+                </tr>
+            
+                <tr>
+                    <td>12</td>
+                    <td><strong>res_color_m3_selection_control</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>1.34 KB</td>
+                    <td>1</td>
+                    <td>3.38</td>
+                </tr>
+            
+                <tr>
+                    <td>13</td>
+                    <td><strong>res_color_m3_tabs_text_color.x</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>624.0 B</td>
+                    <td>1</td>
+                    <td>3.62</td>
+                </tr>
+            
+                <tr>
+                    <td>14</td>
+                    <td><strong>res_Fe.xml</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>648.0 B</td>
+                    <td>1</td>
+                    <td>4.44</td>
+                </tr>
+            
+                <tr>
+                    <td>15</td>
+                    <td><strong>res_color-v31_m3_dynamic_dark_</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>500.0 B</td>
+                    <td>1</td>
+                    <td>3.64</td>
+                </tr>
+            
+                <tr>
+                    <td>16</td>
+                    <td><strong>res_Bx.xml</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>744.0 B</td>
+                    <td>1</td>
+                    <td>4.00</td>
+                </tr>
+            
+                <tr>
+                    <td>17</td>
+                    <td><strong>res_Ig.xml</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>1.52 KB</td>
+                    <td>1</td>
+                    <td>4.10</td>
+                </tr>
+            
+                <tr>
+                    <td>18</td>
+                    <td><strong>res_UO.xml</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>1012.0 B</td>
+                    <td>1</td>
+                    <td>3.33</td>
+                </tr>
+            
+                <tr>
+                    <td>19</td>
+                    <td><strong>res_cR.xml</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>724.0 B</td>
+                    <td>1</td>
+                    <td>3.71</td>
+                </tr>
+            
+                <tr>
+                    <td>20</td>
+                    <td><strong>res_color_mtrl_btn_bg_color_se</strong></td>
+                    <td><span class="risk-etiket risk-dusuk">4</span></td>
+                    <td>500.0 B</td>
+                    <td>1</td>
+                    <td>3.67</td>
+                </tr>
+            
+            </table>
+            
+            <h2>📁 Dosya Detayları</h2>
+        
+            <div class="dosya-karti uyari">
+                <h3>📄 res_9Q.png</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_9Q.png</p>
+                <p><strong>Boyut:</strong> 113.8 KB | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> 48c114f2a8eafda6... | 
+                   <strong>SHA256:</strong> ff6975cc86d42efe...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">42</span> | 
+                   <strong>Entropi:</strong> 7.99 (Yüksek!)</p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu kritik">
+                    <strong>KOD_ENJEKSIYONU</strong> (YUKSEK)<br>
+                    <small>Kod enjeksiyonu</small><br>
+                    <strong>Sayı:</strong> 6 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> $(
+                </div>
+                <h4>📝 İlginç Stringler (11 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                {<span style="color: #e74c3c;">@</span>O4#2<br>v<span style="color: #e74c3c;">@</span>%K|F<br>m7o<span style="color: #e74c3c;">@</span>9*i<br>r<span style="color: #e74c3c;">@</span>/LKj<br>*tC<span style="color: #e74c3c;">@</span>8%<br>*<span style="color: #e74c3c;">@</span>RtE\<br>5f<span style="color: #e74c3c;">@</span>l;5<br>8<<span style="color: #e74c3c;">@</span>}`]<br>nwww|_<br><span style="color: #e74c3c;">@</span>Byf&g<br>X<span style="color: #e74c3c;">@</span>^|<K<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_36.png</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_36.png</p>
+                <p><strong>Boyut:</strong> 36.87 KB | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> b4481747c7611376... | 
+                   <strong>SHA256:</strong> b15604d8a146bd0f...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">14</span> | 
+                   <strong>Entropi:</strong> 7.78 (Yüksek!)</p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu kritik">
+                    <strong>KOD_ENJEKSIYONU</strong> (YUKSEK)<br>
+                    <small>Kod enjeksiyonu</small><br>
+                    <strong>Sayı:</strong> 2 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> $(
+                </div>
+                
+                <h4>📝 İlginç Stringler (4 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                6mZ<span style="color: #e74c3c;">@</span>@@~~~CC<br>Q<span style="color: #e74c3c;">@</span>@@\\\\\<br><span style="color: #e74c3c;">@</span>2Ucz|<br><span style="color: #e74c3c;">@</span>Pa7>Ug3<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 okhttp3_internal_publicsuffix_publicsuffixes.gz</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/okhttp3_internal_publicsuffix_publicsuffixes.gz</p>
+                <p><strong>Boyut:</strong> 36.85 KB | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> 3f5d769a4a9d7e1a... | 
+                   <strong>SHA256:</strong> a1ef3d0e4ec2cbce...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">7</span> | 
+                   <strong>Entropi:</strong> 7.99 (Yüksek!)</p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu kritik">
+                    <strong>KOD_ENJEKSIYONU</strong> (YUKSEK)<br>
+                    <small>Kod enjeksiyonu</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> $(
+                </div>
+                
+                <h4>📝 İlginç Stringler (3 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                -YBB<span style="color: #e74c3c;">@</span>Vr<br>K*<span style="color: #e74c3c;">@</span>R9b<br><span style="color: #e74c3c;">@</span>'iZB2<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_color_m3_dark_highlighted_text.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_color_m3_dark_highlighted_text.xml</p>
+                <p><strong>Boyut:</strong> 376.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> dff15ff65cbe702c... | 
+                   <strong>SHA256:</strong> d6814a6fa91711ec...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 3.69 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/apk/res/android item ...
+                </div>
+                
+                <h4>📝 İlginç Stringler (1 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                **<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_N9.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_N9.xml</p>
+                <p><strong>Boyut:</strong> 508.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> 94720ce9787beede... | 
+                   <strong>SHA256:</strong> 9aded97f71c7ea36...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 3.85 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/apk/res/android set  ...
+                </div>
+                
+                <h4>📝 İlginç Stringler (2 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                shareInterpolator<br>**<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_oz1.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_oz1.xml</p>
+                <p><strong>Boyut:</strong> 464.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> a6debdcab141b684... | 
+                   <strong>SHA256:</strong> 226f2592068382f4...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 3.62 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/apk/res/android item ...
+                </div>
+                
+                <h4>📝 İlginç Stringler (1 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                **<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_YF.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_YF.xml</p>
+                <p><strong>Boyut:</strong> 556.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> a4d973c0608ec0e0... | 
+                   <strong>SHA256:</strong> fb85869bbf5e3de1...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 4.10 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/aapt **http://schemas.a...
+                </div>
+                
+                <h4>📝 İlginç Stringler (2 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                <span style="color: #e74c3c;">http</span>://schemas.android.com/aapt<br>**<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_v3.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_v3.xml</p>
+                <p><strong>Boyut:</strong> 592.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> 2a0145efdd8d9552... | 
+                   <strong>SHA256:</strong> d11e949016a0c642...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 4.22 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/aapt **http://schemas.a...
+                </div>
+                
+                <h4>📝 İlginç Stringler (2 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                <span style="color: #e74c3c;">http</span>://schemas.android.com/aapt<br>**<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_Yw.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_Yw.xml</p>
+                <p><strong>Boyut:</strong> 956.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> 2006209d748c6305... | 
+                   <strong>SHA256:</strong> cb27c7492a85a92f...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 3.87 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/apk/res/android item 
+                </div>
+                
+                <h4>📝 İlginç Stringler (3 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                bottomLeftRadius<br>bottomRightRadius<br>**<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_ag.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_ag.xml</p>
+                <p><strong>Boyut:</strong> 592.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> 9beaf9b723140481... | 
+                   <strong>SHA256:</strong> 4b6f0e76b00e26f8...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 4.22 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/aapt **http://schemas.a...
+                </div>
+                
+                <h4>📝 İlginç Stringler (2 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                <span style="color: #e74c3c;">http</span>://schemas.android.com/aapt<br>**<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_t9.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_t9.xml</p>
+                <p><strong>Boyut:</strong> 656.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> 7ae7884cf0a83ff5... | 
+                   <strong>SHA256:</strong> 9a9881522e32daf5...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 4.48 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/apk/res/android    , ...
+                </div>
+                
+                <h4>📝 İlginç Stringler (3 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                layout_marginStart<br>99com.google.android.material.internal.CheckableImageButton<br>**<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_color_m3_selection_control_ripple_color_selector.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_color_m3_selection_control_ripple_color_selector.xml</p>
+                <p><strong>Boyut:</strong> 1.34 KB | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> 7246432e2f7361f1... | 
+                   <strong>SHA256:</strong> ee30385001ce1154...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 3.38 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/apk/res/android item ...
+                </div>
+                
+                <h4>📝 İlginç Stringler (1 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                **<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_color_m3_tabs_text_color.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_color_m3_tabs_text_color.xml</p>
+                <p><strong>Boyut:</strong> 624.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> 05df5b347ada8301... | 
+                   <strong>SHA256:</strong> 575b40ef706e350d...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 3.62 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/apk/res/android item ...
+                </div>
+                
+                <h4>📝 İlginç Stringler (1 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                **<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_Fe.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_Fe.xml</p>
+                <p><strong>Boyut:</strong> 648.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> 32abecd1c7edbafb... | 
+                   <strong>SHA256:</strong> 68ac9aadda3cde3f...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 4.44 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/apk/res/android path ...
+                </div>
+                
+                <h4>📝 İlginç Stringler (2 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                eeM19,6.41L17.59,5 12,10.59 6.41,5 5,6.41 10.59,12 5,17.59 6.41,19 12,13.41 17.59,19 19,17.59 13.41,12z<br>**<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_color-v31_m3_dynamic_dark_default_color_secondary_text.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_color-v31_m3_dynamic_dark_default_color_secondary_text.xml</p>
+                <p><strong>Boyut:</strong> 500.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> 61e98cebe19d7455... | 
+                   <strong>SHA256:</strong> 89a188bf3b464e0c...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 3.64 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong>4.00 </p>
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/apk/res/android item ...
+                </div>
+                
+                <h4>📝 İlginç Stringler (1 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                **<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_color_mtrl_on_surface_ripple_color.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_color_mtrl_on_surface_ripple_color.xml</p>
+                <p><strong>Boyut:</strong> 808.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> 9d4a402964ec0813... | 
+                   <strong>SHA256:</strong> 45ce361f87a08d36...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 3.62 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/apk/res/android item ...
+                </div>
+                
+                <h4>📝 İlginç Stringler (1 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                **<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_color_material_on_background_emphasis_high_type.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_color_material_on_background_emphasis_high_type.xml</p>
+                <p><strong>Boyut:</strong> 376.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> 0d0170dd38e87991... | 
+                   <strong>SHA256:</strong> c3936370f334d6b3...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 3.68 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/apk/res/android item ...
+                </div>
+                
+                <h4>📝 İlginç Stringler (1 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                **<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_color_material_personalized_primary_text_disable_only.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_color_material_personalized_primary_text_disable_only.xml</p>
+                <p><strong>Boyut:</strong> 500.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> 150e13f591766ab1... | 
+                   <strong>SHA256:</strong> 71df298ca18e175a...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 3.63 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/apk/res/android item ...
+                </div>
+                
+                <h4>📝 İlginç Stringler (1 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                **<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_Px.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_Px.xml</p>
+                <p><strong>Boyut:</strong> 864.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> 81133aa0ba13c3e4... | 
+                   <strong>SHA256:</strong> 96b096b2ddaa165a...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 4.41 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/apk/res/android    D ...
+                </div>
+                
+                <h4>📝 İlginç Stringler (1 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                **<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_PA.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_PA.xml</p>
+                <p><strong>Boyut:</strong> 484.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> a7b913979715440a... | 
+                   <strong>SHA256:</strong> a3c6e3a732f015d6...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 3.60 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/apk/res/android shape...
+                </div>
+                
+                <h4>📝 İlginç Stringler (1 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                **<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_color_m3_navigation_item_text_color.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_color_m3_navigation_item_text_color.xml</p>
+                <p><strong>Boyut:</strong> 1.32 KB | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> edb76751ccc4eaee... | 
+                   <strong>SHA256:</strong> 095931384f3024b3...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 3.39 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/apk/res/android item ...
+                </div>
+                
+                <h4>📝 İlginç Stringler (1 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                **<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="dosya-karti">
+                <h3>📄 res_color_mtrl_choice_chip_ripple_color.xml</h3>
+                <p><strong>Yol:</strong> /storage/emulated/0/dex_contents/res_color_mtrl_choice_chip_ripple_color.xml</p>
+                <p><strong>Boyut:</strong> 948.0 B | 
+                   <strong>Değiştirilme:</strong> 26.01.2026 17:12</p>
+                <p><strong>MD5:</strong> a2436618633ce7c0... | 
+                   <strong>SHA256:</strong> f7d450c2f41cc0e5...</p>
+                <p><strong>Risk Skoru:</strong> <span class="risk-etiket risk-yuksek">4</span> | 
+                   <strong>Entropi:</strong> 3.51 </p>
+                
+                <h4>🔍 Bulunan Patternler (1)</h4>
+            
+                <div class="bulgu">
+                    <strong>URL_ADRESLERI</strong> (ORTA)<br>
+                    <small>URL adresleri</small><br>
+                    <strong>Sayı:</strong> 1 | <strong>Benzersiz:</strong> 1<br>
+                    <strong>Örnekler:</strong> http://schemas.android.com/apk/res/android item ...
+                </div>
+                
+                <h4>📝 İlginç Stringler (1 adet)</h4>
+                <div style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 150px; overflow-y: auto;">
+                **<span style="color: #e74c3c;">http</span>://schemas.android.com/apk/res/android<br></div></div>
+            <div class="oneri">
+                <h3>💡 Öneriler ve Sonraki Adımlar</h3>
+                <ol>
+                    <li><strong>Acil İnceleme:</strong> Yüksek riskli dosyaları (risk skoru > 50) derhal inceleyin</li>
+                    <li><strong>Şifre Değişimi:</strong> Bulunan hardcoded şifre ve anahtarları değiştirin</li>
+                    <li><strong>Bağlantı Kontrolü:</strong> Şüpheli IP ve URL'lere bağlantıları engelleyin</li>
+                    <li><strong>Antivirüs Taraması:</strong> Tüm dosyaları antivirüs ile taratın</li>
+                    <li><strong>Güncelleme:</strong> Modifiye edilmiş bileşenleri kaldırın</li>
+                    <li><strong>Ağ İzleme:</strong> Uygulamanın ağ trafiğini izleyin</li>
+                    <li><strong>Log Analizi:</strong> Uygulama loglarını düzenli kontrol edin</li>
+                </ol>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px; color: #666; font-size: 12px;">
+                <hr>
+                <p>📅 Rapor ID: {datetime.now().strftime("%Y%m%d%H%M%S")}</p>
+                <p>🔧 Türkçe DEX Analiz Aracı v1.0</p>
+            </div>
+        </body>
+        </html>
+        
