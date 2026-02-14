@@ -1,39 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
-    <title>Iframe Yükleme Testi</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hacker Zone - NoBulmaSer</title>
+  <style>
+    body { margin:0; background:#000; color:#0f0; font-family:'Courier New', monospace; overflow:hidden; height:100vh; }
+    canvas { position:absolute; top:0; left:0; z-index:1; }
+    .content { position:relative; z-index:2; text-align:center; padding-top:20%; }
+    h1 { font-size:4em; text-shadow:0 0 10px #0f0; animation:glitch 2s infinite; }
+    @keyframes glitch { 0% { text-shadow:2px 0 #f00, -2px 0 #0ff; } 20% { text-shadow:-2px 0 #f00, 2px 0 #0ff; } 40% { text-shadow:0 0 #0f0; } }
+    form { margin:30px; }
+    input { background:#111; color:#0f0; border:1px solid #0f0; padding:10px; margin:10px; font-size:1.2em; }
+    button { background:#0f0; color:#000; border:none; padding:15px 30px; font-size:1.5em; cursor:pointer; }
+    #status { color:#ff0; margin-top:20px; }
+  </style>
 </head>
 <body>
-    <h2>Iframe Yükleniyor mu?</h2>
-    <iframe id="testFrame" src="https://uat-bugbounty.nonprod.syfe.com/" 
-            width="800" height="400" 
-            style="border: 3px solid red;"></iframe>
+  <canvas id="matrix"></canvas>
+  <div class="content">
+    <h1>HOŞGELDİN HACKER</h1>
+    <p>Sisteme erişim için kayıt ol (Telegram kullanıcı adınla aynı olsun önerilir)</p>
     
-    <script>
-        setTimeout(() => {
-            const frame = document.getElementById('testFrame');
-            const iframeWindow = frame.contentWindow;
-            
-            console.log("Iframe window:", iframeWindow);
-            
-            try {
-                // Iframe içeriğine erişmeye çalış
-                const iframeDoc = frame.contentDocument || iframeWindow.document;
-                console.log("Iframe document:", iframeDoc);
-                console.log("Iframe title:", iframeDoc.title);
-                console.log("Iframe URL:", iframeWindow.location.href);
-                
-                if (iframeDoc && iframeDoc.body) {
-                    document.body.innerHTML += '<h3 style="color:green">✅ Iframe YÜKLENDİ!</h3>';
-                    document.body.innerHTML += '<p>Clickjacking MÜMKÜN olabilir.</p>';
-                }
-            } catch (e) {
-                console.error("Hata:", e.message);
-                document.body.innerHTML += '<h3 style="color:red">❌ Iframe YÜKLENMEDİ!</h3>';
-                document.body.innerHTML += '<p>Hata: ' + e.message + '</p>';
-                document.body.innerHTML += '<p>Clickjacking MÜMKÜN DEĞİL.</p>';
-            }
-        }, 3000);
-    </script>
+    <form id="registerForm">
+      <input type="text" id="username" placeholder="Kullanıcı Adı" required>
+      <input type="password" id="password" placeholder="Şifre" required>
+      <button type="submit">KAYIT OL</button>
+    </form>
+    
+    <div id="status"></div>
+  </div>
+
+  <script>
+    // Matrix rain efekti
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    const chars = '01ハックネオ東京ZA ZA';
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0,0,0,0.05)';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = '#0f0';
+      ctx.font = fontSize + 'px monospace';
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(draw, 35);
+
+    // Kayıt formu
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const status = document.getElementById('status');
+
+      try {
+        const res = await fetch('/register', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({username, password})
+        });
+        const data = await res.json();
+        status.textContent = data.success ? 'Kayıt başarılı! Artık sistemdesin.' : data.error;
+      } catch (err) {
+        status.textContent = 'Hata: ' + err.message;
+      }
+    });
+  </script>
 </body>
 </html>
