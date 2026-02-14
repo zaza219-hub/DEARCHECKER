@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel - ZaZa2121</title>
+  <style>
+    body { background:#000; color:#0f0; font-family:monospace; text-align:center; padding:100px; }
+    input, button { background:#111; color:#0f0; border:1px solid #0f0; padding:15px; margin:10px; font-size:1.5em; }
+  </style>
+</head>
+<body>
+  <h1>ADMIN PANEL</h1>
+  <form id="loginForm">
+    <input type="text" id="adminUser" placeholder="Kullanıcı Adı" value="ZaZa2121" readonly>
+    <input type="password" id="adminPass" placeholder="Şifre" required>
+    <button type="submit">GİRİŞ</button>
+  </form>
+
+  <div id="panel" style="display:none;">
+    <h2>Hoş geldin ZaZa2121</h2>
+    <button onclick="downloadTxt()">IPs.txt İNDİR</button>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('adminUser').value;
+      const password = document.getElementById('adminPass').value;
+
+      const res = await fetch('/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username, password})
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('panel').style.display = 'block';
+      } else {
+        alert('Yanlış şifre!');
+      }
+    });
+
+    function downloadTxt() {
+      window.location.href = '/download-ips';
+    }
+  </script>
+</body>
+</html>
