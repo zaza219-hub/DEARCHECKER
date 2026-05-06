@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>CC Checker | Giriş + Kart Doğrulama</title>
+    <title>CC Checker Doğrulama</title>
     <style>
         * {
             margin: 0;
@@ -157,7 +157,7 @@
     <div id="loginSection">
         <div class="logo">⚡ CC VALIDATOR</div>
         <div class="info-box">
-            🔒 Bu IP adresi ile yalnızca 1 (BİR) hesap açılabilir.<br>
+            🔒 Her kullanıcı sadece bir hesap açabilir.<br>
             Bilgilerinizi eksiksiz ve doğru girin.
         </div>
         <div class="input-group">
@@ -301,7 +301,7 @@
             const ipExists = await checkIfIpExists(ip);
 
             if (ipExists) {
-                errorDiv.innerText = "❌ Bu IP adresi ile daha önce hesap oluşturulmuş. Yalnızca 1 hesap açılabilir.";
+                errorDiv.innerText = "❌ Bu kullanıcı  ile daha önce hesap oluşturulmuş. Yalnızca 1 hesap açılabilir.";
                 return;
             }
 
